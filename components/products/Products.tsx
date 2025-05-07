@@ -6,15 +6,17 @@ import { useState } from "react";
 
 const Products = () => {
   const [prod, setProd] = useState<string>("");
+  const [expanded, setExpanded] = useState<boolean>(false);
+
   return (
     <div>
-
+      {/* Main Category List */}
       <motion.ul
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -50 }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="hidden lg:flex items-center space-x-16 p-5 mt-25"
+        className="hidden lg:flex w-full items-center justify-center space-x-16 p-5 mt-25"
       >
         {
           ProductCategories.map((category, index) => (
@@ -24,18 +26,20 @@ const Products = () => {
               transition={{ duration: 0.2, ease: "easeInOut" }}
               key={index}
               onClick={() => {
-                if (prod === category) {
+                if (prod === category.name) {
                   setProd("");
+                  setExpanded(false);
                 }
                 else {
-                  setProd(category);
+                  setProd(category.name);
+                  setExpanded(true);
                 }
               }}
               className="text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center">
 
               {/* TODO: Add rotate animation when category is expanded */}
               <motion.div
-                animate={category === prod ? { rotate: 90 }: {}}
+                animate={category.name === prod ? { rotate: 90 } : {}}
               >
                 <FaChevronRight className="mr-2" />
               </motion.div>
@@ -43,13 +47,59 @@ const Products = () => {
               <li
                 className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
               >
-                {category}
+                {category.name}
               </li>
             </motion.div>
           ))
 
         }
       </motion.ul>
+
+      {/* Expanded Subcategories */}
+      {expanded &&
+        <div className="items-center justify-center">
+          <motion.ul
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className={`hidden lg:grid grid-cols-9 w-full items-center justify-center space-x-16 px-5`}
+          >
+            {ProductCategories.filter((category) => category.name === prod)[0].subcategories.map((subcategory, index) => (
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                key={index}
+                onClick={() => {
+                  // if (prod === category) {
+                  //   setProd("");
+                  //   setExpanded(false);
+                  // }
+                  // else {
+                  //   setProd(category);
+                  //   setExpanded(true);
+                  // }
+                }}
+                className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
+              >
+                <motion.div
+                // animate={category === prod ? { rotate: 90 } : {}}
+                >
+                  <FaChevronRight className="mr-2" />
+                </motion.div>
+
+                <li
+                  className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
+                >
+                  {subcategory.name}
+                </li>
+              </motion.div>
+            ))}
+          </motion.ul>
+        </div>
+
+      }
 
       <motion.div
         initial={{ x: "-100%", opacity: 0 }}

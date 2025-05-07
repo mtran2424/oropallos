@@ -1,8 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import logo from "@/components/assets/logos/oropallos-logo.png";
-
+import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
+import { CiPhone } from "react-icons/ci";
 
 const Footer = () => {
   return (
@@ -10,7 +10,7 @@ const Footer = () => {
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: "easeOut" }}
-      className="mx-auto bg-red-900 text-white border-t-2 border-[#FFBA04] px-6 py-10 mt-0"
+      className="mx-auto text-neutral-900 bg-white border-t-2 border-[#FFBA04] px-6 py-10 mt-0"
     >
       {/* Footer Body */}
       <div className="flex flex-col sm:flex-row items-center justify-between">
@@ -29,8 +29,9 @@ const Footer = () => {
             <br />
             <a
               href="tel:+15187983988"
-              className="hover:text-yellow-300 underline-animate"
+              className="text-red-900 hover:text-[#FFBA04] underline-animate"
             >
+              <CiPhone className="inline-block mr-1" />
               (518) 798-3988
             </a>
           </p>
