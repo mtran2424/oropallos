@@ -1,12 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
-import { ProductCategories } from "@/components/global.utils";
+import { LiquorCategories, WineCategories } from "@/components/global.utils";
 import { FaChevronRight } from "react-icons/fa6";
 import { useState } from "react";
 
 const Products = () => {
-  const [prod, setProd] = useState<string>("");
-  const [expanded, setExpanded] = useState<boolean>(false);
+  const [currentCategory, setCurrentCategory] = useState<string>("");
+  const [currentSubcategory, setCurrentSubcategory] = useState<string>("");
+  const [expandedCategory, setExpandedCategory] = useState<boolean>(false);
+  const [expandedSubcategory, setExpandedSubcategory] = useState<boolean>(false);
 
   return (
     <div>
@@ -18,89 +20,219 @@ const Products = () => {
         transition={{ duration: 0.5, ease: "easeInOut" }}
         className="hidden lg:flex w-full items-center justify-center space-x-16 p-5 mt-25"
       >
-        {
-          ProductCategories.map((category, index) => (
+        {WineCategories.map((category, index) => (
+          // Dropdowns for each wine category
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            key={index}
+            onClick={() => {
+              // Toggle off children filters too
+              if (currentCategory === category.name) {
+                setExpandedSubcategory(false);
+                setCurrentSubcategory("");
+                setExpandedCategory(false);
+                setCurrentCategory("");
+              }
+              else {
+                // Close out other categories still open
+                setExpandedSubcategory(false);
+                setCurrentSubcategory("");
+                setCurrentCategory(category.name);
+                setExpandedCategory(true);
+              }
+            }}
+            className="text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center">
+
             <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              key={index}
-              onClick={() => {
-                if (prod === category.name) {
-                  setProd("");
-                  setExpanded(false);
-                }
-                else {
-                  setProd(category.name);
-                  setExpanded(true);
-                }
-              }}
-              className="text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center">
-
-              {/* TODO: Add rotate animation when category is expanded */}
-              <motion.div
-                animate={category.name === prod ? { rotate: 90 } : {}}
-              >
-                <FaChevronRight className="mr-2" />
-              </motion.div>
-
-              <li
-                className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
-              >
-                {category.name}
-              </li>
+              animate={category.name === currentCategory ? { rotate: 90 } : {}}
+            >
+              <FaChevronRight className="mr-2" />
             </motion.div>
-          ))
 
+            <li
+              className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
+            >
+              {category.name}
+            </li>
+          </motion.div>
+        ))
         }
+
+        {/* Dropdown for Liquor category */}
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          onClick={() => {
+            if (currentCategory === "Liquor") {
+              // Clear out current liquor category and subcategory
+              setCurrentCategory("");
+              setExpandedCategory(false);
+
+              setCurrentSubcategory("");
+              setExpandedSubcategory(false);
+            }
+            else {
+              // Close out other categories still open
+              setCurrentSubcategory("");
+              setExpandedSubcategory(false);
+
+              setCurrentCategory("Liquor");
+              setExpandedCategory(true);
+            }
+          }}
+          className="text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center">
+
+          <motion.div
+            animate={"Liquor" === currentCategory ? { rotate: 90 } : {}}
+          >
+            <FaChevronRight className="mr-2" />
+          </motion.div>
+
+          <li
+            className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
+          >
+            {"Liquor"}
+          </li>
+        </motion.div>
       </motion.ul>
 
-      {/* Expanded Subcategories */}
-      {expanded &&
+      {/* Expanded Category */}
+      {expandedCategory &&
         <div className="items-center justify-center">
           <motion.ul
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className={`hidden lg:grid grid-cols-9 w-full items-center justify-center space-x-16 px-5`}
+            className={`hidden lg:flex w-full items-center justify-center space-x-16 p-5`}
           >
-            {ProductCategories.filter((category) => category.name === prod)[0].subcategories.map((subcategory, index) => (
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                key={index}
-                onClick={() => {
-                  // if (prod === category) {
-                  //   setProd("");
-                  //   setExpanded(false);
-                  // }
-                  // else {
-                  //   setProd(category);
-                  //   setExpanded(true);
-                  // }
-                }}
-                className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-              >
+            {/* If liquor category is selected, show liquor subcategories */}
+            {currentCategory === "Liquor" ?
+              LiquorCategories.filter((category) => category.name === "Liquor")[0].subcategories.map((subcategory, index) => (
                 <motion.div
-                // animate={category === prod ? { rotate: 90 } : {}}
-                >
-                  <FaChevronRight className="mr-2" />
-                </motion.div>
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  key={index}
+                  onClick={() => {
+                    if (currentSubcategory === subcategory.name) {
+                      // Clear out current liquor subcategory
+                      setExpandedSubcategory(false);
+                      setCurrentSubcategory("");
+                    }
+                    else {
 
-                <li
-                  className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
+                      setCurrentSubcategory(subcategory.name);
+                      setExpandedSubcategory(true);
+                    }
+                  }}
+                  className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
                 >
-                  {subcategory.name}
-                </li>
-              </motion.div>
-            ))}
+                  <motion.div
+                    animate={currentSubcategory === subcategory.name ? { rotate: 90 } : {}}
+                  >
+                    <FaChevronRight className="mr-2" />
+                  </motion.div>
+
+                  <li
+                    className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
+                  >
+                    {subcategory.name}
+                  </li>
+                </motion.div>
+              )) :
+              // If wine category is selected, show wine subcategories
+              WineCategories.filter((category) => category.name === currentCategory)[0].subcategories
+                .map((subcategory, index) => (
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    key={index}
+                    onClick={() => {
+                      // Unselect subcategory if already selected
+                      if (currentSubcategory === subcategory.name) {
+                        setCurrentSubcategory("");
+                        setExpandedSubcategory(false);
+                      }
+                      else {
+                        // Expand subcategory if not already selected
+                        setCurrentSubcategory(subcategory.name);
+                        setExpandedSubcategory(true);
+                      }
+                    }}
+                    className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
+                  >
+                    <motion.div
+                      animate={currentSubcategory === subcategory.name ? { rotate: 90 } : {}}
+                    >
+                      <FaChevronRight className="mr-2" />
+                    </motion.div>
+
+                    <li className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
+                      {subcategory.name}
+                    </li>
+                  </motion.div>
+                ))}
           </motion.ul>
         </div>
-
       }
 
+      {/* Expanded Subcategory */}
+      {expandedSubcategory &&
+        <div className="items-center justify-center">
+          <motion.ul
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className={`hidden lg:flex w-full items-center justify-center space-x-16 p-5`}
+          >
+            {/* If liquor subcategory is selected, show liquor subtypes */}
+            {currentCategory === "Liquor" ?
+              LiquorCategories.filter((category) => category.name === currentCategory)[0].subcategories
+                .filter((subcategory) => subcategory.name === currentSubcategory)[0].subtypes
+                .map((subtype, index) => (
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    key={index}
+                    onClick={() => {
+                      // Logic to handle subtype filter
+                    }}
+                    className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
+                  >
+
+                    <li className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
+                      {subtype}
+                    </li>
+                  </motion.div>
+                )) :
+              WineCategories.filter((category) => category.name === currentCategory)[0].subcategories.filter((subcategory) => subcategory.name === currentSubcategory)[0].wines.map((wine, index) => (
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  key={index}
+                  onClick={() => {
+                    // Logic to handle wine filter
+                  }}
+                  className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
+                >
+                  <li className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
+                    {wine}
+                  </li>
+                </motion.div>
+              ))}
+          </motion.ul>
+        </div>
+      }
+
+      {/* Main Content */}
       <motion.div
         initial={{ x: "-100%", opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
