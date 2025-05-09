@@ -1,0 +1,247 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { IoIosAdd } from "react-icons/io";
+import { categoryOptions, Product, wineSubcategoryOptions, liquorSubcategoryOptions, otherWineSubcategoryOptions } from "@/components/global.utils";
+import { createProduct } from "@/app/api/productapi";
+import { AnimatePresence, motion } from "framer-motion";
+import toast from "react-hot-toast";
+
+// This component is a button that opens a modal for adding a product
+const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void; }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [add, setAdd] = useState(false);
+
+  // States for form fields
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState<number>(0);
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [subcategory, setSubcategory] = useState("");
+  const [type, setType] = useState("");
+
+  // Upon form submission, validate the input and send it to the backend
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validate input fields
+    if (!name || !price || !category || !subcategory) {
+      alert(`Please fill in all required fields.`);
+      return;
+    }
+
+    // Construct product data object to be sent to the API
+    const productData = {
+      name: name,
+      description: description,
+      price: price,
+      category: category,
+      subcategory: subcategory,
+      type: type
+    };
+
+    // Send the product data to the backend API to create a new product
+    createProduct(productData)
+      .then((response) => {
+        onAddProduct({
+          id: response.product.id,
+          name: name,
+          description: description,
+          price: price,
+          category: category,
+          subcategory: subcategory,
+          type: type
+        });
+      }).then(() => {
+        // Show success message
+        toast.success(`Product ${name} added successfully!`);
+
+        // Reset form fields after successful submission
+        setName("");
+        setPrice(0);
+        setCategory("");
+        setSubcategory("");
+        setType("");
+        setDescription("");
+
+        // Close the modal after submission
+        setAdd(false);
+      });
+  };
+
+  // Open the modal for adding a product
+  const openEventModal = () => {
+    setAdd(true);
+  };
+
+  // Close the modal for adding a product
+  const closeEventModal = () => {
+    setAdd(false);
+  };
+
+  // Close the modal when clicking outside of it
+  const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      closeEventModal();
+    }
+  }, []);
+
+  // Add event listener for closing the modal when clicking outside of it
+  useEffect(() => {
+    if (add) {
+      document.addEventListener('mousedown', closeModalOnOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', closeModalOnOutsideClick);
+    };
+  }, [closeModalOnOutsideClick, add]);
+
+  return (
+    <>
+      {/* Add event button */}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
+        className="flex flex-row text-md items-center text-blue-500 hover:text-blue-300 p-1"
+        onClick={openEventModal}>
+        <IoIosAdd size={25} />
+        Add Product
+      </motion.button>
+
+      {/* Modal for adding event */}
+      <AnimatePresence mode="wait">
+        {add && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, x: "-100%" }}
+              animate={{ opacity: 1, x: "0" }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              ref={modalRef}
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-auto border-1 border-zinc-500"
+            >
+              {/* Modal Header */}
+              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Add Product</h3>
+
+              {/* Close Modal Button */}
+              <div className="absolute top-4 right-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  className="text-lg text-blue-500 hover:text-zinc-200"
+                  onClick={closeEventModal}
+                >
+                  Close
+                </motion.button>
+              </div>
+
+              {/* Form for adding event */}
+              <div className="mt-6 w-full border-t-1 border-zinc-500 text-sm sm:text-md rounded-lg p-4">
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+
+                  {/* Name Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Product Name</label>
+                  <input
+                    type="text"
+                    required
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Name"
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                  />
+
+                  {/* Category Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Category</label>
+                  <select
+                    id="category"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => {
+                      if (e.target.value !== category) {
+                        // Reset subcategory and type when category changes
+                        setSubcategory("");
+                        setType("");
+                      }
+                      setCategory(e.target.value);
+                    }}
+                    value={category}
+                  >
+                    <option value="">Select Category</option>
+                    {categoryOptions.map((category, index) => (
+                      <option key={index} value={category.value}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Subategory Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Subcategory</label>
+                  <select
+                    id="subcategory"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => {
+                      if (e.target.value !== subcategory) {
+                        // Reset type when subcategory changes
+                        setType("");
+                      }
+                      setSubcategory(e.target.value)
+                    }}
+                    value={subcategory}
+                  >
+                    <option value="">Select Subcategory</option>
+                    {/* Render subcategory options based on selected category */}
+                    {category === "Liquor" ? liquorSubcategoryOptions.map((subcategory, index) => (
+                      <option key={index} value={subcategory.value}>
+                        {subcategory.name}
+                      </option>
+                    )) :
+                      category === "Other_Wine" ? otherWineSubcategoryOptions.map((subcategory, index) => (
+                        <option key={index} value={subcategory.value}>
+                          {subcategory.name}
+                        </option>
+                      )) :
+                        wineSubcategoryOptions.map((subcategory, index) => (
+                          <option key={index} value={subcategory.value}>
+                            {subcategory.name}
+                          </option>
+                        ))}
+                  </select>
+
+                  {/* Type Field */}
+
+                  {/* Price Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Price"
+                    onChange={(e) => setPrice(parseFloat(e.target.value))}
+                    value={price}
+                  />
+
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
+                  <textarea
+                    className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Product Description"
+                    onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+
+                  {/* TODO: Add loading spinner */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    type="submit"
+                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                  >
+                    Submit
+                  </motion.button>
+                </form>
+              </div>
+            </motion.div>
+          </div >
+        )}
+
+      </AnimatePresence >
+
+    </>
+  );
+}
+
+export default AddProduct;

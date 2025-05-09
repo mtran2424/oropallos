@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { LiquorCategories, WineCategories } from "@/components/global.utils";
+import { ProductCategories } from "@/components/global.utils";
 import { FaChevronRight } from "react-icons/fa6";
 import { useState } from "react";
 
@@ -20,7 +20,7 @@ const Products = () => {
         transition={{ duration: 0.5, ease: "easeInOut" }}
         className="hidden lg:flex w-full items-center justify-center space-x-16 p-5 mt-25"
       >
-        {WineCategories.map((category, index) => (
+        {ProductCategories.map((category, index) => (
           // Dropdowns for each wine category
           <motion.div
             whileHover={{ scale: 1.1 }}
@@ -59,44 +59,6 @@ const Products = () => {
           </motion.div>
         ))
         }
-
-        {/* Dropdown for Liquor category */}
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          onClick={() => {
-            if (currentCategory === "Liquor") {
-              // Clear out current liquor category and subcategory
-              setCurrentCategory("");
-              setExpandedCategory(false);
-
-              setCurrentSubcategory("");
-              setExpandedSubcategory(false);
-            }
-            else {
-              // Close out other categories still open
-              setCurrentSubcategory("");
-              setExpandedSubcategory(false);
-
-              setCurrentCategory("Liquor");
-              setExpandedCategory(true);
-            }
-          }}
-          className="text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center">
-
-          <motion.div
-            animate={"Liquor" === currentCategory ? { rotate: 90 } : {}}
-          >
-            <FaChevronRight className="mr-2" />
-          </motion.div>
-
-          <li
-            className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
-          >
-            {"Liquor"}
-          </li>
-        </motion.div>
       </motion.ul>
 
       {/* Expanded Category */}
@@ -110,42 +72,9 @@ const Products = () => {
             className={`hidden lg:flex w-full items-center justify-center space-x-16 p-5`}
           >
             {/* If liquor category is selected, show liquor subcategories */}
-            {currentCategory === "Liquor" ?
-              LiquorCategories.filter((category) => category.name === "Liquor")[0].subcategories.map((subcategory, index) => (
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  key={index}
-                  onClick={() => {
-                    if (currentSubcategory === subcategory.name) {
-                      // Clear out current liquor subcategory
-                      setExpandedSubcategory(false);
-                      setCurrentSubcategory("");
-                    }
-                    else {
-
-                      setCurrentSubcategory(subcategory.name);
-                      setExpandedSubcategory(true);
-                    }
-                  }}
-                  className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-                >
-                  <motion.div
-                    animate={currentSubcategory === subcategory.name ? { rotate: 90 } : {}}
-                  >
-                    <FaChevronRight className="mr-2" />
-                  </motion.div>
-
-                  <li
-                    className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
-                  >
-                    {subcategory.name}
-                  </li>
-                </motion.div>
-              )) :
+            {
               // If wine category is selected, show wine subcategories
-              WineCategories.filter((category) => category.name === currentCategory)[0].subcategories
+              ProductCategories.filter((category) => category.name === currentCategory)[0].subcategories
                 .map((subcategory, index) => (
                   <motion.div
                     whileHover={{ scale: 1.1 }}
@@ -192,39 +121,20 @@ const Products = () => {
             className={`hidden lg:flex w-full items-center justify-center space-x-16 p-5`}
           >
             {/* If liquor subcategory is selected, show liquor subtypes */}
-            {currentCategory === "Liquor" ?
-              LiquorCategories.filter((category) => category.name === currentCategory)[0].subcategories
-                .filter((subcategory) => subcategory.name === currentSubcategory)[0].subtypes
-                .map((subtype, index) => (
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    key={index}
-                    onClick={() => {
-                      // Logic to handle subtype filter
-                    }}
-                    className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-                  >
-
-                    <li className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-                      {subtype}
-                    </li>
-                  </motion.div>
-                )) :
-              WineCategories.filter((category) => category.name === currentCategory)[0].subcategories.filter((subcategory) => subcategory.name === currentSubcategory)[0].wines.map((wine, index) => (
+            {
+              ProductCategories.filter((category) => category.name === currentCategory)[0].subcategories.filter((subcategory) => subcategory.name === currentSubcategory)[0].types.map((type, index) => (
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   key={index}
                   onClick={() => {
-                    // Logic to handle wine filter
+                    // Logic to handle type filter
                   }}
                   className="col-span-3 text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
                 >
                   <li className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-                    {wine}
+                    {type}
                   </li>
                 </motion.div>
               ))}

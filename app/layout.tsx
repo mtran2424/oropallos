@@ -3,6 +3,7 @@ import { Montserrat, Merriweather } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/footer/Footer";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -26,14 +27,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${montserrat.variable} ${merriweather.variable} bg-white antialiased`}
-      >
-        <Navbar />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${montserrat.variable} ${merriweather.variable} bg-white antialiased`}
+        >
+          <Navbar />
+          {children}
+          <Footer />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
