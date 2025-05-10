@@ -15,6 +15,7 @@ export async function GET() {
         category: true,
         subcategory: true,
         type: true,
+        imageUrl: true,
       },
     });
 

@@ -71,3 +71,13 @@ export const getProducts = async () => {
   }
   return res.json();
 }
+
+export const getProduct = async (id: string) => {
+  const res = await fetch(`/api/products/get/${id}`, {
+    method: 'GET',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch products');
+  }
+  return res.json();
+}

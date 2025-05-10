@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
 import EditProduct from "../utils/EditProduct";
+import Image from "next/image";
 
 // This component is responsible for crud operations on products
 const ProductsSpreadsheet = () => {
@@ -66,7 +67,22 @@ const ProductsSpreadsheet = () => {
       case "type":
         return product.type;
       case "description":
-        return product.description;
+        return <textarea
+          readOnly
+          className="w-full border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={product.description}
+        ></textarea>
+      case "imageUrl":
+        return (
+          product.imageUrl ?
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            width={200}
+            height={200}
+          /> :
+          product.imageUrl
+        );
       default:
         return null;
     }

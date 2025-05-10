@@ -43,13 +43,14 @@ enum ProductSubcategory {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String             @id @default(uuid())
   name        String
   description String?
   category    ProductCategory
   subcategory ProductSubcategory
   type        String?
   price       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  imageUrl    String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 }

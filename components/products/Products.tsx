@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ProductCategories } from "@/components/global.utils";
 import { FaChevronRight } from "react-icons/fa6";
 import { useState } from "react";
+import Collection from "./Collection";
 
 const Products = () => {
   const [currentCategory, setCurrentCategory] = useState<string>("");
@@ -14,53 +15,55 @@ const Products = () => {
   return (
     <div>
       {/* Main Category List */}
-      <motion.ul
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -50 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="hidden xl:flex w-full items-center justify-center space-x-16 p-5 mt-25"
-      >
-        {ProductCategories.map((category, index) => (
-          // Dropdowns for each wine category
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            key={index}
-            onClick={() => {
-              // Toggle off children filters too
-              if (currentCategory === category.name) {
-                setExpandedSubcategory(false);
-                setCurrentSubcategory("");
-                setExpandedCategory(false);
-                setCurrentCategory("");
-              }
-              else {
-                // Close out other categories still open
-                setExpandedSubcategory(false);
-                setCurrentSubcategory("");
-                setCurrentCategory(category.name);
-                setExpandedCategory(true);
-              }
-            }}
-            className="text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center">
-
+      <AnimatePresence>
+        <motion.ul
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -50 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="hidden xl:flex w-full items-center justify-center space-x-16 p-5 mt-25"
+        >
+          {ProductCategories.map((category, index) => (
+            // Dropdowns for each wine category
             <motion.div
-              animate={category.name === currentCategory ? { rotate: 90 } : {}}
-            >
-              <FaChevronRight className="mr-2" />
-            </motion.div>
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              key={index}
+              onClick={() => {
+                // Toggle off children filters too
+                if (currentCategory === category.name) {
+                  setExpandedSubcategory(false);
+                  setCurrentSubcategory("");
+                  setExpandedCategory(false);
+                  setCurrentCategory("");
+                }
+                else {
+                  // Close out other categories still open
+                  setExpandedSubcategory(false);
+                  setCurrentSubcategory("");
+                  setCurrentCategory(category.name);
+                  setExpandedCategory(true);
+                }
+              }}
+              className="text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center">
 
-            <li
-              className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
-            >
-              {category.name}
-            </li>
-          </motion.div>
-        ))
-        }
-      </motion.ul>
+              <motion.div
+                animate={category.name === currentCategory ? { rotate: 90 } : {}}
+              >
+                <FaChevronRight className="mr-2" />
+              </motion.div>
+
+              <li
+                className="text-lg whitespace-nowrap font-serif cursor-pointer underline-animate"
+              >
+                {category.name}
+              </li>
+            </motion.div>
+          ))
+          }
+        </motion.ul>
+      </AnimatePresence>
 
       {/* Expanded Category */}
       <AnimatePresence>
@@ -206,7 +209,7 @@ const Products = () => {
       {/* Expanded Subcategory */}
       <AnimatePresence>
         {expandedSubcategory && ProductCategories.filter((category) => category.name === currentCategory)[0].subcategories
-                  .filter((subcategory) => subcategory.name === currentSubcategory)[0].types.length > 0 &&
+          .filter((subcategory) => subcategory.name === currentSubcategory)[0].types.length > 0 &&
           <div className="items-center justify-center">
             <motion.ul
               initial={{ opacity: 0, y: -50 }}
@@ -214,10 +217,10 @@ const Products = () => {
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className={`hidden xl:grid ${ProductCategories.filter((category) => category.name === currentCategory)[0].subcategories
-                  .filter((subcategory) => subcategory.name === currentSubcategory)[0].types.length === 2 ? "grid-cols-8"
-                  : ProductCategories.filter((category) => category.name === currentCategory)[0].subcategories
-                    .filter((subcategory) => subcategory.name === currentSubcategory)[0].types.length === 3 ? "grid-cols-12"
-                    : "grid-cols-16"
+                .filter((subcategory) => subcategory.name === currentSubcategory)[0].types.length === 2 ? "grid-cols-8"
+                : ProductCategories.filter((category) => category.name === currentCategory)[0].subcategories
+                  .filter((subcategory) => subcategory.name === currentSubcategory)[0].types.length === 3 ? "grid-cols-12"
+                  : "grid-cols-16"
                 }
               w-full items-start justify-center p-5`}
             >
@@ -257,19 +260,8 @@ const Products = () => {
         <div
           className="flex flex-col w-full min-h-screen h-full items-center justify-start"
         >
-          <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start mb-4">
-            Products
-          </h1>
-          <p className="text-xl text-center sm:text-start font-serif">
-            Check out our selection of wines and liquors!<br />
-            <br />
-            <a
-              href="tel:+15187983988"
-              className="underline-animate"
-            >
-              (518) 798-3988
-            </a>
-          </p>
+          <Collection />
+
         </div>
       </motion.div>
     </div>
