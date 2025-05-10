@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
-import { categoryOptions, Product, wineSubcategoryOptions, liquorSubcategoryOptions, otherWineSubcategoryOptions } from "@/components/global.utils";
+import { categoryOptions, Product, wineSubcategoryOptions, liquorSubcategoryOptions, otherWineSubcategoryOptions, sparklingWineSubcategoryOptions, blushWineSubcategoryOptions } from "@/components/global.utils";
 import { createProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -187,20 +187,33 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     <option value="">Select Subcategory</option>
                     {/* Render subcategory options based on selected category */}
                     {category === "Liquor" ? liquorSubcategoryOptions.map((subcategory, index) => (
-                      <option key={index} value={subcategory.value}>
+                      <option key={index} value={subcategory.name}>
                         {subcategory.name}
                       </option>
                     )) :
                       category === "Other_Wine" ? otherWineSubcategoryOptions.map((subcategory, index) => (
-                        <option key={index} value={subcategory.value}>
+                        <option key={index} value={subcategory.name}>
                           {subcategory.name}
                         </option>
                       )) :
-                        wineSubcategoryOptions.map((subcategory, index) => (
-                          <option key={index} value={subcategory.value}>
-                            {subcategory.name}
-                          </option>
-                        ))}
+                        category === "Red_Wine" || category === "White_Wine" ?
+                          wineSubcategoryOptions.map((subcategory, index) => (
+                            <option key={index} value={subcategory.name}>
+                              {subcategory.name}
+                            </option>
+                          )) :
+                          category === "Sparkling_Wine" ? sparklingWineSubcategoryOptions.map((subcategory, index) => (
+                            <option key={index} value={subcategory.name}>
+                              {subcategory.name}
+                            </option>
+                          )) :
+                            category === "Blush_Wine" ? blushWineSubcategoryOptions.map((subcategory, index) => (
+                              <option key={index} value={subcategory.name}>
+                                {subcategory.name}
+                              </option>
+                            )) :
+                              <option value="">Select Subcategory</option>
+                    }
                   </select>
 
                   {/* Type Field */}

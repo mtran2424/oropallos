@@ -3,7 +3,9 @@ import {
   categoryOptions,
   Product, wineSubcategoryOptions,
   liquorSubcategoryOptions,
-  otherWineSubcategoryOptions
+  otherWineSubcategoryOptions,
+  sparklingWineSubcategoryOptions,
+  blushWineSubcategoryOptions
 } from "@/components/global.utils";
 import { editProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
@@ -187,11 +189,24 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                           {subcategory.name}
                         </option>
                       )) :
+                      category === "Red_Wine" || category === "White_Wine" ? 
                         wineSubcategoryOptions.map((subcategory, index) => (
                           <option key={index} value={subcategory.name}>
                             {subcategory.name}
                           </option>
-                        ))}
+                        )) :
+                        category === "Sparkling_Wine" ? sparklingWineSubcategoryOptions.map((subcategory, index) => (
+                          <option key={index} value={subcategory.name}>
+                            {subcategory.name}
+                          </option>
+                        )) :
+                          category === "Blush_Wine" ? blushWineSubcategoryOptions.map((subcategory, index) => (
+                            <option key={index} value={subcategory.name}>
+                              {subcategory.name}
+                            </option>
+                          )) : 
+                            <option value="">Select Subcategory</option>
+                      }
                   </select>
 
                   {/* Type Field */}

@@ -18,7 +18,7 @@ datasource db {
 enum ProductCategory {
   Red_Wine
   White_Wine
-  Rose_Wine
+  Blush_Wine
   Sparkling_Wine
   Other_Wine
   Liquor
@@ -28,8 +28,10 @@ enum ProductSubcategory {
   Dry
   Sweet
   Semi_Sweet
+  Rose
   Dessert
   Cooking
+  Vermouth
   Whiskey
   Tequila
   Vodka
