@@ -226,7 +226,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     min="0"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Price"
-                    onChange={(e) => setPrice(parseFloat(e.target.value))}
+                    onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                     value={price}
                   />
 

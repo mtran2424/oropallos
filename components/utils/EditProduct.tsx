@@ -215,12 +215,11 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
                   <input
                     type="number"
-                    required
                     step="0.01"
                     min="0"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Price"
-                    onChange={(e) => setPrice(parseFloat(e.target.value))}
+                    onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                     value={price}
                   />
 
