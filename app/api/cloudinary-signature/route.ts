@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import cloudinary from 'cloudinary';
+import { auth } from '@clerk/nextjs/server';
 
 cloudinary.v2.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -8,6 +9,13 @@ cloudinary.v2.config({
 });
 
 export async function POST() {
+  // Check for user
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
   const timestamp = Math.floor(Date.now() / 1000);
   const folder = 'oropallos';
 

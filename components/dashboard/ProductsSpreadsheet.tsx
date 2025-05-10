@@ -148,8 +148,8 @@ const ProductsSpreadsheet = () => {
 
         <AddProduct onAddProduct={handleAddProduct} />
 
-        <div className="flex max-w-[95vw] rounded-md shadow-md border border-zinc-400 text-zinc-800">
-          <div className="flex overflow-x-auto w-[100vw]">
+        <div className="flex max-w-[95vw] max-h-[70vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
+          <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}
             <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "1500px" }}>
