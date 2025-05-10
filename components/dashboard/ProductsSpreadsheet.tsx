@@ -155,7 +155,7 @@ const ProductsSpreadsheet = () => {
             <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "1500px" }}>
 
               {/* Table Headers */}
-              <thead>
+              <thead className="sticky top-0 bg-white">
                 <tr>
                   {productTableColumns.map((column) => (
                     <th
