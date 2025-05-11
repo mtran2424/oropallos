@@ -5,10 +5,10 @@ import { CiImageOff } from "react-icons/ci";
 const ProductCard = ({ product }: { product: Product }) => {
   return (
     <div className="flex flex-col bg-white shadow-md rounded-lg border-1 border-zinc-300 p-4 w-full min-w-[200px]">
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center mb-2">
         {product.imageUrl ? <Image
           priority
-          src={``}
+          src={product.imageUrl}
           alt={product.name}
           className="w-32 h-32 object-cover rounded-lg"
           width={200}
@@ -19,7 +19,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         </div>
       }
       </div>
-      <h2 className="text-xl font-semibold mt-2 font-serif">{product.name}</h2>
+      <h2 className="text-md md:text-lg font-semibold mt-2 font-serif">{product.name}</h2>
       <p className="text-gray-700 mt-1 font-serif">${product.price.toFixed(2)} USD</p>
       <p className="text-gray-500 mt-1 font-serif">{product.category.split("_").join(" ")}</p>
       <p className="text-gray-500 mt-1 font-serif">{product.subcategory.split("_").join(" ")}</p>

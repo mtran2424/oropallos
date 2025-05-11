@@ -7,12 +7,14 @@ export interface ProductType {
   value: string;
 }
 
+export interface ProductSubcategory {
+  name: string;
+  types: ProductType[];
+}
+
 export interface ProductCategory {
   name: string;
-  subcategories: {
-    name: string;
-    types: ProductType[];
-  }[];
+  subcategories: ProductSubcategory[];
 }
 
 export interface Product {

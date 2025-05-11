@@ -1,61 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
-
-const products = [
-  { name: "Tito's Handmade Vodka 1.75L", price: 36.99, category: "Vodka", subcategory: "Plain", type: "American" },
-  { name: "Grey Goose Vodka 750ml", price: 29.99, category: "Vodka", subcategory: "Premium", type: "French" },
-  { name: "Jack Daniel's Tennessee Whiskey 1L", price: 42.99, category: "Whiskey", subcategory: "Tennessee", type: "Sour Mash" },
-  { name: "Jameson Irish Whiskey 750ml", price: 34.99, category: "Whiskey", subcategory: "Irish", type: "Blended" },
-  { name: "Maker's Mark Bourbon 750ml", price: 37.99, category: "Whiskey", subcategory: "Bourbon", type: "Kentucky" },
-  { name: "Patrón Silver Tequila 750ml", price: 49.99, category: "Tequila", subcategory: "Silver", type: "Jalisco" },
-  { name: "Casamigos Blanco Tequila 750ml", price: 47.99, category: "Tequila", subcategory: "Blanco", type: "Jalisco" },
-  { name: "Don Julio Reposado 750ml", price: 58.99, category: "Tequila", subcategory: "Reposado", type: "Jalisco" },
-  { name: "Hendrick's Gin 750ml", price: 38.99, category: "Gin", subcategory: "Premium", type: "Scottish" },
-  { name: "Tanqueray Gin 750ml", price: 29.99, category: "Gin", subcategory: "London Dry", type: "British" },
-  { name: "Bacardi Superior Rum 1L", price: 19.99, category: "Rum", subcategory: "White", type: "Puerto Rican" },
-  { name: "Captain Morgan Spiced Rum 750ml", price: 22.99, category: "Rum", subcategory: "Spiced", type: "Caribbean" },
-  { name: "Ciroc Vodka 750ml", price: 39.99, category: "Vodka", subcategory: "Flavored", type: "French" },
-  { name: "Belvedere Vodka 750ml", price: 42.99, category: "Vodka", subcategory: "Premium", type: "Polish" },
-  { name: "Johnnie Walker Black Label 750ml", price: 44.99, category: "Whiskey", subcategory: "Scotch", type: "Blended" },
-  { name: "The Macallan 12 Year Scotch 750ml", price: 69.99, category: "Whiskey", subcategory: "Scotch", type: "Single Malt" },
-  { name: "Glenfiddich 12 Year Scotch 750ml", price: 64.99, category: "Whiskey", subcategory: "Scotch", type: "Single Malt" },
-  { name: "Remy Martin VSOP Cognac 750ml", price: 55.99, category: "Cognac", subcategory: "VSOP", type: "French" },
-  { name: "Hennessy VS Cognac 750ml", price: 49.99, category: "Cognac", subcategory: "VS", type: "French" },
-  { name: "Courvoisier VS Cognac 750ml", price: 46.99, category: "Cognac", subcategory: "VS", type: "French" },
-];
+import { Product } from "@/components/global.utils";
 
 const PRODUCTS_PER_PAGE = 25;
 
-const Collection = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
+const Collection = ({ products }: { products: Product[] }) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filtered product list
+  const filteredProducts = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    return products.filter((product) =>
+      [product.name, product.category, product.subcategory, product.type]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(term))
+    );
+  }, [products, searchTerm]);
+
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, products.length);
-  const currentProducts = products.slice(startIdx, endIdx);
+  const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, filteredProducts.length);
+  const currentProducts = filteredProducts.slice(startIdx, endIdx);
+
+  // Reset to page 1 when search changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full font-serif">
-      {/* Showing X of Y */}
-      <p className="text-lg font-semibold mb-4">
-        Showing {endIdx} of {products.length} products
-      </p>
+    <div className="flex flex-col items-center justify-center w-full h-full font-serif px-4">
+      {/* Search Bar */}
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        placeholder="Search by name, category, subcategory, or type..."
+        className="w-full max-w-md px-4 py-2 mt-6 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
 
       {/* Products Grid with animation */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={currentPage} // triggers animation on page change
+          key={currentPage + searchTerm} // triggers animation on page/search change
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 py-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 py-8 max-w-7xl w-full"
         >
           {currentProducts.map((product, index) => (
             <ProductCard key={index} product={product} />
           ))}
         </motion.div>
       </AnimatePresence>
+
+      {/* Showing X of Y */}
+      <p className="text-md font-semibold mb-2 text-zinc-500">
+        Showing {endIdx} of {filteredProducts.length} products
+      </p>
 
       {/* Pagination Controls */}
       <div className="flex items-center space-x-2 mb-8">

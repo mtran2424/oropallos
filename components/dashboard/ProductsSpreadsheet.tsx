@@ -75,13 +75,13 @@ const ProductsSpreadsheet = () => {
       case "imageUrl":
         return (
           product.imageUrl ?
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            width={200}
-            height={200}
-          /> :
-          product.imageUrl
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              width={400}
+              height={400}
+            /> :
+            product.imageUrl
         );
       default:
         return null;
@@ -153,7 +153,7 @@ const ProductsSpreadsheet = () => {
 
             {/* Product Table Start */}
             <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "1500px" }}>
-
+              {/* TODO: Make up down filters for header fields */}
               {/* Table Headers */}
               <thead className="sticky top-0 bg-white">
                 <tr>
