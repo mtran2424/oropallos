@@ -1,12 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import {
-  categoryOptions,
-  Product, wineSubcategoryOptions,
-  liquorSubcategoryOptions,
-  otherWineSubcategoryOptions,
-  sparklingWineSubcategoryOptions,
-  blushWineSubcategoryOptions
-} from "@/components/global.utils";
+import { Product, ProductCategories } from "@/components/global.utils";
 import { editProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -181,7 +174,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                   <input
                     type="text"
                     required
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Name"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
@@ -191,7 +184,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Category</label>
                   <select
                     id="category"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     onChange={(e) => {
                       if (e.target.value !== category) {
                         // Reset subcategory and type when category changes
@@ -203,8 +196,8 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                     value={category}
                   >
                     <option value="">Select Category</option>
-                    {categoryOptions.map((category, index) => (
-                      <option key={index} value={category.name}>
+                    {ProductCategories.map((category, index) => (
+                      <option key={index} value={category.value}>
                         {category.name}
                       </option>
                     ))}
@@ -214,7 +207,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Subcategory</label>
                   <select
                     id="subcategory"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     onChange={(e) => {
                       if (e.target.value !== subcategory) {
                         // Reset type when subcategory changes
@@ -222,41 +215,41 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                       }
                       setSubcategory(e.target.value)
                     }}
-                    value={category}
+                    value={subcategory}
                   >
                     <option value="">Select Subcategory</option>
                     {/* Render subcategory options based on selected category */}
-                    {category === "Liquor" ? liquorSubcategoryOptions.map((subcategory, index) => (
-                      <option key={index} value={subcategory.name}>
-                        {subcategory.name}
-                      </option>
-                    )) :
-                      category === "Other_Wine" ? otherWineSubcategoryOptions.map((subcategory, index) => (
-                        <option key={index} value={subcategory.name}>
-                          {subcategory.name}
-                        </option>
-                      )) :
-                        category === "Red_Wine" || category === "White_Wine" ?
-                          wineSubcategoryOptions.map((subcategory, index) => (
-                            <option key={index} value={subcategory.name}>
-                              {subcategory.name}
-                            </option>
-                          )) :
-                          category === "Sparkling_Wine" ? sparklingWineSubcategoryOptions.map((subcategory, index) => (
-                            <option key={index} value={subcategory.name}>
-                              {subcategory.name}
-                            </option>
-                          )) :
-                            category === "Blush_Wine" ? blushWineSubcategoryOptions.map((subcategory, index) => (
-                              <option key={index} value={subcategory.name}>
-                                {subcategory.name}
-                              </option>
-                            )) :
-                              <option value="">Select Subcategory</option>
+                    {category && (
+                      ProductCategories.filter((cat) => cat.value === category)[0].subcategories
+                        .map((subcategory, index) => (
+                          <option key={index} value={subcategory.value}>
+                            {subcategory.name}
+                          </option>
+                        ))
+                    )
                     }
                   </select>
 
                   {/* Type Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
+                  <select
+                    id="type"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    onChange={(e) => {
+                      setType(e.target.value)
+                    }}
+                    value={type}
+                  >
+                    <option value="">Select Type</option>
+                    {(category && subcategory) &&
+                      (ProductCategories.filter((cat) => cat.value === category)[0].subcategories
+                        .filter((subcat) => subcat.value === subcategory)[0].types
+                        .map((type, index) => (
+                          <option key={index} value={type.value}>
+                            {type.name}
+                          </option>
+                        )))}
+                  </select>
 
                   {/* Price Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
@@ -264,7 +257,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                     type="number"
                     step="0.01"
                     min="0"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Price"
                     onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                     value={price}
@@ -272,7 +265,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
 
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
                   <textarea
-                    className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Product Description"
                     onChange={(e) => setDescription(e.target.value)}
                     value={description}
@@ -288,7 +281,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                   {imageUrl && (
                     <div className="relative inline-block px-2">
                       <motion.button
-                      whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05 }}
                         onClick={handleRemoveImage}
                         className="relative text-red-600 hover:text-red-400 bg-white rounded-full"
                         aria-label="Remove image"

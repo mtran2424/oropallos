@@ -10,11 +10,13 @@ export interface ProductType {
 export interface ProductSubcategory {
   name: string;
   types: ProductType[];
+  value: string;
 }
 
 export interface ProductCategory {
   name: string;
   subcategories: ProductSubcategory[];
+  value: string;
 }
 
 export interface Product {
@@ -106,6 +108,7 @@ const whiskeyTypes = [
   { name: "Canadian", value: "Canadian" },
   { name: "Japanese", value: "Japanese" },
 ];
+
 const tequilaTypes = [
   { name: "Blanco", value: "Blanco" },
   { name: "Reposado", value: "Reposado" },
@@ -151,54 +154,60 @@ export const ProductCategories: ProductCategory[] = [
   {
     name: "Red Wines",
     subcategories: [
-      { name: "Dry", types: dryRedTypes },
-      { name: "Sweet", types: sweetRedTypes },
-      { name: "Semi Sweet", types: [] },
+      { name: "Dry", types: dryRedTypes, value: "Dry" },
+      { name: "Sweet", types: sweetRedTypes, value: "Sweet" },
+      { name: "Semi Sweet", types: [], value: "Semi_Sweet" },
     ],
+    value: "Red_Wine",
   },
   {
     name: "White Wines",
     subcategories: [
-      { name: "Dry", types: dryWhiteTypes },
-      { name: "Sweet", types: sweetWhiteTypes },
-      { name: "Semi Sweet", types: [] },
+      { name: "Dry", types: dryWhiteTypes, value: "Dry" },
+      { name: "Sweet", types: sweetWhiteTypes, value: "Sweet" },
+      { name: "Semi Sweet", types: [], value: "Semi_Sweet" },
     ],
+    value: "White_Wine",
   },
   {
     name: "Sparkling Wines",
     subcategories: [
-      { name: "Dry", types: drySparklingTypes },
-      { name: "Sweet", types: sweetSparklingTypes },
+      { name: "Dry", types: drySparklingTypes, value: "Dry" },
+      { name: "Sweet", types: sweetSparklingTypes, value: "Sweet" },
     ],
+    value: "Sparkling_Wine",
   },
   {
     name: "Blush Wines",
     subcategories: [
-      { name: "Rose", types: [] },
-      { name: "Dry", types: [] },
-      { name: "Sweet", types: [] },
+      { name: "Rose", types: [], value: "Rose" },
+      { name: "Dry", types: [], value: "Dry" },
+      { name: "Sweet", types: [], value: "Sweet" },
     ],
+    value: "Blush_Wine",
   },
   {
     name: "Other Wines",
     subcategories: [
-      { name: "Dessert", types: [] },
-      { name: "Cooking", types: cookingTypes },
-      { name: "Vermouth", types: vermouthTypes },
+      { name: "Dessert", types: [], value: "Dessert" },
+      { name: "Cooking", types: cookingTypes, value: "Cooking" },
+      { name: "Vermouth", types: vermouthTypes, value: "Vermouth" },
     ],
+    value: "Other_Wine",
   },
   {
     name: "Liquor",
     subcategories: [
-      { name: "Whiskey", types: whiskeyTypes },
-      { name: "Tequila", types: tequilaTypes },
-      { name: "Vodka", types: vodkaTypes },
-      { name: "Gin", types: [] },
-      { name: "Rum", types: rumTypes },
-      { name: "Brandy", types: brandyTypes },
-      { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes },
-      { name: "Ready-To-Drink", types: rtdTypes },
-    ]
+      { name: "Whiskey", types: whiskeyTypes, value: "Whiskey" },
+      { name: "Tequila", types: tequilaTypes, value: "Tequila" },
+      { name: "Vodka", types: vodkaTypes, value: "Vodka" },
+      { name: "Gin", types: [], value: "Gin" },
+      { name: "Rum", types: rumTypes, value: "Rum" },
+      { name: "Brandy", types: brandyTypes, value: "Brandy" },
+      { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
+      { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
+    ],
+    value: "Liquor",
   }
 ] as const;
 
@@ -229,7 +238,6 @@ export const productTableColumns = [
   { field: "description", label: "Description", width: "400px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
 ] as const;
-
 
 export const categoryOptions = [
   { name: "Red Wine", value: "Red_Wine" },

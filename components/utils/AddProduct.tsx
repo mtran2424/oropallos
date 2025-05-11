@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { IoIosAdd, IoIosCloseCircle } from "react-icons/io";
-import { categoryOptions, Product, wineSubcategoryOptions, liquorSubcategoryOptions, otherWineSubcategoryOptions, sparklingWineSubcategoryOptions, blushWineSubcategoryOptions } from "@/components/global.utils";
+import { Product, ProductCategories } from "@/components/global.utils";
 import { createProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -187,7 +187,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                   <input
                     type="text"
                     required
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Name"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
@@ -197,7 +197,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Category</label>
                   <select
                     id="category"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     onChange={(e) => {
                       if (e.target.value !== category) {
                         // Reset subcategory and type when category changes
@@ -209,7 +209,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     value={category}
                   >
                     <option value="">Select Category</option>
-                    {categoryOptions.map((category, index) => (
+                    {ProductCategories.map((category, index) => (
                       <option key={index} value={category.value}>
                         {category.name}
                       </option>
@@ -220,7 +220,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Subcategory</label>
                   <select
                     id="subcategory"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     onChange={(e) => {
                       if (e.target.value !== subcategory) {
                         // Reset type when subcategory changes
@@ -232,38 +232,37 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                   >
                     <option value="">Select Subcategory</option>
                     {/* Render subcategory options based on selected category */}
-                    {category === "Liquor" ? liquorSubcategoryOptions.map((subcategory, index) => (
-                      <option key={index} value={subcategory.name}>
-                        {subcategory.name}
-                      </option>
-                    )) :
-                      category === "Other_Wine" ? otherWineSubcategoryOptions.map((subcategory, index) => (
-                        <option key={index} value={subcategory.name}>
-                          {subcategory.name}
-                        </option>
-                      )) :
-                        category === "Red_Wine" || category === "White_Wine" ?
-                          wineSubcategoryOptions.map((subcategory, index) => (
-                            <option key={index} value={subcategory.name}>
-                              {subcategory.name}
-                            </option>
-                          )) :
-                          category === "Sparkling_Wine" ? sparklingWineSubcategoryOptions.map((subcategory, index) => (
-                            <option key={index} value={subcategory.name}>
-                              {subcategory.name}
-                            </option>
-                          )) :
-                            category === "Blush_Wine" ? blushWineSubcategoryOptions.map((subcategory, index) => (
-                              <option key={index} value={subcategory.name}>
-                                {subcategory.name}
-                              </option>
-                            )) :
-                              <option value="">Select Subcategory</option>
+                    {category && (
+                      ProductCategories.filter((cat) => cat.value === category)[0].subcategories
+                        .map((subcategory, index) => (
+                          <option key={index} value={subcategory.value}>
+                            {subcategory.name}
+                          </option>
+                        ))
+                    )
                     }
                   </select>
 
                   {/* Type Field */}
-                  {/* TODO: Add type field that adapts based on the selected category and subcategory once types have been finalized */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
+                  <select
+                    id="type"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    onChange={(e) => {
+                      setType(e.target.value)
+                    }}
+                    value={type}
+                  >
+                    <option value="">Select Type</option>
+                    {(category && subcategory) &&
+                      (ProductCategories.filter((cat) => cat.value === category)[0].subcategories
+                        .filter((subcat) => subcat.value === subcategory)[0].types
+                        .map((type, index) => (
+                          <option key={index} value={type.value}>
+                            {type.name}
+                          </option>
+                        )))}
+                  </select>
 
                   {/* Price Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
@@ -271,7 +270,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     type="number"
                     step="0.01"
                     min="0"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Price"
                     onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                     value={price}
@@ -279,25 +278,25 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
 
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
                   <textarea
-                    className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Product Description"
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
 
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
-                  />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 transition-all duration-200 ease-in-out"
+                    />
                   <label className="text-md font-semibold text-gray-600 w-full text-left px-2">Image Preview:</label>
                   {imageUrl && (
                     <div className="relative inline-block px-2">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         onClick={handleRemoveImage}
-                        className="relative text-red-600 hover:text-red-400 bg-white rounded-full"
+                        className="relative text-red-600 hover:text-red-500 bg-white rounded-full"
                         aria-label="Remove image"
                       >
                         <IoIosCloseCircle size={30} />

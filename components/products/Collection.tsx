@@ -71,7 +71,10 @@ const Collection = ({ products }: { products: Product[] }) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              onClick={() => setIsOpen(false)}
+              onClick={() => { 
+                setIsOpen(false); 
+                setSearchTerm(""); 
+              }}
               className="text-gray-600 p-2 focus:outline-none"
             >
               <IoMdClose size={20} />
@@ -84,7 +87,9 @@ const Collection = ({ products }: { products: Product[] }) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              onClick={() => setIsOpen((prev) => !prev)}
+              onClick={() => {
+                setIsOpen((prev) => !prev);
+              }}
               className="text-gray-600 p-2 focus:outline-none"
             >
               <FaSearch size={20} />
