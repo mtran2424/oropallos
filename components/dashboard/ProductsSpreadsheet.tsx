@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { categoryOptions, Product, productTableColumns } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
 import { deleteProduct, getProducts } from "@/app/api/productapi";
@@ -7,13 +7,70 @@ import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
 import EditProduct from "../utils/EditProduct";
 import Image from "next/image";
+import { IoMdClose } from "react-icons/io";
+import { FaSearch } from "react-icons/fa";
+
+const PRODUCTS_PER_PAGE = 15;
 
 // This component is responsible for crud operations on products
 const ProductsSpreadsheet = () => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isOpen, setIsOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [refresh, setRefresh] = useState(false);
-
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("name-asc");
+
+  // Apply filters, seach terms, and sorting
+  const sortedAndFilteredProducts = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    const filtered = products.filter((product) =>
+      [product.name, product.category, product.subcategory, product.type]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(term))
+    )
+      .filter((product) =>
+        categoryFilters.length > 0 ? categoryFilters.includes(product.category) : true
+      );
+
+    // Choose sorting method
+    const sorted = [...filtered];
+    switch (sortOption) {
+      case "name-asc":
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "name-desc":
+        sorted.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "price-asc":
+        sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+        break;
+      case "price-desc":
+        sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+    }
+
+    return sorted;
+  }, [categoryFilters, products, searchTerm, sortOption]);
+
+  // Handlers for search and sort
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOption(e.target.value);
+    setCurrentPage(1);
+  };
+
+  // For pagination
+  const totalPages = Math.ceil(sortedAndFilteredProducts.length / PRODUCTS_PER_PAGE);
+  const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, sortedAndFilteredProducts.length);
+  const currentProducts = sortedAndFilteredProducts.slice(startIdx, endIdx);
+
 
   // Refresh product list when a new product is added
   const handleAddProduct = (product: Product) => {
@@ -29,7 +86,6 @@ const ProductsSpreadsheet = () => {
   // Send a delete request to the server to remove the product and refresh the list
   const handleDeleteProduct = async (id: string) => {
     try {
-
       // Call the delete function from productapi
       await deleteProduct(id)
         .then((res) => {
@@ -88,12 +144,6 @@ const ProductsSpreadsheet = () => {
     }
   };
 
-  // Sort and filter orders based on selected status filters and created date
-  const sortedProducts = [...products]
-    .filter((product) =>
-      categoryFilters.length > 0 ? categoryFilters.includes(product.category) : true
-    )
-
   // Function to toggle the status filter
   const toggleCategoryFilter = (status: string) => {
     setCategoryFilters((prev) =>
@@ -124,7 +174,7 @@ const ProductsSpreadsheet = () => {
         <h1 className="text-2xl font-semibold text-zinc-900">Products</h1>
 
 
-        {/* Filters for order statuses */}
+        {/* Filters for categories */}
         <div>
           <h2 className="text-lg font-bold text-zinc-900 mb-1">Filters</h2>
           <div className="flex gap-2 flex-wrap">
@@ -146,14 +196,79 @@ const ProductsSpreadsheet = () => {
           </div>
         </div>
 
-        <AddProduct onAddProduct={handleAddProduct} />
+
+        {/* Search Bar */}
+        <div className="flex flex-center items-center w-full max-w-7xl mt-4">
+          {isOpen ? (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onClick={() => setIsOpen(false)}
+              className="text-gray-600 p-2 focus:outline-none"
+            >
+              <IoMdClose size={20} />
+            </motion.button>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="text-gray-600 p-2 focus:outline-none"
+            >
+              <FaSearch size={20} />
+            </motion.button>
+          )}
+
+          {/* Search Input */}
+          <motion.input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search by name, category, subcategory, or type..."
+            initial={{ width: 0, opacity: 0 }}
+            animate={{
+              width: isOpen ? "100%" : 0,
+              opacity: isOpen ? 1 : 0,
+              paddingLeft: isOpen ? "0.75rem" : "0rem",
+              paddingRight: isOpen ? "0.75rem" : "0rem",
+            }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
+            style={{ whiteSpace: "nowrap" }}
+          />
+        </div>
+
+        <div className="flex flex-row w-full whitespace-nowrap">
+          <AddProduct onAddProduct={handleAddProduct} />
+          {/* Sort Dropdown */}
+          <div className="flex justify-end w-full">
+            <select
+              value={sortOption}
+              onChange={handleSortChange}
+              className="border border-gray-300 rounded px-3 py-2 text-sm"
+            >
+              <option value="name-asc">Name (A–Z)</option>
+              <option value="name-desc">Name (Z–A)</option>
+              <option value="price-asc">Price (Low → High)</option>
+              <option value="price-desc">Price (High → Low)</option>
+            </select>
+          </div>
+        </div>
+
 
         <div className="flex max-w-[95vw] max-h-[70vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
           <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}
             <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "1500px" }}>
-              {/* TODO: Make up down filters for header fields */}
               {/* Table Headers */}
               <thead className="sticky top-0 bg-white">
                 <tr>
@@ -178,8 +293,8 @@ const ProductsSpreadsheet = () => {
 
               {/* Table Body */}
               <tbody className="divide-y divide-zinc-400">
-                {sortedProducts.length > 0 ? (
-                  sortedProducts.map((product) => (
+                {currentProducts.length > 0 ? (
+                  currentProducts.map((product) => (
                     <tr key={product.id} className="hover:bg-zinc-200 transition duration-200">
                       {productTableColumns.map((column) => (
                         // Render each cell based on the column field
@@ -237,6 +352,42 @@ const ProductsSpreadsheet = () => {
         <div className="mt-2 text-xs text-zinc-900 italic">
           <span>Scroll horizontally to view all columns →</span>
         </div>
+
+        <div className="flex flex-col items-center justify-center w-full max-w-7xl">
+          {/* Showing Count */}
+          <p className="text-md font-semibold mb-2 text-zinc-500">
+            Showing {endIdx} of {sortedAndFilteredProducts.length} products
+          </p>
+
+          {/* Pagination */}
+          <div className="flex items-center space-x-2 mb-8">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className={`px-4 py-2 rounded ${currentPage === 1
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+            >
+              Prev
+            </button>
+            <span className="text-lg font-medium">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              className={`px-4 py-2 rounded ${currentPage === totalPages
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+            >
+              Next
+            </button>
+          </div>
+
+        </div>
+
 
       </div>
     </div>

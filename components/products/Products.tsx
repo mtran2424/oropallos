@@ -116,7 +116,7 @@ const Products = () => {
         {expandedCategory && currentCategory &&
           <div className="items-center justify-center">
             <motion.ul
-              key={currentCategory.name}
+              key={currentCategory.name + seeMoreTypes.toString()}
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}

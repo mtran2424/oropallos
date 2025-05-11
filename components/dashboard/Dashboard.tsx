@@ -24,7 +24,7 @@ const Dashboard = () => {
       transition={{ duration: 1, ease: "easeInOut" }}
       className="mt-25"
     >
-      <div className="flex flex-col w-full h-screen items-center justify-start">
+      <div className="flex flex-col w-full h-full min-h-screen items-center justify-start">
         Administrative Dashboard
 
         <ProductsSpreadsheet />

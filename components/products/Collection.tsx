@@ -2,49 +2,130 @@ import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { Product } from "@/components/global.utils";
+import { FaSearch } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 const PRODUCTS_PER_PAGE = 25;
 
 const Collection = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [sortOption, setSortOption] = useState("name-asc");
 
-  // Filtered product list
-  const filteredProducts = useMemo(() => {
+  // Search + Sort
+  const sortedAndFilteredProducts = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    return products.filter((product) =>
+    const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type]
         .filter(Boolean)
         .some((field) => field.toLowerCase().includes(term))
     );
-  }, [products, searchTerm]);
 
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+    const sorted = [...filtered];
+    switch (sortOption) {
+      case "name-asc":
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "name-desc":
+        sorted.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "price-asc":
+        sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+        break;
+      case "price-desc":
+        sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+    }
+
+    return sorted;
+  }, [products, searchTerm, sortOption]);
+
+  const totalPages = Math.ceil(sortedAndFilteredProducts.length / PRODUCTS_PER_PAGE);
   const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, filteredProducts.length);
-  const currentProducts = filteredProducts.slice(startIdx, endIdx);
+  const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, sortedAndFilteredProducts.length);
+  const currentProducts = sortedAndFilteredProducts.slice(startIdx, endIdx);
 
-  // Reset to page 1 when search changes
+  // Handlers
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOption(e.target.value);
     setCurrentPage(1);
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full font-serif px-4">
       {/* Search Bar */}
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        placeholder="Search by name, category, subcategory, or type..."
-        className="w-full max-w-md px-4 py-2 mt-6 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      <div className="flex flex-center items-center w-full max-w-7xl mt-4">
+        {isOpen ? (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            onClick={() => setIsOpen(false)}
+            className="text-gray-600 p-2 focus:outline-none"
+          >
+            <IoMdClose size={20} />
+          </motion.button>
+        ) : (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="text-gray-600 p-2 focus:outline-none"
+          >
+            <FaSearch size={20} />
+          </motion.button>
+        )}
 
-      {/* Products Grid with animation */}
+        {/* Search Input */}
+        <motion.input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder="Search by name, category, subcategory, or type..."
+          initial={{ width: 0, opacity: 0 }}
+          animate={{
+            width: isOpen ? "100%" : 0,
+            opacity: isOpen ? 1 : 0,
+            paddingLeft: isOpen ? "0.75rem" : "0rem",
+            paddingRight: isOpen ? "0.75rem" : "0rem",
+          }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
+          style={{ whiteSpace: "nowrap" }}
+        />
+      </div>
+
+      {/* Sort Dropdown */}
+      <div className="flex justify-end w-full max-w-7xl mt-4">
+        <select
+          value={sortOption}
+          onChange={handleSortChange}
+          className="border border-gray-300 rounded px-3 py-2 text-sm"
+        >
+          <option value="name-asc">Name (A–Z)</option>
+          <option value="name-desc">Name (Z–A)</option>
+          <option value="price-asc">Price (Low → High)</option>
+          <option value="price-desc">Price (High → Low)</option>
+        </select>
+      </div>
+
+      {/* Products Grid */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={currentPage + searchTerm} // triggers animation on page/search change
+          key={currentPage + searchTerm + sortOption}
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
@@ -57,21 +138,20 @@ const Collection = ({ products }: { products: Product[] }) => {
         </motion.div>
       </AnimatePresence>
 
-      {/* Showing X of Y */}
+      {/* Showing Count */}
       <p className="text-md font-semibold mb-2 text-zinc-500">
-        Showing {endIdx} of {filteredProducts.length} products
+        Showing {endIdx} of {sortedAndFilteredProducts.length} products
       </p>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       <div className="flex items-center space-x-2 mb-8">
         <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className={`px-4 py-2 rounded ${
-            currentPage === 1
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-blue-500 text-white hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded ${currentPage === 1
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
         >
           Prev
         </button>
@@ -81,11 +161,10 @@ const Collection = ({ products }: { products: Product[] }) => {
         <button
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className={`px-4 py-2 rounded ${
-            currentPage === totalPages
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-blue-500 text-white hover:bg-blue-600"
-          }`}
+          className={`px-4 py-2 rounded ${currentPage === totalPages
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
         >
           Next
         </button>
