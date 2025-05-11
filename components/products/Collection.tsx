@@ -59,67 +59,70 @@ const Collection = ({ products }: { products: Product[] }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full font-serif px-4">
-      {/* Search Bar */}
-      <div className="flex flex-center items-center w-full max-w-7xl mt-4">
-        {isOpen ? (
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            onClick={() => setIsOpen(false)}
-            className="text-gray-600 p-2 focus:outline-none"
-          >
-            <IoMdClose size={20} />
-          </motion.button>
-        ) : (
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="text-gray-600 p-2 focus:outline-none"
-          >
-            <FaSearch size={20} />
-          </motion.button>
-        )}
 
-        {/* Search Input */}
-        <motion.input
-          type="text"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          placeholder="Search by name, category, subcategory, or type..."
-          initial={{ width: 0, opacity: 0 }}
-          animate={{
-            width: isOpen ? "100%" : 0,
-            opacity: isOpen ? 1 : 0,
-            paddingLeft: isOpen ? "0.75rem" : "0rem",
-            paddingRight: isOpen ? "0.75rem" : "0rem",
-          }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-          style={{ whiteSpace: "nowrap" }}
-        />
-      </div>
+      <div className="flex flex-col gap-2 md:flex-row items-center w-full max-w-7xl">
+        {/* Search Bar */}
+        <div className="flex flex-center items-center w-full mt-2 max-w-7xl">
+          {isOpen ? (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onClick={() => setIsOpen(false)}
+              className="text-gray-600 p-2 focus:outline-none"
+            >
+              <IoMdClose size={20} />
+            </motion.button>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="text-gray-600 p-2 focus:outline-none"
+            >
+              <FaSearch size={20} />
+            </motion.button>
+          )}
 
-      {/* Sort Dropdown */}
-      <div className="flex justify-end w-full max-w-7xl mt-4">
-        <select
-          value={sortOption}
-          onChange={handleSortChange}
-          className="border border-gray-300 rounded px-3 py-2 text-sm"
-        >
-          <option value="name-asc">Name (A–Z)</option>
-          <option value="name-desc">Name (Z–A)</option>
-          <option value="price-asc">Price (Low → High)</option>
-          <option value="price-desc">Price (High → Low)</option>
-        </select>
+          {/* Search Input */}
+          <motion.input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search by name, category, subcategory, or type..."
+            initial={{ width: 0, opacity: 0 }}
+            animate={{
+              width: isOpen ? "100%" : 0,
+              opacity: isOpen ? 1 : 0,
+              paddingLeft: isOpen ? "0.75rem" : "0rem",
+              paddingRight: isOpen ? "0.75rem" : "0rem",
+            }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
+            style={{ whiteSpace: "nowrap" }}
+          />
+        </div>
+
+        {/* Sort Dropdown */}
+        <div className="flex justify-center md:justify-end w-full md:w-fit max-w-7xl">
+          <select
+            value={sortOption}
+            onChange={handleSortChange}
+            className="border border-gray-300 rounded px-3 py-2 text-sm"
+          >
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="price-asc">Price (Low → High)</option>
+            <option value="price-desc">Price (High → Low)</option>
+          </select>
+        </div>
       </div>
 
       {/* Products Grid */}

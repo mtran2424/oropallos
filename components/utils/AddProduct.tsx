@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import { IoIosAdd } from "react-icons/io";
+import { IoIosAdd, IoIosCloseCircle } from "react-icons/io";
 import { categoryOptions, Product, wineSubcategoryOptions, liquorSubcategoryOptions, otherWineSubcategoryOptions, sparklingWineSubcategoryOptions, blushWineSubcategoryOptions } from "@/components/global.utils";
 import { createProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
@@ -59,6 +59,9 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
     }
   };
 
+  const handleRemoveImage = () => {
+    setImageUrl("");
+  };
 
   // Upon form submission, validate the input and send it to the backend
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -260,6 +263,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                   </select>
 
                   {/* Type Field */}
+                  {/* TODO: Add type field that adapts based on the selected category and subcategory once types have been finalized */}
 
                   {/* Price Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
@@ -288,7 +292,25 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
                   />
                   <label className="text-md font-semibold text-gray-600 w-full text-left px-2">Image Preview:</label>
-                  {imageUrl && <Image src={imageUrl} width={200} height={200} alt="Uploaded image" />}
+                  {imageUrl && (
+                    <div className="relative inline-block px-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        onClick={handleRemoveImage}
+                        className="relative text-red-600 hover:text-red-400 bg-white rounded-full"
+                        aria-label="Remove image"
+                      >
+                        <IoIosCloseCircle size={30} />
+                      </motion.button>
+                      <Image
+                        src={imageUrl}
+                        width={200}
+                        height={200}
+                        alt="Uploaded image"
+                        className="rounded-md"
+                      />
+                    </div>
+                  )}
 
                   {/* TODO: Add loading spinner */}
                   <motion.button

@@ -171,9 +171,8 @@ const ProductsSpreadsheet = () => {
     <div>
       <div className="flex flex-col justify-between items-start mb-3 space-y-4 px-2">
 
+        {/* Header */}
         <h1 className="text-2xl font-semibold text-zinc-900">Products</h1>
-
-
         {/* Filters for categories */}
         <div>
           <h2 className="text-lg font-bold text-zinc-900 mb-1">Filters</h2>
@@ -198,7 +197,7 @@ const ProductsSpreadsheet = () => {
 
 
         {/* Search Bar */}
-        <div className="flex flex-center items-center w-full max-w-7xl mt-4">
+        <div className="flex flex-center items-center w-full max-w-7xl ">
           {isOpen ? (
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -255,8 +254,8 @@ const ProductsSpreadsheet = () => {
               onChange={handleSortChange}
               className="border border-gray-300 rounded px-3 py-2 text-sm"
             >
-              <option value="name-asc">Name (A–Z)</option>
-              <option value="name-desc">Name (Z–A)</option>
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
               <option value="price-asc">Price (Low → High)</option>
               <option value="price-desc">Price (High → Low)</option>
             </select>
@@ -264,7 +263,7 @@ const ProductsSpreadsheet = () => {
         </div>
 
 
-        <div className="flex max-w-[95vw] max-h-[70vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
+        <div className="flex max-w-[95vw] max-h-[60vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
           <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}

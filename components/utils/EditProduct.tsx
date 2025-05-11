@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { MdModeEditOutline } from "react-icons/md";
 import Image from "next/image";
+import { IoIosCloseCircle } from "react-icons/io";
 
 // This component is a button that opens a modal for adding a product
 const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProduct: () => void; }) => {
@@ -26,46 +27,49 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
   const [subcategory, setSubcategory] = useState(product.subcategory);
   const [type, setType] = useState(product.type);
   const [imageUrl, setImageUrl] = useState(product.imageUrl);
-  
-    const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-  
-      // Step 1: Get the signature and timestamp from your API route
-      const response = await fetch('/api/cloudinary-signature', {
+
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Step 1: Get the signature and timestamp from your API route
+    const response = await fetch('/api/cloudinary-signature', {
+      method: 'POST',
+    });
+    const data = await response.json();
+
+    // Step 2: Prepare the FormData for the image upload
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('api_key', data.apiKey); // Cloudinary API Key
+    formData.append('signature', data.signature); // Signed signature
+    formData.append('timestamp', data.timestamp.toString()); // Timestamp
+    formData.append('upload_preset', 'ml_default'); // Your upload preset
+    formData.append('folder', 'oropallos'); // (Optional) Specify folder in Cloudinary
+
+    // Step 3: Upload the image to Cloudinary
+    const uploadRes = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
         method: 'POST',
-      });
-      const data = await response.json();
-  
-      // Step 2: Prepare the FormData for the image upload
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('api_key', data.apiKey); // Cloudinary API Key
-      formData.append('signature', data.signature); // Signed signature
-      formData.append('timestamp', data.timestamp.toString()); // Timestamp
-      formData.append('upload_preset', 'ml_default'); // Your upload preset
-      formData.append('folder', 'oropallos'); // (Optional) Specify folder in Cloudinary
-  
-      // Step 3: Upload the image to Cloudinary
-      const uploadRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
-  
-      const uploadData = await uploadRes.json();
-  
-      // Step 4: Get the secure URL from Cloudinary and set it
-      if (uploadData.secure_url) {
-        setImageUrl(uploadData.secure_url); // Cloudinary's public image URL
-        console.log('Image uploaded successfully:', uploadData.secure_url);
-      } else {
-        console.error('Error uploading image:', uploadData.error);
+        body: formData,
       }
-    };
-  
+    );
+
+    const uploadData = await uploadRes.json();
+
+    // Step 4: Get the secure URL from Cloudinary and set it
+    if (uploadData.secure_url) {
+      setImageUrl(uploadData.secure_url); // Cloudinary's public image URL
+      console.log('Image uploaded successfully:', uploadData.secure_url);
+    } else {
+      console.error('Error uploading image:', uploadData.error);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageUrl("");
+  };
 
   // Upon form submission, validate the input and send it to the backend
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,7 +88,8 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
       price: price,
       category: category,
       subcategory: subcategory,
-      type: type
+      type: type,
+      imageUrl: imageUrl,
     };
 
     if (product.id) {
@@ -280,8 +285,25 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                     onChange={handleImageUpload}
                     className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
                   />
-                  <label className="text-md font-semibold text-gray-600 w-full text-left px-2">Image Preview:</label>
-                  {imageUrl && <Image src={imageUrl} width={200} height={200} alt="Uploaded image" />}
+                  {imageUrl && (
+                    <div className="relative inline-block px-2">
+                      <motion.button
+                      whileHover={{ scale: 1.05 }}
+                        onClick={handleRemoveImage}
+                        className="relative text-red-600 hover:text-red-400 bg-white rounded-full"
+                        aria-label="Remove image"
+                      >
+                        <IoIosCloseCircle size={30} />
+                      </motion.button>
+                      <Image
+                        src={imageUrl}
+                        width={200}
+                        height={200}
+                        alt="Uploaded image"
+                        className="rounded-md"
+                      />
+                    </div>
+                  )}
 
                   {/* TODO: Add loading spinner */}
                   <motion.button
