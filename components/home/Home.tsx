@@ -19,7 +19,7 @@ const Home = () => {
       className="my-35"
     >
       {/* Home Content */}
-      <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-10 px-10">
+      <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-30 px-10">
 
         {/* Intro Section */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
@@ -129,7 +129,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Specials */}
+        {/* Specials and services*/}
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
           <div className="flex flex-col w-full items-start justify-start">
             <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
@@ -144,12 +144,19 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl font-serif">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+
           <div className="flex flex-col w-full items-start justify-start">
             <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
               Why Choose Us?
             </h1>
-            <div className="grid grid-cols-3 w-full items-center justify-center gap-10 text-center">
+            <p className="text-xl text-start text-zinc-500 font-serif">
+              We{'\''}re committed to providing our customers with the best shopping experience possible 
+              and a welcoming and friendly atmosphere.
+              We offer curbside and in-store pickup, so you can shop your way.
+              Plus, we have a wide selection of chilled wines and cocktails, so you can enjoy your drinks right away!
+            </p>
+            <div className="grid grid-cols-3 w-full items-center justify-center gap-10 p-5 text-center font-serif text-zinc-600">
               <div className="flex flex-col items-center justify-start">
                 <BiSolidDiscount size={70} className="text-zinc-400" />
                 <div>Unbelievably low prices</div>
@@ -165,8 +172,10 @@ const Home = () => {
               </div>
 
             </div>
+
           </div>
         </div>
+
       </div>
     </motion.div>
   );
