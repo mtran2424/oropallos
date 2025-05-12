@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { categoryOptions, Product, productTableColumns } from "@/components/global.utils";
+import { Product, ProductCategories, productTableColumns } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
 import { deleteProduct, getProducts } from "@/app/api/productapi";
 import toast from "react-hot-toast";
@@ -19,6 +19,7 @@ const ProductsSpreadsheet = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+  const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("name-asc");
 
@@ -32,6 +33,9 @@ const ProductsSpreadsheet = () => {
     )
       .filter((product) =>
         categoryFilters.length > 0 ? categoryFilters.includes(product.category) : true
+      )
+      .filter((product) =>
+        subcategoryFilters.length > 0 ? subcategoryFilters.includes(product.subcategory) : true
       );
 
     // Choose sorting method
@@ -52,7 +56,7 @@ const ProductsSpreadsheet = () => {
     }
 
     return sorted;
-  }, [categoryFilters, products, searchTerm, sortOption]);
+  }, [categoryFilters, products, searchTerm, sortOption, subcategoryFilters]);
 
   // Handlers for search and sort
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +109,7 @@ const ProductsSpreadsheet = () => {
     }
   };
 
+  // Function to render each cell based on the column type
   const renderCell = (product: Product, column: keyof Product) => {
     switch (column) {
       case "id":
@@ -153,6 +158,15 @@ const ProductsSpreadsheet = () => {
     );
   };
 
+  // Function to toggle the status filter
+  const toggleSubcategoryFilter = (status: string) => {
+    setSubcategoryFilters((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
+    );
+  };
+
   // Fetch products from the server when the component mounts or refreshes
   useEffect(() => {
     const fetchProducts = async () => {
@@ -177,7 +191,7 @@ const ProductsSpreadsheet = () => {
         <div>
           <h2 className="text-lg font-bold text-zinc-900 mb-1">Filters</h2>
           <div className="flex gap-2 flex-wrap">
-            {categoryOptions.map((category) => (
+            {ProductCategories.map((category) => (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -193,6 +207,41 @@ const ProductsSpreadsheet = () => {
               </motion.button>
             ))}
           </div>
+
+          {/* Subcategory Filters */}
+          <div className="flex gap-2 flex-wrap mt-2">
+            {(() => {
+              const rendered = new Set();
+
+              return categoryFilters.flatMap((category) => {
+                const selectedCategory = ProductCategories.find((cat) => cat.value === category);
+                if (!selectedCategory) return [];
+
+                return selectedCategory.subcategories
+                  .filter((subcategory) => {
+                    if (rendered.has(subcategory.value)) return false;
+                    rendered.add(subcategory.value);
+                    return true;
+                  })
+                  .map((subcategory) => (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      key={subcategory.value}
+                      onClick={() => toggleSubcategoryFilter(subcategory.value)}
+                      className={`text-xs px-2 py-1 rounded border font-semibold ${subcategoryFilters.includes(subcategory.value)
+                          ? "text-zinc-200 bg-blue-500 border-blue-200"
+                          : "text-zinc-900 border-blue-200"
+                        }`}
+                    >
+                      {subcategory.name}
+                    </motion.button>
+                  ));
+              });
+            })()}
+          </div>
+
         </div>
 
 
@@ -322,7 +371,7 @@ const ProductsSpreadsheet = () => {
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          className="text-center text-red-500 hover:text-red-700"
+                          className="text-center text-red-500 hover:text-red-400"
                           onClick={() => handleDeleteProduct(product.id || "")}
                         >
                           <MdDelete size={25} />

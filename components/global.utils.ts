@@ -2,23 +2,29 @@
  * Global utility functions and constants for the application.
  */
 
+// INTERFACES
+
+// Model for product type
 export interface ProductType {
   name: string;
   value: string;
 }
 
+// Model for product subcategory
 export interface ProductSubcategory {
   name: string;
   types: ProductType[];
   value: string;
 }
 
+// Model for product category
 export interface ProductCategory {
   name: string;
   subcategories: ProductSubcategory[];
   value: string;
 }
 
+// Model for product
 export interface Product {
   id?: string;
   name: string;
@@ -30,6 +36,9 @@ export interface Product {
   imageUrl?: string;
 }
 
+// CONSTANTS
+
+// Constants for types of each subcategory
 const dryRedTypes = [
   { name: "Cabernet Sauvignon", value: "Cabernet_Sauvignon" },
   { name: "Merlot", value: "Merlot" },
@@ -150,6 +159,7 @@ const rtdTypes = [
   { name: "Bottled Cocktails", value: "Bottled_Cocktails" },
 ];
 
+// Constant defining product categories, subcategories and types
 export const ProductCategories: ProductCategory[] = [
   {
     name: "Red Wines",
@@ -228,6 +238,7 @@ export const productHeaders = [
   "Actions"
 ] as const;
 
+// Headers for product tables in admin view
 export const productTableColumns = [
   { field: "id", label: "Product ID", width: "200px" },
   { field: "name", label: "Name", width: "200px" },
@@ -237,47 +248,4 @@ export const productTableColumns = [
   { field: "type", label: "Type", width: "250px" },
   { field: "description", label: "Description", width: "400px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
-] as const;
-
-export const categoryOptions = [
-  { name: "Red Wine", value: "Red_Wine" },
-  { name: "White Wine", value: "White_Wine" },
-  { name: "Sparkling Wine", value: "Sparkling_Wine" },
-  { name: "Blush Wine", value: "Blush_Wine" },
-  { name: "Other Wine", value: "Other_Wine" },
-  { name: "Liquor", value: "Liquor" },
-] as const;
-
-export const wineSubcategoryOptions = [
-  { name: "Dry", value: "Dry" },
-  { name: "Sweet", value: "Sweet" },
-  { name: "Semi Sweet", value: "Semi_Sweet" },
-] as const;
-
-export const otherWineSubcategoryOptions = [
-  { name: "Dessert", value: "Dessert" },
-  { name: "Cooking", value: "Cooking" },
-  { name: "Vermouth", value: "Vermouth" },
-] as const;
-
-export const sparklingWineSubcategoryOptions = [
-  { name: "Dry", value: "Dry" },
-  { name: "Sweet", value: "Sweet" },
-] as const;
-
-export const blushWineSubcategoryOptions = [
-  { name: "Rose", value: "Rose" },
-  { name: "Dry", value: "Dry" },
-  { name: "Sweet", value: "Sweet" },
-] as const;
-
-export const liquorSubcategoryOptions = [
-  { name: "Whiskey", value: "Whiskey" },
-  { name: "Tequila", value: "Tequila" },
-  { name: "Vodka", value: "Vodka" },
-  { name: "Gin", value: "Gin" },
-  { name: "Rum", value: "Rum" },
-  { name: "Brandy", value: "Brandy" },
-  { name: "Cordials/Liqueurs/Schnapps", value: "Cordials_Liqueurs_Schnapps" },
-  { name: "Ready-To-Drink", value: "Ready_To_Drink" },
 ] as const;

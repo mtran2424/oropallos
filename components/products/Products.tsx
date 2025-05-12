@@ -7,6 +7,7 @@ import Collection from "./Collection";
 import { getProducts } from "@/app/api/productapi";
 import { IoMdClose } from "react-icons/io";
 
+// Products component - Displays a list of products with filters for categories, subcategories, and types
 const Products = () => {
   const [currentCategory, setCurrentCategory] = useState<ProductCategory>();
   const [currentSubcategory, setCurrentSubcategory] = useState<ProductSubcategory>();
@@ -18,6 +19,7 @@ const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
 
+  // Apply filters and products
   const filteredProducts = useMemo(() => {
     const filtered = products.filter((product) => {
       if (currentCategory && product.category !== currentCategory.name) {
@@ -61,6 +63,7 @@ const Products = () => {
     fetchProducts();
   }, []);
 
+  // Reset subcategory and type and collapse children filters when a new category is selected
   useEffect(() => {
     if (currentCategory) {
       setCurrentSubcategory(undefined);
@@ -75,6 +78,7 @@ const Products = () => {
     }
   }, [currentCategory]);
 
+  // Reset type and collapse subcategory when a new subcategory is selected
   useEffect(() => {
     if (currentSubcategory) {
       setExpandedSubcategory(true);
@@ -109,6 +113,7 @@ const Products = () => {
           transition={{ duration: 0.5, ease: "easeInOut" }}
           className="hidden md:flex flex-row w-full items-center justify-center space-x-16 p-2 mt-25 overflow-hidden"
         >
+          {/* General Categories - Show up to 4 */}
           {((!seeMoreCategories ? ProductCategories.slice(0, 4) : ProductCategories.slice(4, 6))
           ).map((category, index) => (
             <motion.div
@@ -156,6 +161,7 @@ const Products = () => {
       <AnimatePresence mode="wait">
         {expandedCategory && currentCategory &&
           <div className="items-center justify-center">
+            {/* Subcategories - Show up to 5 */}
             <motion.ul
               key={currentCategory.name + seeMoreTypes.toString()}
               initial={{ opacity: 0, y: -50 }}
@@ -229,6 +235,7 @@ const Products = () => {
         {expandedSubcategory &&
           currentSubcategory && currentSubcategory.types.length > 0 &&
           <div className="items-center justify-center">
+            {/* Show all types */}
             <motion.ul
               key={currentSubcategory.name}
               initial={{ opacity: 0, y: -50 }}
@@ -243,30 +250,29 @@ const Products = () => {
               w-full items-start justify-center px-5 mt-2`}
             >
               {/* If liquor subcategory is selected, show liquor subtypes */}
-              {
-                currentSubcategory && currentSubcategory.types
-                  .map((type, index) => (
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      key={index}
-                      onClick={() => {
-                        // Logic to handle type filter
-                        if (currentType === type.name) {
-                          setCurrentType("");
-                        }
-                        else {
-                          setCurrentType(type.name);
-                        }
-                      }}
-                      className="col-span-4 text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-                    >
-                      <li className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-                        {type.name}
-                      </li>
-                    </motion.div>
-                  ))}
+              {currentSubcategory && currentSubcategory.types
+                .map((type, index) => (
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    key={index}
+                    onClick={() => {
+                      // Logic to handle type filter
+                      if (currentType === type.name) {
+                        setCurrentType("");
+                      }
+                      else {
+                        setCurrentType(type.name);
+                      }
+                    }}
+                    className="col-span-4 text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
+                  >
+                    <li className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
+                      {type.name}
+                    </li>
+                  </motion.div>
+                ))}
             </motion.ul>
           </div>
         }
@@ -281,14 +287,14 @@ const Products = () => {
         className="md:mt-0 mt-25"
       >
 
-        {/* Product Filter path */}
+        {/* Product Filter path component */}
         <div className="flex flex-col items-center">
 
           <div className="grid grid-cols-1 max-w-7xl w-full justify-center">
             {/* Filter Header */}
             <h2 className="text-lg font-bold text-zinc-900 px-5">Filters</h2>
 
-            {/* Filter Path */}
+            {/* Filter Path - Clears current filters on click */}
             <div className="flex flex-row items-center px-5 font-serif text-md">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -303,6 +309,7 @@ const Products = () => {
                 Products
               </motion.button>
 
+              {/* General Categories - Red Wine, White Wine, Liquor, etc... */}
               <AnimatePresence mode="wait">
                 {currentCategory &&
                   <motion.div
@@ -329,6 +336,7 @@ const Products = () => {
                 }
               </AnimatePresence>
 
+              {/* Subcategories - Flavor Profiles, liquor types, etc... */}
               <AnimatePresence mode="wait">
                 {currentSubcategory &&
                   <motion.div
@@ -375,11 +383,13 @@ const Products = () => {
           </div>
         </div>
 
+        {/* Mobile Filter Button */}
         <motion.button
           onClick={() => setOpen(!open)}
           className='md:hidden fixed z-60 bottom-10 right-5 px-5'
           whileHover={{ scale: 1.1 }}
         >
+          {/* Filter Icon */}
           <AnimatePresence mode="wait">
             {open ? (
               <motion.div
@@ -390,6 +400,7 @@ const Products = () => {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="hover:text-[#FFBA04] transition duration-300 ease-in-out"
               >
+                {/* Close filter icon */}
                 <IoMdClose size={30} />
               </motion.div>
             ) : (
@@ -401,13 +412,14 @@ const Products = () => {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="hover:text-[#FFBA04] transition duration-300 ease-in-out"
               >
+                {/* Filter icon */}
                 <FaFilter size={35} />
               </motion.div>
             )}
           </AnimatePresence>
         </motion.button>
 
-
+        {/* Collection of Products */}
         <div
           className="flex flex-col w-full min-h-screen h-full items-center justify-start"
         >
@@ -416,6 +428,7 @@ const Products = () => {
         </div>
       </motion.div>
 
+      {/* Mobile Filter Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -426,10 +439,12 @@ const Products = () => {
             exit="hidden"
             className="md:hidden fixed top-0 right-0 h-full w-3/4 max-w-xs bg-white shadow-lg z-50 font-serif"
           >
-            {/* Sidebar content goes here */}
-
+            {/* Header */}
             <h2 className="text-lg font-semibold text-zinc-900 mt-2 ml-2">Filters</h2>
+
+            {/* Dropdown filters */}
             <div className="flex flex-col items-start gap-4 p-5 overflow-y-auto h-[90vh]">
+
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2 underline">Categories</label>
               {/* Category List */}
               {ProductCategories.map((category, index) => (
@@ -456,7 +471,7 @@ const Products = () => {
                 </motion.div>
               ))}
 
-              {/* Subcategory List */}
+              {/* Subcategory List - appears when category is selected */}
               <AnimatePresence mode="wait">
                 {currentCategory && (
                   <motion.div
@@ -496,7 +511,8 @@ const Products = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
-              {/* Type List */}
+
+              {/* Type List - appears when subcategory is selected */}
               <AnimatePresence mode="wait">
                 {currentSubcategory && (
                   <motion.div

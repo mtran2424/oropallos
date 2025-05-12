@@ -1,32 +1,148 @@
 "use client";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import WesTaste from "@/components/assets/photos/wes-tasting.png";
+import { useState } from "react";
 
 const Home = () => {
+  const [expandDiscount, setExpandDiscount] = useState(false);
+  const [expandIntro, setExpandIntro] = useState(false);
   return (
     <motion.div
       initial={{ x: "-100%", opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="mt-35"
+      className="my-35"
     >
-      <div className="flex flex-col w-full h-screen items-center justify-start">
-        
-        <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start mb-4">
-          Welcome to {`Oropallo\'s Discount Wine and Liquor`}
-        </h1>
-        <p className="text-xl text-center sm:text-start font-serif">
-          367 Dix Ave,<br />
-          Queensbury, NY 12804<br />
-          <br />
-          <a
-            href="tel:+15187983988"
-            className="underline-animate"
-          >
-            (518) 798-3988
-          </a>
-        </p>
+      {/* Home Content */}
+      <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-10 px-10">
+
+        {/* Intro Section */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+
+          <div className="flex flex-col w-full items-start justify-start">
+            <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
+              Welcome to {`Oropallo\'s Discount Wine & Liquor`}
+            </h1>
+            <p className="text-xl text-start text-zinc-500 font-serif">
+              Stop by for our discounts and low prices on wine and liquor!
+              We have a wide selection of wines, liquors, and spirits to choose from.
+            </p>
+
+            <AnimatePresence initial={false}>
+              {expandIntro && (
+                <motion.div
+                  key="intro"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <p className="text-xl text-start text-zinc-500 font-serif">
+                    <br />
+                    Whether you{'\''}re looking for a special bottle for a celebration or just want to stock up for the weekend,
+                    we{'\''}ve got you covered. Our knowledgeable staff is here to help you find the perfect drink for any occasion.
+                    <br />
+                    <br />
+                    <span className="font-bold text-red-900">Visit us today!</span>
+                    <br />
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            <motion.button
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              onClick={() => setExpandIntro(!expandIntro)}
+              className="text-lg rounded-full mt-2 p-3 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+            >
+              {expandIntro ? "Read less" : "Read more"}
+            </motion.button>
+
+          </div>
+
+          {/* Insert an image here */}
+          <div className="flex p-5 lg:p-2">
+            <Image
+              src={WesTaste}
+              alt="Wes Tasting"
+              width={600}
+              height={600}
+              className="rounded-lg shadow-lg"
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
+          </div>
+        </div>
+
+        {/* Discounts Section */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+
+          <div className="flex flex-col w-full items-start justify-start">
+            <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
+              Our Discounts
+            </h1>
+            <p className="text-xl text-start text-zinc-500 font-serif">
+              Looking for a great deal on your favorite wines and liquors? Shopping on a budget? We{'\''}ve got you covered!
+              Stop by on our discount days. We offer a variety of deals on select products, so you can stock up without breaking the bank.
+            </p>
+
+            <AnimatePresence initial={false}>
+              {expandDiscount && (
+                <motion.div
+                  key="discount"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <p className="text-xl text-start text-zinc-500 font-serif">
+                    <br />
+                    Every Tuesday, we offer a senior discount: 15% off wine products and tax-free liquor for all seniors aged 50 and older.
+                    <br /><br />
+                    Wednesdays are Tax-Free Day: All non-sale wine and liquor items in the store are tax-free.
+                    <br /><br />
+                    Veterans Discount: Veterans receive 15% off wine products and tax-free liquor every day of the week.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <motion.button
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              onClick={() => setExpandDiscount(!expandDiscount)}
+              className="text-lg rounded-full mt-2 p-3 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+            >
+              {expandDiscount ? "Read less" : "Read more"}
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Specials */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+          <div className="flex flex-col w-full items-start justify-start">
+            <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
+              Specials
+            </h1>
+            <p className="text-xl text-start text-zinc-500 font-serif">
+              We{'\''}re constantly bringing in new products and running sales and specials.
+              Check out our <a href="https://www.facebook.com/p/Oropallos-Discount-Wine-Liquor-100063748050582/" className="text-red-900 hover:text-[#FFBA04] underline-animate transition-colors">
+                Facebook
+              </a> page for the latest updates on our specials and new arrivals.
+            </p>
+          </div>
+        </div>
+
       </div>
+
     </motion.div>
   );
 }
