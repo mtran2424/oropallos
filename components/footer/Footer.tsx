@@ -82,8 +82,9 @@ const Footer = () => {
           </ul>
         </div>
       </div>
-
       <div className="text-center text-md text-gray-400 mt-10">
+        Disclaimer: All discounts, prices, specials are subject to change without notice. Please check with our staff for the most current information.
+        <br />
         &copy; {currentYear} Oropallo{'\''}s Discount Wine & Liquor. All rights reserved.
       </div>
     </motion.footer>

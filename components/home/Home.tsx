@@ -3,6 +3,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import WesTaste from "@/components/assets/photos/wes-tasting.png";
 import { useState } from "react";
+import { FaConciergeBell } from "react-icons/fa";
+import { BiSolidDiscount } from "react-icons/bi";
+import { RiTempColdFill } from "react-icons/ri";
 
 const Home = () => {
   const [expandDiscount, setExpandDiscount] = useState(false);
@@ -52,14 +55,14 @@ const Home = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
             <motion.button
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
               onClick={() => setExpandIntro(!expandIntro)}
-              className="text-lg rounded-full mt-2 p-3 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+              className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
             >
               {expandIntro ? "Read less" : "Read more"}
             </motion.button>
@@ -119,7 +122,7 @@ const Home = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
               onClick={() => setExpandDiscount(!expandDiscount)}
-              className="text-lg rounded-full mt-2 p-3 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+              className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
             >
               {expandDiscount ? "Read less" : "Read more"}
             </motion.button>
@@ -141,8 +144,30 @@ const Home = () => {
           </div>
         </div>
 
-      </div>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl font-serif">
+          <div className="flex flex-col w-full items-start justify-start">
+            <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
+              Why Choose Us?
+            </h1>
+            <div className="grid grid-cols-3 w-full items-center justify-center gap-10 text-center">
+              <div className="flex flex-col items-center justify-start">
+                <BiSolidDiscount size={70} className="text-zinc-400" />
+                <div>Unbelievably low prices</div>
+              </div>
+              <div className="flex flex-col items-center justify-start">
+                <FaConciergeBell size={70} className="text-zinc-400" />
+                <div>Curbside and in-store pickup</div>
+              </div>
 
+              <div className="flex flex-col items-center justify-start">
+                <RiTempColdFill size={70} className="text-zinc-400" />
+                <div>Chilled wines and liquors</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }
