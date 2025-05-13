@@ -80,14 +80,16 @@ const HomeGallery = () => {
             className="keen-slider__slide relative h-[70vh] w-screen"
           >
             {/* Background Image */}
-            <Image
-              src={slide.image}
-              alt={slide.alt || ""}
-              fill
-              className="object-cover object-center z-0"
-              priority
-            />
-
+            <div className="relative w-full h-full overflow-hidden group">
+              {/* Background Image */}
+              <Image
+                src={slide.image}
+                alt={slide.alt || ""}
+                fill
+                className="object-cover object-center transform scale-110 group-hover:scale-100 transition-transform duration-700 ease-out z-0"
+                priority
+              />
+            </div>
             {/* Optional overlay for contrast */}
             {/* <div className="absolute inset-0 bg-black/30 z-10" /> */}
 
@@ -120,14 +122,14 @@ const HomeGallery = () => {
 
         <button
           onClick={() => instanceRef.current?.prev()}
-          className="absolute left-0 h-full w-1/4 text-white p-5"
+          className="absolute left-0 h-full w-1/4 text-white p-5 cursor-pointer"
         >
           {/* <CiSquareChevLeft size={40} /> */}
         </button>
 
         <button
           onClick={() => instanceRef.current?.next()}
-          className="absolute right-0 h-full w-1/4 text-white p-5"
+          className="absolute right-0 h-full w-1/4 text-white p-5 cursor-pointer"
         >
           {/* <CiSquareChevRight size={40} /> */}
         </button>

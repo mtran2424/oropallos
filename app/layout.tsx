@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/footer/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
+import { MapProvider } from "@/components/providers/map-provider";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -33,7 +34,9 @@ export default function RootLayout({
           className={`${montserrat.variable} ${merriweather.variable} bg-white antialiased`}
         >
           <Navbar />
-          {children}
+          <MapProvider>
+            {children}
+          </MapProvider>
           <Footer />
         </body>
       </html>

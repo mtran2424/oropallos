@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "prisma generate && prisma db push --accept-data-loss && next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.19.1",
     "@prisma/client": "^6.7.0",
+    "@react-google-maps/api": "^2.20.6",
     "cloudinary": "^2.6.1",
     "framer-motion": "^12.9.7",
     "keen-slider": "^6.8.6",

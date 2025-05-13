@@ -5,6 +5,7 @@ import { FaConciergeBell } from "react-icons/fa";
 import { BiSolidDiscount } from "react-icons/bi";
 import { RiTempColdFill } from "react-icons/ri";
 import HomeGallery from "./HomeGallery";
+import Link from "next/link";
 
 const Home = () => {
   const [expandDiscount, setExpandDiscount] = useState(false);
@@ -20,7 +21,7 @@ const Home = () => {
       {/* Home Content */}
       <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-20">
         {/* Intro Section */}
-        <div className="flex flex-col w-full items-start justify-start px-10">
+        <div className="flex flex-col w-full items-start justify-start px-10 max-w-6xl">
           <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
             Welcome to {`Oropallo\'s Discount Wine & Liquor`}
           </h1>
@@ -45,7 +46,9 @@ const Home = () => {
                   we{'\''}ve got you covered. Our knowledgeable staff is here to help you find the perfect drink for any occasion.
                   <br />
                   <br />
-                  <span className="font-bold text-red-900">Visit us today!</span>
+                  <Link href="/about" className="text-red-900 hover:text-[#FFBA04] underline-animate transition-colors font-bold">
+                    Visit us today!
+                  </Link>
                   <br />
                 </p>
               </motion.div>
@@ -63,8 +66,10 @@ const Home = () => {
             {expandIntro ? "Read less" : "Read more"}
           </motion.button>
         </div>
+
         <HomeGallery />
 
+        {/* TODO: Michelles Picks */}
 
         {/* Discounts Section */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 px-10 max-w-6xl">

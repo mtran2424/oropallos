@@ -27,7 +27,7 @@ const Footer = () => {
 
           {/* Contact Info */}
           <p className="text-lg lg:text-xl text-center md:text-start">
-            367 Dix Ave,<br />
+            376 Dix Ave,<br />
             Queensbury, NY 12804<br />
             <br />
             <a
