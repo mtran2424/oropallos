@@ -70,6 +70,7 @@ const Home = () => {
         <HomeGallery />
 
         {/* TODO: Michelles Picks */}
+        
 
         {/* Discounts Section */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 px-10 max-w-6xl">

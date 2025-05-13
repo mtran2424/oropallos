@@ -81,3 +81,18 @@ export const getProduct = async (id: string) => {
   }
   return res.json();
 }
+
+export const favoriteProduct = async (id: string, favorite: boolean) => {
+  const res = await fetch(`/api/products/update/favorite/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ favorite: favorite }),
+  });
+  if (!res.ok) {
+    throw new Error('Failed to update product');
+  }
+
+  return res;
+}

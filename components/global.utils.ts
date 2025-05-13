@@ -34,6 +34,7 @@ export interface Product {
   subcategory: string;
   type: string;
   imageUrl?: string;
+  favorite: boolean;
 }
 
 // CONSTANTS

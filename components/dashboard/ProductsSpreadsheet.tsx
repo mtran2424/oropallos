@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { Product, ProductCategories, productTableColumns } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
-import { deleteProduct, getProducts } from "@/app/api/productapi";
+import { deleteProduct, favoriteProduct, getProducts } from "@/app/api/productapi";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdFavorite } from "react-icons/md";
 import EditProduct from "../utils/EditProduct";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
@@ -108,6 +108,21 @@ const ProductsSpreadsheet = () => {
       toast.error('Failed to delete product');
     }
   };
+
+  const handleFavoriteToggle = async (id: string, product: Product) => {
+    try {
+      await favoriteProduct(id, !product.favorite)
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success('Favorite changed successfully');
+            setRefresh(!refresh);
+          }
+        });
+    } catch (error) {
+      console.error('Error favoriting product:', error);
+      toast.error('Failed to favorite product');
+    }
+  }
 
   // Function to render each cell based on the column type
   const renderCell = (product: Product, column: keyof Product) => {
@@ -231,8 +246,8 @@ const ProductsSpreadsheet = () => {
                       key={subcategory.value}
                       onClick={() => toggleSubcategoryFilter(subcategory.value)}
                       className={`text-xs px-2 py-1 rounded border font-semibold ${subcategoryFilters.includes(subcategory.value)
-                          ? "text-zinc-200 bg-blue-500 border-blue-200"
-                          : "text-zinc-900 border-blue-200"
+                        ? "text-zinc-200 bg-blue-500 border-blue-200"
+                        : "text-zinc-900 border-blue-200"
                         }`}
                     >
                       {subcategory.name}
@@ -334,6 +349,13 @@ const ProductsSpreadsheet = () => {
                     className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
                     style={{ width: "200px" }}
                   >
+                    <strong>Favorite</strong>
+                  </th>
+
+                  <th
+                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                    style={{ width: "200px" }}
+                  >
                     <strong>Actions</strong>
                   </th>
                 </tr>
@@ -358,6 +380,27 @@ const ProductsSpreadsheet = () => {
                           {renderCell(product, column.field as keyof Product)}
                         </td>
                       ))}
+
+                      <td
+                        className="px-4 py-3 text-sm align-center"
+                        style={{
+                          width: "200px",
+                          maxWidth: "200px",
+                          whiteSpace: "pre-line",
+                        }}
+                      >
+                        {/* Favorite Product Button */}
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="text-center"
+                          onClick={() => handleFavoriteToggle(product.id || "", product)}
+                        >
+                          {product.favorite ? 
+                          <MdFavorite size={40} className="text-red-500 hover:text-red-400 transition duration-200 ease-in-out" /> : 
+                          <MdFavorite size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out"/>}
+                        </motion.button>
+                      </td>
 
                       <td
                         className="px-4 py-3 text-sm align-center"
