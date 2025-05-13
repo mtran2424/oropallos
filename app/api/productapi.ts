@@ -82,6 +82,16 @@ export const getProduct = async (id: string) => {
   return res.json();
 }
 
+export const getFavorites = async () => {
+  const res = await fetch('/api/products/get/favorites', {
+    method: 'GET',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch products');
+  }
+  return res.json();
+};
+
 export const favoriteProduct = async (id: string, favorite: boolean) => {
   const res = await fetch(`/api/products/update/favorite/${id}`, {
     method: 'PUT',
