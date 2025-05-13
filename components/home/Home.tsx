@@ -6,6 +6,7 @@ import { BiSolidDiscount } from "react-icons/bi";
 import { RiTempColdFill } from "react-icons/ri";
 import HomeGallery from "./HomeGallery";
 import Link from "next/link";
+import FavoritesGallery from "./FavoritesGallery";
 
 const Home = () => {
   const [expandDiscount, setExpandDiscount] = useState(false);
@@ -70,7 +71,8 @@ const Home = () => {
         <HomeGallery />
 
         {/* TODO: Michelles Picks */}
-        
+        <FavoritesGallery />
+
 
         {/* Discounts Section */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 px-10 max-w-6xl">
