@@ -1,11 +1,10 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import WesTaste from "@/components/assets/photos/wes-tasting.png";
 import { useState } from "react";
 import { FaConciergeBell } from "react-icons/fa";
 import { BiSolidDiscount } from "react-icons/bi";
 import { RiTempColdFill } from "react-icons/ri";
+import HomeGallery from "./HomeGallery";
 
 const Home = () => {
   const [expandDiscount, setExpandDiscount] = useState(false);
@@ -19,71 +18,56 @@ const Home = () => {
       className="my-35"
     >
       {/* Home Content */}
-      <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-30 px-10">
-
+      <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-20">
         {/* Intro Section */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+        <div className="flex flex-col w-full items-start justify-start px-10">
+          <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
+            Welcome to {`Oropallo\'s Discount Wine & Liquor`}
+          </h1>
+          <p className="text-xl text-start text-zinc-500 font-serif">
+            Stop by for our discounts and low prices on wine and liquor!
+            We have a wide selection of wines, liquors, and spirits to choose from.
+          </p>
 
-          <div className="flex flex-col w-full items-start justify-start">
-            <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
-              Welcome to {`Oropallo\'s Discount Wine & Liquor`}
-            </h1>
-            <p className="text-xl text-start text-zinc-500 font-serif">
-              Stop by for our discounts and low prices on wine and liquor!
-              We have a wide selection of wines, liquors, and spirits to choose from.
-            </p>
+          <AnimatePresence initial={false}>
+            {expandIntro && (
+              <motion.div
+                key="intro"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <p className="text-xl text-start text-zinc-500 font-serif">
+                  <br />
+                  Whether you{'\''}re looking for a special bottle for a celebration or just want to stock up for the weekend,
+                  we{'\''}ve got you covered. Our knowledgeable staff is here to help you find the perfect drink for any occasion.
+                  <br />
+                  <br />
+                  <span className="font-bold text-red-900">Visit us today!</span>
+                  <br />
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            <AnimatePresence initial={false}>
-              {expandIntro && (
-                <motion.div
-                  key="intro"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="overflow-hidden"
-                >
-                  <p className="text-xl text-start text-zinc-500 font-serif">
-                    <br />
-                    Whether you{'\''}re looking for a special bottle for a celebration or just want to stock up for the weekend,
-                    we{'\''}ve got you covered. Our knowledgeable staff is here to help you find the perfect drink for any occasion.
-                    <br />
-                    <br />
-                    <span className="font-bold text-red-900">Visit us today!</span>
-                    <br />
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <motion.button
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              onClick={() => setExpandIntro(!expandIntro)}
-              className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
-            >
-              {expandIntro ? "Read less" : "Read more"}
-            </motion.button>
-
-          </div>
-
-          {/* Insert an image here */}
-          <div className="flex p-5 lg:p-2">
-            <Image
-              src={WesTaste}
-              alt="Wes Tasting"
-              width={600}
-              height={600}
-              className="rounded-lg shadow-lg"
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
-          </div>
+          <motion.button
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            onClick={() => setExpandIntro(!expandIntro)}
+            className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+          >
+            {expandIntro ? "Read less" : "Read more"}
+          </motion.button>
         </div>
+        <HomeGallery />
+
 
         {/* Discounts Section */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 px-10 max-w-6xl">
 
           <div className="flex flex-col w-full items-start justify-start">
             <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
@@ -130,7 +114,7 @@ const Home = () => {
         </div>
 
         {/* Specials and services*/}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 px-10 max-w-6xl">
           <div className="flex flex-col w-full items-start justify-start">
             <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
               Specials
@@ -144,34 +128,38 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-6xl">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 px-10 max-w-6xl">
 
           <div className="flex flex-col w-full items-start justify-start">
             <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
               Why Choose Us?
             </h1>
             <p className="text-xl text-start text-zinc-500 font-serif">
-              We{'\''}re committed to providing our customers with the best shopping experience possible 
+              We{'\''}re committed to providing our customers with the best shopping experience possible
               and a welcoming and friendly atmosphere.
               We offer curbside and in-store pickup, so you can shop your way.
-              Plus, we have a wide selection of chilled wines and cocktails, so you can enjoy your drinks right away!
+              Plus, we have a wide range of chilled wines and cocktails, so you can enjoy your drinks right away!
             </p>
-            <div className="grid grid-cols-3 w-full items-center justify-center gap-10 p-5 text-center font-serif text-zinc-600">
-              <div className="flex flex-col items-center justify-start">
+            <div className="grid grid-cols-3 w-full items-start justify-center gap-10 p-5 text-center font-serif text-zinc-600">
+              <div className="flex flex-col items-center gap-2 justify-start">
                 <BiSolidDiscount size={70} className="text-zinc-400" />
                 <div>Unbelievably low prices</div>
               </div>
-              <div className="flex flex-col items-center justify-start">
+
+              <div className="flex flex-col items-center gap-2 justify-start">
                 <FaConciergeBell size={70} className="text-zinc-400" />
-                <div>Curbside and in-store pickup</div>
+                <div>
+                  Curbside and in-store pickup <br />
+                  <span className="text-sm">(Must provide valid 21+ ID upon pickup)</span>
+                </div>
               </div>
 
-              <div className="flex flex-col items-center justify-start">
+              <div className="flex flex-col items-center gap-2 justify-start">
                 <RiTempColdFill size={70} className="text-zinc-400" />
-                <div>Chilled wines and liquors</div>
+                <div>Chilled wines and RTD beverages</div>
               </div>
-
             </div>
+
 
           </div>
         </div>

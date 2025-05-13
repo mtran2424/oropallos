@@ -70,22 +70,32 @@ const sweetRedTypes = [
   { name: "Chocolate Wine", value: "Chocolate_Wine" },
 ];
 
+const semiRedTypes = [
+  { name: "Table Wine", value: "Table_Wine" },
+  { name: "Beaujolais", value: "Beaujolais" },
+];
+
 const dryWhiteTypes = [
   { name: "Chardonnay", value: "Chardonnay" },
   { name: "Sauvignon Blanc", value: "Sauvignon_Blanc" },
   { name: "Pinot Grigio", value: "Pinot_Grigio" },
   { name: "Dry Riesling", value: "Dry_Riesling" },
   { name: "Vinho Verde", value: "Vinho_Verde" },
-  { name: "Suave", value: "Suave" },
+  { name: "Soave", value: "Soave" },
   { name: "White Rioja", value: "White_Rioja" },
   { name: "White Malbec", value: "White_Malbec" },
   { name: "White Bordeaux", value: "White_Bordeaux" },
+  { name: "White Côtes du Rhône", value: "White_Cotes_du_Rhone" },
 ];
 
 const sweetWhiteTypes = [
   { name: "Moscato", value: "Moscato" },
   { name: "White Table Wine", value: "White_Table_Wine" },
   { name: "Sweet Riesling", value: "Sweet_Riesling" },
+];
+
+const semiWhiteTypes = [
+  { name: "Riesling", value: "Riesling" },
   { name: "Gewürztraminer", value: "Gewurztraminer" },
 ];
 
@@ -110,6 +120,12 @@ const cookingTypes = [
   { name: "Madeira", value: "Madeira" },
 ];
 
+const dessertTypes = [
+  { name: "Port", value: "Port" },
+  { name: "Tawny Port", value: "Tawny_Port" },
+  { name: "Cream Sherry", value: "Cream_Sherry" },
+];
+
 const whiskeyTypes = [
   { name: "Bourbon", value: "Bourbon" },
   { name: "Scotch", value: "Scotch" },
@@ -128,13 +144,13 @@ const tequilaTypes = [
 const vodkaTypes = [
   { name: "Plain", value: "Plain" },
   { name: "Flavored", value: "Flavored" },
-  { name: "Potato", value: "Potato" },
 ];
 
 const rumTypes = [
   { name: "Light Rum", value: "Light_Rum" },
   { name: "Dark Rum", value: "Dark_Rum" },
   { name: "Spiced Rum", value: "Spiced_Rum" },
+  { name: "Flavored Rum", value: "Flavored_Rum" },
 ];
 
 const brandyTypes = [
@@ -145,17 +161,13 @@ const brandyTypes = [
 
 const cordialsTypes = [
   { name: "Amaretto", value: "Amaretto" },
-  { name: "Irish Cream", value: "Irish_Cream" },
-  { name: "Triple Sec", value: "Triple_Sec" },
-  { name: "Peach Schnapps", value: "Peach_Schnapps" },
-  { name: "Butterscotch Schnapps", value: "Butterscotch_Schnapps" },
-  { name: "Peppermint Schnapps", value: "Peppermint_Schnapps" },
-  { name: "Sour Apple Pucker", value: "Sour_Apple_Pucker" },
+  { name: "Creams", value: "Creams" },
+  { name: "Schnapps", value: "Schnapps" },
+  { name: "General Liqeuers", value: "General_Liqeuers" },
 ];
 
 const rtdTypes = [
   { name: "Canned Cocktails", value: "Canned_Cocktails" },
-  { name: "Wine Coolers", value: "Wine_Coolers" },
   { name: "Bottled Cocktails", value: "Bottled_Cocktails" },
 ];
 
@@ -166,7 +178,7 @@ export const ProductCategories: ProductCategory[] = [
     subcategories: [
       { name: "Dry", types: dryRedTypes, value: "Dry" },
       { name: "Sweet", types: sweetRedTypes, value: "Sweet" },
-      { name: "Semi Sweet", types: [], value: "Semi_Sweet" },
+      { name: "Semi Sweet", types: semiRedTypes, value: "Semi_Sweet" },
     ],
     value: "Red_Wine",
   },
@@ -175,7 +187,7 @@ export const ProductCategories: ProductCategory[] = [
     subcategories: [
       { name: "Dry", types: dryWhiteTypes, value: "Dry" },
       { name: "Sweet", types: sweetWhiteTypes, value: "Sweet" },
-      { name: "Semi Sweet", types: [], value: "Semi_Sweet" },
+      { name: "Semi Sweet", types: semiWhiteTypes, value: "Semi_Sweet" },
     ],
     value: "White_Wine",
   },
@@ -188,20 +200,22 @@ export const ProductCategories: ProductCategory[] = [
     value: "Sparkling_Wine",
   },
   {
-    name: "Blush Wines",
+    name: "Rose Wines",
     subcategories: [
-      { name: "Rose", types: [], value: "Rose" },
       { name: "Dry", types: [], value: "Dry" },
       { name: "Sweet", types: [], value: "Sweet" },
     ],
-    value: "Blush_Wine",
+    value: "Rose_Wine",
   },
   {
     name: "Other Wines",
     subcategories: [
-      { name: "Dessert", types: [], value: "Dessert" },
+      { name: "Dessert", types: dessertTypes, value: "Dessert" },
       { name: "Cooking", types: cookingTypes, value: "Cooking" },
       { name: "Vermouth", types: vermouthTypes, value: "Vermouth" },
+      { name: "Box Wine", types: [], value: "Box_Wine" },
+      { name: "Organic", types: [], value: "Organic"},
+      { name: "Low Calorie", types: [], value: "Low_Calorie" },
     ],
     value: "Other_Wine",
   },
@@ -216,6 +230,7 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Brandy", types: brandyTypes, value: "Brandy" },
       { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
       { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
+      {name: "Moonshine", types: [], value: "Moonshine"},
     ],
     value: "Liquor",
   }
