@@ -203,6 +203,9 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     onChange={(e) => setName(e.target.value)}
                     value={name}
                   />
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    i.e. {'\"'}Josh Red Blend{'\"'} or {'\"'}Recipe 21{'\"'}
+                  </div>
 
                   <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Classification</div>
 
@@ -289,6 +292,9 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
                     value={price}
                   />
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    i.e. {'\"'}19.99{'\"'} - No $ sign needed
+                  </div>
 
                   {/* Size Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
@@ -300,6 +306,9 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     onChange={(e) => setSize(e.target.value)}
                     value={size}
                   />
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
+                  </div>
 
                   {/* ABV Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">ABV</label>
@@ -315,6 +324,9 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     }}
                     value={abv ?? ""}
                   />
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    i.e. {'\"'}40{'\"'} - No % sign needed
+                  </div>
 
                   {/* Description Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
