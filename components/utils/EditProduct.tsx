@@ -20,6 +20,8 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
   const [subcategory, setSubcategory] = useState(product.subcategory);
   const [type, setType] = useState(product.type);
   const [imageUrl, setImageUrl] = useState(product.imageUrl);
+  const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
+  const [size, setSize] = useState(product.size);
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -83,6 +85,9 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
       subcategory: subcategory,
       type: type,
       imageUrl: imageUrl,
+      favorite: product.favorite,
+      abv: abv,
+      size: size,
     };
 
     if (product.id) {
@@ -180,6 +185,8 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                     value={name}
                   />
 
+                  <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Classification</div>
+
                   {/* Category Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Category</label>
                   <select
@@ -251,6 +258,8 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                         )))}
                   </select>
 
+                  <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
+
                   {/* Price Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
                   <input
@@ -263,6 +272,33 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                     value={price}
                   />
 
+                  {/* Size Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
+                  <input
+                    type="text"
+                    required
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="Size"
+                    onChange={(e) => setSize(e.target.value)}
+                    value={size}
+                  />
+
+                  {/* ABV Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">ABV</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="ABV"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setAbv(value === "" ? undefined : parseFloat(value));
+                    }}
+                    value={abv ?? ""}
+                  />
+
+                  {/* Description Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
                   <textarea
                     className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
@@ -271,6 +307,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                     value={description}
                   ></textarea>
 
+                  {/* Image Upload Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
                   <input
                     type="file"

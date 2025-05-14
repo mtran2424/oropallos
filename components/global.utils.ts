@@ -35,6 +35,8 @@ export interface Product {
   type: string;
   imageUrl?: string;
   favorite: boolean;
+  abv?: number;
+  size: string;
 }
 
 // CONSTANTS
@@ -259,9 +261,11 @@ export const productTableColumns = [
   { field: "id", label: "Product ID", width: "200px" },
   { field: "name", label: "Name", width: "200px" },
   { field: "price", label: "Price", width: "150px" },
+  { field: "size", label: "Size", width: "200px" },
+  { field: "abv", label: "ABV", width: "150px" },
   { field: "category", label: "Category", width: "200px" },
   { field: "subcategory", label: "Subcategory", width: "200px" },
   { field: "type", label: "Type", width: "250px" },
-  { field: "description", label: "Description", width: "400px" },
+  { field: "description", label: "Description", width: "10000px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
 ] as const;

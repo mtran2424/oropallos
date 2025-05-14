@@ -2,25 +2,28 @@ import { getFavorites } from "@/app/api/productapi";
 import { useEffect, useState } from "react";
 import { Product } from "@/components/global.utils";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
-import { useKeenSlider } from "keen-slider/react";
+import { motion } from "framer-motion";
 import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
+import { redirect } from "next/navigation";
 
 const FavoritesGallery = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [sliderRef, instanceRef] = useKeenSlider({
-    loop: true,
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel);
-    },
-    renderMode: "performance",
-    defaultAnimation: {
-      duration: 400,
-      easing: (t) => t,
-    },
-  });
+  const [current, setCurrent] = useState(0);
 
+  // Function to handle the previous and next button clicks
+  const prev = () => setCurrent((prev) => (prev - 1 + products.length) % products.length);
+  const next = () => setCurrent((prev) => (prev + 1) % products.length);
+
+  // Displaces product relative to the current product
+  const getPosition = (index: number) => {
+    const offset = index - current;
+    if (offset === 0) return 'center';
+    if (offset === -1 || (current === 0 && index === products.length - 1)) return 'left';
+    if (offset === 1 || (current === products.length - 1 && index === 0)) return 'right';
+    return 'hidden';
+  };
+
+  // Fetch products from the API when the component mounts
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -34,80 +37,98 @@ const FavoritesGallery = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-10 px-10">
-      <div className="flex flex-col w-full items-start justify-start max-w-6xl">
-        <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
-          Michelle{'\''}s Picks
-        </h1>
-        <p className="text-xl text-start text-zinc-500 font-serif">
-          Check out these favorites, curated by our owner and resident expert, Michelle Oropallo.
-        </p>
-      </div>
-
-      <div className="relative w-full flex items-center justify-center">
-        <button
-          onClick={() => instanceRef.current?.prev()}
-          className="absolute left-2 z-30 bg-white/80 hover:bg-white text-zinc-800 p-2 rounded-full shadow"
-        >
-          <CiSquareChevLeft size={32} />
-        </button>
-
-        <div ref={sliderRef} className="keen-slider w-full">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="keen-slider__slide relative h-full w-full flex items-center justify-center"
-            >
-              <div className="relative w-full aspect-[4/3] overflow-hidden group">
-                {product.imageUrl && (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-contain object-center z-0"
-                    priority
-                  />
-                )}
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  key={product.id}
-                  className="absolute bottom-0 z-20 flex flex-col items-center w-full font-serif"
-                >
-                  <div className="text-zinc-800 p-8 w-full text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">{product.name}</h2>
-                    <p className="mb-6 text-2xl">{product.description}</p>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          ))}
+    <div className="flex flex-col items-center justify-center px-10">
+      {products.length > 0 ? <div>
+        <div className="flex flex-col w-full items-start justify-start max-w-6xl">
+          <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
+            Michelle{'\''}s Picks
+          </h1>
+          <p className="text-xl text-start text-zinc-500 font-serif">
+            Check out these favorites, curated by our owner and resident expert, Michelle Oropallo.
+          </p>
         </div>
 
-        <button
-          onClick={() => instanceRef.current?.next()}
-          className="absolute right-2 z-30 bg-white/80 hover:bg-white text-zinc-800 p-2 rounded-full shadow"
-        >
-          <CiSquareChevRight size={32} />
-        </button>
-      </div>
+        {/* Carousel */}
+        <div className="relative w-full flex items-center justify-center overflow-hidden">
+          {/* Prev arrow */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            onClick={prev}
+            className="absolute left-0 z-10 p-2"
+          >
+            <CiSquareChevLeft size={30} />
+          </motion.button>
 
-      <div className="flex items-center gap-2 z-30 mt-4">
-        {products.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => instanceRef.current?.moveToIdx(i)}
-            className={`h-3 w-3 rounded-full transition-transform duration-200 ${
-              currentSlide === i ? "bg-zinc-800 scale-125" : "bg-gray-400"
-            }`}
-          />
-        ))}
-      </div>
+          <div className="flex items-center justify-center w-full h-[70vh] gap-4">
+            {products.map((product, index) => {
+              const position = getPosition(index);
+              let scale = 0.8;
+              let opacity = 0.3;
+              let zIndex = 0;
+              let x = '0%';
+
+              if (position === 'center') {
+                scale = 1;
+                opacity = 1;
+                zIndex = 10;
+                x = '0%';
+              } else if (position === 'left') {
+                x = '-100%';
+                zIndex = 5;
+              } else if (position === 'right') {
+                x = '100%';
+                zIndex = 5;
+              } else {
+                opacity = 0;
+              }
+
+              return (
+                <motion.div
+                  key={index}
+                  className="absolute flex flex-col items-center justify-center w-64 font-serif"
+                  animate={{ scale, opacity, x, zIndex }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                >
+                  <div className="relative w-60 h-80">
+                    {product.imageUrl && <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-contain"
+                    />}
+                  </div>
+                  <h1 className="mt-4 text-lg font-semibold text-zinc-800">{product.name}</h1>
+
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                    className="mt-2 px-4 py-2 text-white bg-red-900 border-1 border-red-900 rounded-full hover:bg-white hover:text-red-900 transition duration-300 ease-in-out"
+                    onClick={() => {
+                      redirect(`/products/${product.id}`);
+                    }}
+                  >
+                    View Product
+                  </motion.button>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Next arrow */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            onClick={next}
+            className="absolute right-0 z-10 p-2">
+            <CiSquareChevRight size={30} />
+          </motion.button>
+        </div>
+
+      </div> : <></>}
     </div>
   );
 };

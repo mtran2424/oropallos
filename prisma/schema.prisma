@@ -51,6 +51,8 @@ model Product {
   category    ProductCategory
   subcategory ProductSubcategory
   type        String?
+  abv        Float?
+  size       String @default("750mL")
 
   price    Float
   imageUrl String?

@@ -17,6 +17,8 @@ export async function GET() {
         type: true,
         imageUrl: true,
         favorite: true,
+        abv: true,
+        size: true,
       },
     });
 

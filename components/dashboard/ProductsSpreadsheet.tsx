@@ -159,6 +159,10 @@ const ProductsSpreadsheet = () => {
             /> :
             product.imageUrl
         );
+      case "abv":
+        return product.abv ? `${product.abv}%` : "N/A";
+      case "size":
+        return product.size;
       default:
         return null;
     }

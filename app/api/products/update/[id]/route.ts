@@ -29,7 +29,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: 'Product not found' }, { status: 404 });
     }
 
-    const { name, description, price, category, subcategory, type } = await req.json();
+    const { name, description, price, category, subcategory, type, abv, favorite, imageUrl, size } = await req.json();
 
     // API call to update the product in the database
     const product = await db.product.update({
@@ -40,7 +40,11 @@ export async function PUT(req: NextRequest) {
         price,
         category,
         subcategory,
-        type
+        type,
+        favorite,
+        imageUrl,
+        abv,
+        size,
       },
     });
 

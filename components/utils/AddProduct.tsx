@@ -19,6 +19,8 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
   const [subcategory, setSubcategory] = useState("");
   const [type, setType] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [abv, setAbv] = useState<number | undefined>(undefined);
+  const [size, setSize] = useState("750mL");
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,7 +70,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
     e.preventDefault();
 
     // Validate input fields
-    if (!name || !price || !category || !subcategory) {
+    if (!name || !price || !category || !subcategory || !size) {
       alert(`Please fill in all required fields.`);
       return;
     }
@@ -81,7 +83,10 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
       category: category,
       subcategory: subcategory,
       type: type,
-      imageUrl: imageUrl
+      imageUrl: imageUrl,
+      favorite: false,
+      abv: abv,
+      size: size,
     };
 
     // Send the product data to the backend API to create a new product
@@ -94,7 +99,10 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
           price: price,
           category: category,
           subcategory: subcategory,
-          type: type
+          type: type,
+          abv: abv,
+          favorite: false,
+          size: size,
         });
       }).then(() => {
         // Show success message
@@ -107,6 +115,9 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
         setSubcategory("");
         setType("");
         setDescription("");
+        setImageUrl("");
+        setAbv(0);
+        setSize("750mL");
 
         // Close the modal after submission
         setAdd(false);
@@ -193,6 +204,8 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     value={name}
                   />
 
+                  <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Classification</div>
+
                   {/* Category Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Category</label>
                   <select
@@ -238,8 +251,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                           <option key={index} value={subcategory.value}>
                             {subcategory.name}
                           </option>
-                        ))
-                    )
+                        )))
                     }
                   </select>
 
@@ -264,6 +276,8 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                         )))}
                   </select>
 
+                  <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
+
                   {/* Price Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
                   <input
@@ -276,6 +290,33 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     value={price}
                   />
 
+                  {/* Size Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
+                  <input
+                    type="text"
+                    required
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="Size"
+                    onChange={(e) => setSize(e.target.value)}
+                    value={size}
+                  />
+
+                  {/* ABV Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">ABV</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="ABV"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setAbv(value === "" ? undefined : parseFloat(value));
+                    }}
+                    value={abv ?? ""}
+                  />
+
+                  {/* Description Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
                   <textarea
                     className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
@@ -283,13 +324,14 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
 
+                  {/* Image Upload Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 transition-all duration-200 ease-in-out"
-                    />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 transition-all duration-200 ease-in-out"
+                  />
                   <label className="text-md font-semibold text-gray-600 w-full text-left px-2">Image Preview:</label>
                   {imageUrl && (
                     <div className="relative inline-block px-2">
