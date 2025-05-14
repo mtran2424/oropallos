@@ -315,6 +315,19 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                     onChange={handleImageUpload}
                     className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
                   />
+                  <div className="text-md font-semibold text-zinc-500 w-full text-left px-4">or</div>
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">URL</label>
+                  <input
+                    type="text"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="Size"
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    value={imageUrl}
+                  />
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    Please use only use URL field for reused images from cloudinary. Preexisting URLs can be found under image in spreadsheet. 
+                    Duplicate image uploads get expensive quickly.
+                  </div>
                   {imageUrl && (
                     <div className="relative inline-block px-2">
                       <motion.button

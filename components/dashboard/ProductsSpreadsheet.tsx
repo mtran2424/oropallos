@@ -151,12 +151,23 @@ const ProductsSpreadsheet = () => {
       case "imageUrl":
         return (
           product.imageUrl ?
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              width={400}
-              height={400}
-            /> :
+            <>
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                width={400}
+                height={400}
+              />
+              <a
+                href={product.imageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 font-serif underline-animate break-all truncate max-w-full block"
+              >
+                {product.imageUrl}
+              </a>
+            </>
+            :
             product.imageUrl
         );
       case "abv":
@@ -335,9 +346,9 @@ const ProductsSpreadsheet = () => {
           <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}
-            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "1500px" }}>
+            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
               {/* Table Headers */}
-              <thead className="sticky top-0 bg-white">
+              <thead className="sticky top-0 bg-white z-50">
                 <tr>
                   {productTableColumns.map((column) => (
                     <th
@@ -400,9 +411,9 @@ const ProductsSpreadsheet = () => {
                           className="text-center"
                           onClick={() => handleFavoriteToggle(product.id || "", product)}
                         >
-                          {product.favorite ? 
-                          <MdFavorite size={40} className="text-red-500 hover:text-red-400 transition duration-200 ease-in-out" /> : 
-                          <MdFavorite size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out"/>}
+                          {product.favorite ?
+                            <MdFavorite size={40} className="text-red-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
+                            <MdFavorite size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
                         </motion.button>
                       </td>
 
