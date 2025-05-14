@@ -9,6 +9,7 @@ import EditProduct from "../utils/EditProduct";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
+import CopyButton from "../ui/CopyButton";
 
 const PRODUCTS_PER_PAGE = 15;
 
@@ -143,11 +144,15 @@ const ProductsSpreadsheet = () => {
       case "type":
         return product.type;
       case "description":
-        return <textarea
-          readOnly
-          className="w-full border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={product.description}
-        ></textarea>
+        return (
+          <div>
+            <textarea
+              readOnly
+              className="w-full h-[200px] border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={product.description}
+            ></textarea>
+            {product.description && <CopyButton text={product.description} />}
+          </div>)
       case "imageUrl":
         return (
           product.imageUrl ?
@@ -166,6 +171,7 @@ const ProductsSpreadsheet = () => {
               >
                 {product.imageUrl}
               </a>
+              <CopyButton text={product.imageUrl} />
             </>
             :
             product.imageUrl

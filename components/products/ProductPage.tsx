@@ -7,6 +7,9 @@ import { getProduct } from "@/app/api/productapi";
 import Image from "next/image";
 import { FaChevronRight, FaWineBottle } from "react-icons/fa";
 import { MdWaterDrop } from "react-icons/md";
+import { CiImageOff } from "react-icons/ci";
+import RelatedProducts from "./RelevantProducts";
+import { useRouter } from "next/navigation";
 
 const MAX_DESC_LENGTH = 200;
 
@@ -16,6 +19,8 @@ const ProductPage = () => {
   // Get the product ID from the URL
   const params = useParams();
   const id = params.id as string;
+
+  const router = useRouter();
 
   // Manage the state of the description expansion
   const [isDescExpanded, setIsDescExpanded] = useState(false);
@@ -74,9 +79,10 @@ const ProductPage = () => {
                     whileTap={{ scale: 0.9 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                     onClick={() => {
+                      router.push(`/products?category=${product.category}`);
                     }}
                   >
-                    {product?.category}
+                    {product?.category.split("_").join(" ")}
                   </motion.button>
                 </motion.div>
               }
@@ -100,9 +106,10 @@ const ProductPage = () => {
                     whileTap={{ scale: 0.9 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                     onClick={() => {
+                      router.push(`/products?category=${product.category}&subcategory=${product.subcategory}`);
                     }}
                   >
-                    {product.subcategory}
+                    {product.subcategory.split("_").join(" ")}
                   </motion.button>
                 </motion.div>
               }
@@ -118,9 +125,12 @@ const ProductPage = () => {
                   exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                   className="flex flex-row items-center"
+                  onClick={() => {
+                    router.push(`/products?category=${product.category}&subcategory=${product.subcategory}&type=${product.type}`);
+                  }}
                 >
                   <FaChevronRight className="mx-2" />
-                  {product.type}
+                  {product.type.split("_").join(" ")}
                 </motion.div>
               }
             </AnimatePresence>
@@ -139,22 +149,28 @@ const ProductPage = () => {
         </div>
 
         {/* Product Image and Content */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 px-10 w-full h-full max-w-7xl">
+        <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 w-full h-full max-w-7xl">
           {/* Image */}
-          {product && product.imageUrl &&
-            <div className="relative w-full h-200 font-serif text-zinc-400 min-w-[300px]">
-              <Image
-                src={product.imageUrl}
-                alt={product.name + " image"}
-                fill
-                className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full"
-              />
-              Disclaimer: Actual product may vary from image.
-            </div>
-          }
+          <div className="flex flex-col w-full items-center font-serif text-zinc-400 ">
+            {product && product.imageUrl ?
+              <div className="relative w-full h-200 min-w-[300px]">
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name + " image"}
+                  fill
+                  className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full"
+                />
+              </div>
+              :
+              <div className="w-full h-full flex items-center justify-center bg-zinc-100 rounded-lg min-h-[300px]">
+                <CiImageOff size={200} className="text-zinc-400" />
+              </div>
+            }
+            Disclaimer: Actual product may vary from image.
+          </div>
 
           {/* Product Content */}
-          <div className="flex flex-col items-start justify-start w-full h-full space-y-4">
+          <div className="flex flex-col items-start justify-start w-full h-full gap-10">
 
             {/* Description Logic */}
             <div>
@@ -190,24 +206,35 @@ const ProductPage = () => {
                 </motion.button>}
             </div>
 
-            <p className="text-2xl font-sans text-red-900">${product?.price.toFixed(2)} USD</p>
-            <p className="text-xl font-serif text-zinc-500">Size: {product?.size}</p>
+            {/* Price and sizing */}
+            <div>
+              <p className="text-2xl font-sans text-red-900">${product?.price.toFixed(2)} USD</p>
+              <p className="text-xl font-serif text-zinc-500">Size: {product?.size}</p>
+            </div>
 
-
-            <h1 className="text-2xl font-sans text-left text-red-900">Product Details</h1>
             {/* Details */}
-            <p className="text-lg font-serif text-zinc-500">
-              <FaWineBottle className="inline-block mr-2" />
-              {product?.category}/
-              {product?.subcategory}
-              {product?.type ? "/" + product?.type : ""}
-            </p>
-            <p className="text-lg font-serif text-zinc-500">
-              <MdWaterDrop  className="inline-block mr-2" />
-              {product?.abv ? `ABV: ${product?.abv.toFixed(1)}%` : "ABV: Not Available"}
-            </p>
+            <div>
+              <h1 className="text-xl font-sans text-left text-red-900">Product Details</h1>
+              <p className="text-lg font-serif text-zinc-500">
+                <FaWineBottle className="inline-block mr-2" />
+                {product?.category.split("_").join(" ")}/
+                {product?.subcategory.split("_").join(" ")}
+                {product?.type ? "/" + product?.type.split("_").join(" ") : ""}
+              </p>
+              <p className="text-lg font-serif text-zinc-500">
+                <MdWaterDrop className="inline-block mr-2" />
+                {product?.abv ? `ABV: ${product?.abv.toFixed(1)}%` : "ABV: Not Available"}
+              </p>
+            </div>
+
           </div>
+
         </div>
+
+        {/* Related Products Section */}
+        {product &&
+          <RelatedProducts currentProduct={product} />
+        }
       </div>
     </motion.div>
   );

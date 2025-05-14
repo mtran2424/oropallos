@@ -6,14 +6,25 @@ import { useEffect, useMemo, useState } from "react";
 import Collection from "./Collection";
 import { getProducts } from "@/app/api/productapi";
 import { IoMdClose } from "react-icons/io";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Products component - Displays a list of products with filters for categories, subcategories, and types
 const Products = () => {
-  const [currentCategory, setCurrentCategory] = useState<ProductCategory>();
-  const [currentSubcategory, setCurrentSubcategory] = useState<ProductSubcategory>();
-  const [currentType, setCurrentType] = useState<string>("");
-  const [expandedCategory, setExpandedCategory] = useState<boolean>(false);
-  const [expandedSubcategory, setExpandedSubcategory] = useState<boolean>(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const categoryParam = searchParams.get("category");
+  const subcategoryParam = searchParams.get("subcategory");
+  const typeParam = searchParams.get("type");
+
+  const [currentCategory, setCurrentCategory] = useState<ProductCategory | undefined>(
+    categoryParam ? ProductCategories.find((cat) => cat.value === categoryParam) : undefined
+  );
+  const [currentSubcategory, setCurrentSubcategory] = useState<ProductSubcategory | undefined>(
+    categoryParam && subcategoryParam ? ProductCategories.find((cat) => cat.value === categoryParam)?.subcategories.find((subcat) => subcat.value === subcategoryParam) : undefined
+  );
+  const [currentType, setCurrentType] = useState<string>(typeParam || "");
+  const [expandedCategory, setExpandedCategory] = useState<boolean>(categoryParam ? true : false);
+  const [expandedSubcategory, setExpandedSubcategory] = useState<boolean>(subcategoryParam ? true : false);
   const [seeMoreCategories, setSeeMoreCategories] = useState<boolean>(false);
   const [seeMoreTypes, setSeeMoreTypes] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,10 +33,10 @@ const Products = () => {
   // Apply filters and products
   const filteredProducts = useMemo(() => {
     const filtered = products.filter((product) => {
-      if (currentCategory && product.category !== currentCategory.name) {
+      if (currentCategory && product.category !== currentCategory.value) {
         return false;
       }
-      if (currentSubcategory && product.subcategory !== currentSubcategory.name) {
+      if (currentSubcategory && product.subcategory !== currentSubcategory.value) {
         return false;
       }
       if (currentType && product.type !== currentType) {
@@ -63,34 +74,6 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  // Reset subcategory and type and collapse children filters when a new category is selected
-  useEffect(() => {
-    if (currentCategory) {
-      setCurrentSubcategory(undefined);
-      setExpandedCategory(true);
-      setCurrentType("");
-    }
-    else {
-      // Reset all states when no category is selected
-      setCurrentSubcategory(undefined);
-      setExpandedCategory(false);
-      setCurrentType("");
-    }
-  }, [currentCategory]);
-
-  // Reset type and collapse subcategory when a new subcategory is selected
-  useEffect(() => {
-    if (currentSubcategory) {
-      setExpandedSubcategory(true);
-      setCurrentType("");
-    }
-    else {
-      // Reset all states when no category is selected
-      setExpandedSubcategory(false);
-      setCurrentType("");
-    }
-  }, [currentSubcategory]);
-
   //Ensure that the menu is closed when the window is resized
   useEffect(() => {
     const handleResize = () => {
@@ -124,9 +107,17 @@ const Products = () => {
               onClick={() => {
                 if (currentCategory?.name === category.name) {
                   setCurrentCategory(undefined);
+                  setExpandedCategory(false);
+                  const currentPath = window.location.pathname;
+                  router.push(currentPath)
                 } else {
                   setCurrentCategory(category);
+                  setExpandedCategory(true);
+                  router.push(`/products?category=${category.value}`);
                 }
+                setCurrentSubcategory(undefined)
+                setExpandedSubcategory(false);
+                setCurrentType("")
               }}
               className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center"
             >
@@ -146,6 +137,11 @@ const Products = () => {
             onClick={() => {
               setSeeMoreCategories(!seeMoreCategories);
               setCurrentCategory(undefined);
+              setCurrentSubcategory(undefined)
+              setExpandedSubcategory(false);
+              setCurrentType("")
+              const currentPath = window.location.pathname;
+              router.push(currentPath)
             }}
             className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
           >
@@ -188,11 +184,17 @@ const Products = () => {
                       // Unselect subcategory if already selected
                       if (currentSubcategory && currentSubcategory.name === subcategory.name) {
                         setCurrentSubcategory(undefined);
+                        setExpandedSubcategory(false);
+                        router.push(`/products?category=${currentCategory.value}`);
                       }
                       else {
                         // Expand subcategory if not already selected
                         setCurrentSubcategory(subcategory);
+                        setExpandedSubcategory(true);
+                        router.push(`/products?category=${currentCategory.value}&subcategory=${subcategory.value}`);
                       }
+
+                      setCurrentType("");
                     }}
                     className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
                   >
@@ -216,7 +218,9 @@ const Products = () => {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   onClick={() => {
                     setSeeMoreTypes(!seeMoreTypes);
+                    router.push(`/products?category=${currentCategory.value}`);
                     setCurrentSubcategory(undefined);
+                    setExpandedSubcategory(false);
                   }}
                   className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
                 >
@@ -250,7 +254,7 @@ const Products = () => {
               w-full items-start justify-center px-5 mt-2`}
             >
               {/* If liquor subcategory is selected, show liquor subtypes */}
-              {currentSubcategory && currentSubcategory.types
+              {currentCategory && currentSubcategory && currentSubcategory.types
                 .map((type, index) => (
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -260,10 +264,12 @@ const Products = () => {
                     onClick={() => {
                       // Logic to handle type filter
                       if (currentType === type.name) {
+                        router.push(`/products?category=${currentCategory.value}&subcategory=${currentSubcategory}`);
                         setCurrentType("");
                       }
                       else {
-                        setCurrentType(type.name);
+                        router.push(`/products?category=${currentCategory.value}&subcategory=${currentSubcategory}&type=${type}`);
+                        setCurrentType(type.value);
                       }
                     }}
                     className="col-span-4 text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
@@ -304,6 +310,12 @@ const Products = () => {
                   setCurrentCategory(undefined);
                   setCurrentSubcategory(undefined);
                   setCurrentType("");
+
+                  setExpandedCategory(false)
+                  setExpandedSubcategory(false);
+                  const currentPath = window.location.pathname;
+                  router.push(currentPath);
+
                 }}
               >
                 Products
@@ -326,8 +338,11 @@ const Products = () => {
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.2, ease: "easeInOut" }}
                       onClick={() => {
+                        router.push(`/products?category=${currentCategory.value}`)
                         setCurrentSubcategory(undefined);
                         setCurrentType("");
+
+                        setExpandedSubcategory(false);
                       }}
                     >
                       {currentCategory?.name}
@@ -338,7 +353,7 @@ const Products = () => {
 
               {/* Subcategories - Flavor Profiles, liquor types, etc... */}
               <AnimatePresence mode="wait">
-                {currentSubcategory &&
+                { currentCategory && currentSubcategory &&
                   <motion.div
                     key={currentSubcategory.name}
                     initial={{ opacity: 0, x: -50 }}
@@ -355,6 +370,7 @@ const Products = () => {
                       transition={{ duration: 0.2, ease: "easeInOut" }}
                       onClick={() => {
                         setCurrentType("");
+                        router.push(`/products?category=${currentCategory.value}&subcategory=${currentSubcategory.value}`)
                       }}
                     >
                       {currentSubcategory?.name}
@@ -375,7 +391,7 @@ const Products = () => {
                     className="flex flex-row items-center"
                   >
                     <FaChevronRight className="mx-2" />
-                    {currentType}
+                    {currentType.split("_").join(" ")}
                   </motion.div>
                 }
               </AnimatePresence>
