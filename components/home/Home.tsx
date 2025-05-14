@@ -23,7 +23,7 @@ const Home = () => {
       <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-20">
         {/* Intro Section */}
         <div className="flex flex-col w-full items-start justify-start px-10 max-w-6xl">
-          <h1 className="text-2xl sm:text-4xl font-sans text-center sm:text-start text-red-900 mb-4">
+          <h1 className="text-2xl sm:text-4xl font-sans text-start text-red-900 mb-4">
             Welcome to {`Oropallo\'s Discount Wine & Liquor`}
           </h1>
           <p className="text-xl text-start text-zinc-500 font-serif">
@@ -148,7 +148,7 @@ const Home = () => {
               We offer curbside and in-store pickup, so you can shop your way.
               Plus, we have a wide range of chilled wines and cocktails, so you can enjoy your drinks right away!
             </p>
-            <div className="grid grid-cols-3 w-full items-start justify-center gap-10 p-5 text-center font-serif text-zinc-600">
+            <div className="grid grid-cols-1 md:grid-cols-3 w-full items-start justify-center gap-10 p-5 text-center font-serif text-zinc-600">
               <div className="flex flex-col items-center gap-2 justify-start">
                 <BiSolidDiscount size={70} className="text-zinc-400" />
                 <div>Unbelievably low prices</div>
