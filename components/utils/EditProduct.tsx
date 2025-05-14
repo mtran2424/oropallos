@@ -141,7 +141,7 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
         whileTap={{ scale: 0.9 }}
         className="text-xl text-blue-500 hover:text-blue-400 p-1"
         onClick={openEventModal}>
-        <MdModeEditOutline size={25} />
+        <MdModeEditOutline size={30} />
       </motion.button>
 
       {/* Modal for adding event */}
@@ -332,12 +332,15 @@ const EditProduct = ({ product, onEditProduct }: { product: Product, onEditProdu
                   <input
                     type="text"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="Size"
+                    placeholder="URL"
                     onChange={(e) => setImageUrl(e.target.value)}
                     value={imageUrl}
                   />
-                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-                    Please use only use URL field for reused images from cloudinary. Preexisting URLs can be found under image in spreadsheet.
+                  <div className="text-sm font-medium text-zinc-500 text-left px-4 break-words">
+                    Please only use the URL field for reused images from Cloudinary.
+                    <br />
+                    Preexisting URLs can be found under the image column in the spreadsheet.
+                    <br />
                     Duplicate image uploads get expensive quickly.
                   </div>
                   {imageUrl && (

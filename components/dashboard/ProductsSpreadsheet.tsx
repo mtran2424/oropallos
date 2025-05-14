@@ -155,8 +155,8 @@ const ProductsSpreadsheet = () => {
               <Image
                 src={product.imageUrl}
                 alt={product.name}
-                width={400}
-                height={400}
+                width={300}
+                height={300}
               />
               <a
                 href={product.imageUrl}
@@ -432,7 +432,7 @@ const ProductsSpreadsheet = () => {
                           className="text-center text-red-500 hover:text-red-400"
                           onClick={() => handleDeleteProduct(product.id || "")}
                         >
-                          <MdDelete size={25} />
+                          <MdDelete size={30} />
                         </motion.button>
 
                         {/* Edit Product Button */}

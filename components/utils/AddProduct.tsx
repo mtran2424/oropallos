@@ -173,7 +173,7 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
               exit={{ opacity: 0, x: "100%" }}
               transition={{ duration: 0.3 }}
               ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-auto border-1 border-zinc-500"
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border-1 border-zinc-500"
             >
               {/* Modal Header */}
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Add Product</h3>
@@ -349,12 +349,15 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                   <input
                     type="text"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="Size"
+                    placeholder="URL"
                     onChange={(e) => setImageUrl(e.target.value)}
                     value={imageUrl}
                   />
-                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-                    Please use only use URL field for reused images from cloudinary. Preexisting URLs can be found under image in spreadsheet.
+                  <div className="text-sm font-medium text-zinc-500 text-left px-4 break-words">
+                    Please only use the URL field for reused images from Cloudinary.
+                    <br />
+                    Preexisting URLs can be found under the image column in the spreadsheet.
+                    <br />
                     Duplicate image uploads get expensive quickly.
                   </div>
                   {imageUrl && (
