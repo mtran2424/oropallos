@@ -11,7 +11,7 @@ const Collection = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [sortOption, setSortOption] = useState("name-asc");
+  const [sortOption, setSortOption] = useState("popular");
 
   // Search + Sort
   const sortedAndFilteredProducts = useMemo(() => {
@@ -36,6 +36,14 @@ const Collection = ({ products }: { products: Product[] }) => {
       case "price-desc":
         sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
+      case "popular":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
+          return dateB.getTime() - dateA.getTime();
+        })
+        break;
+
     }
 
     return sorted;
@@ -122,6 +130,7 @@ const Collection = ({ products }: { products: Product[] }) => {
             onChange={handleSortChange}
             className="border border-gray-300 rounded px-3 py-2 text-sm"
           >
+            <option value="popular">Most Popular</option>
             <option value="name-asc">Name (A-Z)</option>
             <option value="name-desc">Name (Z-A)</option>
             <option value="price-asc">Price (Low → High)</option>

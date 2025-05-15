@@ -17,10 +17,13 @@ const Products = () => {
   const typeParam = searchParams.get("type");
 
   const [currentCategory, setCurrentCategory] = useState<ProductCategory | undefined>(
-    categoryParam ? ProductCategories.find((cat) => cat.value === categoryParam) : undefined
+    categoryParam ? ProductCategories
+    .find((cat) => cat.value === categoryParam) : undefined
   );
   const [currentSubcategory, setCurrentSubcategory] = useState<ProductSubcategory | undefined>(
-    categoryParam && subcategoryParam ? ProductCategories.find((cat) => cat.value === categoryParam)?.subcategories.find((subcat) => subcat.value === subcategoryParam) : undefined
+    categoryParam && subcategoryParam ? ProductCategories
+    .find((cat) => cat.value === categoryParam)?.subcategories
+    .find((subcat) => subcat.value === subcategoryParam) : undefined
   );
   const [currentType, setCurrentType] = useState<string>(typeParam || "");
   const [expandedCategory, setExpandedCategory] = useState<boolean>(categoryParam ? true : false);
