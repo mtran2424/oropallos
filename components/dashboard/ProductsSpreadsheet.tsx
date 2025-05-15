@@ -41,6 +41,7 @@ const ProductsSpreadsheet = () => {
 
     // Choose sorting method
     const sorted = [...filtered];
+    
     switch (sortOption) {
       case "name-asc":
         sorted.sort((a, b) => a.name.localeCompare(b.name));
@@ -53,6 +54,20 @@ const ProductsSpreadsheet = () => {
         break;
       case "price-desc":
         sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+      case "newest-oldest":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
+          return dateA.getTime() - dateB.getTime();
+        });
+        break;
+        case "oldest-newest":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
+          return dateB.getTime() - dateA.getTime();
+        })
         break;
     }
 
@@ -75,7 +90,6 @@ const ProductsSpreadsheet = () => {
   const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, sortedAndFilteredProducts.length);
   const currentProducts = sortedAndFilteredProducts.slice(startIdx, endIdx);
-
 
   // Refresh product list when a new product is added
   const handleAddProduct = (product: Product) => {
@@ -331,7 +345,7 @@ const ProductsSpreadsheet = () => {
         </div>
 
         <div className="flex flex-row w-full whitespace-nowrap">
-          <AddProduct onAddProduct={handleAddProduct} />
+          <AddProduct onAddProduct={handleAddProduct} products={products} />
           {/* Sort Dropdown */}
           <div className="flex justify-end w-full">
             <select
@@ -343,6 +357,8 @@ const ProductsSpreadsheet = () => {
               <option value="name-desc">Name (Z-A)</option>
               <option value="price-asc">Price (Low → High)</option>
               <option value="price-desc">Price (High → Low)</option>
+              <option value="newest-oldest">Date (Oldest → Newest)</option>
+              <option value="oldest-newest">Date (Newest → Oldest)</option>
             </select>
           </div>
         </div>
@@ -442,7 +458,7 @@ const ProductsSpreadsheet = () => {
                         </motion.button>
 
                         {/* Edit Product Button */}
-                        <EditProduct product={product} onEditProduct={handleEditProduct} />
+                        <EditProduct product={product} onEditProduct={handleEditProduct} products={products} />
                       </td>
 
                     </tr>

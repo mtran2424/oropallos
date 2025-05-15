@@ -5,7 +5,7 @@ import { Product } from "@/components/global.utils";
 import { FaSearch } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 
-const PRODUCTS_PER_PAGE = 25;
+const PRODUCTS_PER_PAGE = 24;
 
 const Collection = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -71,9 +71,9 @@ const Collection = ({ products }: { products: Product[] }) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              onClick={() => { 
-                setIsOpen(false); 
-                setSearchTerm(""); 
+              onClick={() => {
+                setIsOpen(false);
+                setSearchTerm("");
               }}
               className="text-gray-600 p-2 focus:outline-none"
             >
@@ -138,7 +138,7 @@ const Collection = ({ products }: { products: Product[] }) => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 py-8 max-w-7xl w-full"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 py-8 max-w-7xl w-full"
         >
           {currentProducts.map((product, index) => (
             <ProductCard key={index} product={product} />
@@ -153,29 +153,39 @@ const Collection = ({ products }: { products: Product[] }) => {
 
       {/* Pagination */}
       <div className="flex items-center space-x-2 mb-8">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
           disabled={currentPage === 1}
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className={`px-4 py-2 rounded ${currentPage === 1
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-600"
-            }`}
+          className={`px-4 py-2 rounded-full
+            border-1 border-red-900 
+            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
+            text-white disabled:text-white hover:text-red-900
+            transition-colors ease-in-out
+            disabled:cursor-not-allowed disabled:opacity-50`}
         >
           Prev
-        </button>
+        </motion.button>
         <span className="text-lg font-medium">
           Page {currentPage} of {totalPages}
         </span>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className={`px-4 py-2 rounded ${currentPage === totalPages
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-600"
-            }`}
+          className={`px-4 py-2 rounded-full
+            border-1 border-red-900 
+            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
+            text-white disabled:text-white hover:text-red-900
+            transition-colors ease-in-out
+            disabled:cursor-not-allowed disabled:opacity-50`}
         >
           Next
-        </button>
+        </motion.button>
       </div>
     </div>
   );

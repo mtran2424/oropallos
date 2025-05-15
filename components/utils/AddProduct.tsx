@@ -7,7 +7,10 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 
 // This component is a button that opens a modal for adding a product
-const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void; }) => {
+const AddProduct = ({ onAddProduct, products }: {
+  onAddProduct: (product: Product) => void;
+  products: Product[]
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [add, setAdd] = useState(false);
 
@@ -21,6 +24,31 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
   const [imageUrl, setImageUrl] = useState("");
   const [abv, setAbv] = useState<number | undefined>(undefined);
   const [size, setSize] = useState("750mL");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (name.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    const productNames = [
+      ...new Set(products.map((product) => product.name))
+    ]
+
+    // Example local filtering. Replace with API fetch if needed.
+    const matches = productNames.filter((product) =>
+      product.toLowerCase().includes(name.toLowerCase())
+    );
+    setSuggestions(matches);
+    setShowSuggestions(true);
+  }, [name, products]);
+
+  const handleSelectSuggestion = (suggestedName: string) => {
+    setName(suggestedName);
+    setShowSuggestions(false);
+  };
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -192,17 +220,40 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
               {/* Form for adding event */}
               <div className="mt-6 w-full border-t-1 border-zinc-500 text-sm sm:text-md rounded-lg p-4">
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-
                   {/* Name Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Product Name</label>
-                  <input
-                    type="text"
-                    required
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      required
+                      className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out w-full"
+                      placeholder="Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      onFocus={() => name.length >= 2 && setShowSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // delay to allow click
+                    />
+                    {showSuggestions && suggestions.length > 0 && (
+                      // Suggestions dropdown
+                      <motion.ul
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
+                      >
+                        {suggestions.map((suggestion, idx) => (
+                          <motion.li
+                            key={idx}
+                            className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
+                            onClick={() => handleSelectSuggestion(suggestion)}
+                          >
+                            {suggestion}
+                          </motion.li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </div>
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
                     i.e. {'\"'}Josh Red Blend{'\"'} or {'\"'}Recipe 21{'\"'}
                   </div>
@@ -354,11 +405,11 @@ const AddProduct = ({ onAddProduct }: { onAddProduct: (product: Product) => void
                     value={imageUrl}
                   />
                   <div className="text-sm font-medium text-zinc-500 text-left px-4 break-words">
-                    Please only use the URL field for reused images from Cloudinary.
+                    Please only use the URL field for reused images from Cloudinary. Preexisting 
                     <br />
-                    Preexisting URLs can be found under the image column in the spreadsheet.
+                    URLs can be found under the image column in the spreadsheet. Duplicate 
                     <br />
-                    Duplicate image uploads get expensive quickly.
+                    image uploads get expensive eventually.
                   </div>
                   {imageUrl && (
                     <div className="relative inline-block px-2">

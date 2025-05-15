@@ -10,7 +10,7 @@ import CansAisle from "@/components/assets/photos/cans-aisle.jpg";
 import RecipeDisplay from "@/components/assets/photos/recipe-display.jpg";
 import ChampageShelf from "@/components/assets/photos/champagne-shelf.jpg";
 import RtdShelf from "@/components/assets/photos/rtd-shelf.jpg";
-import WesTasting from "@/components/assets/photos/wes-tasting.png";
+import WesTasting from "@/components/assets/photos/wes-tasting.jpg";
 
 const slides = [
   {
@@ -86,7 +86,7 @@ const HomeGallery = () => {
                 src={slide.image}
                 alt={slide.alt || ""}
                 fill
-                className="object-cover object-center transform scale-110 group-hover:scale-100 transition-transform duration-700 ease-out z-0"
+                className="object-cover object-center transform scale-105 group-hover:scale-100 transition-transform duration-700 ease-out z-0"
                 priority
               />
             </div>

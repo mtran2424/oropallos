@@ -151,14 +151,14 @@ const ProductPage = () => {
         {/* Product Image and Content */}
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 w-full h-full max-w-7xl">
           {/* Image */}
-          <div className="flex flex-col w-full items-center font-serif text-zinc-400 ">
+          <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-10">
             {product && product.imageUrl ?
-              <div className="relative w-full h-200 min-w-[300px]">
+              <div className="relative w-full h-200 min-w-[300px] min-h-[300px]">
                 <Image
                   src={product.imageUrl}
                   alt={product.name + " image"}
                   fill
-                  className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full"
+                  className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full p-5"
                 />
               </div>
               :

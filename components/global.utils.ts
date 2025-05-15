@@ -37,6 +37,7 @@ export interface Product {
   favorite: boolean;
   abv?: number;
   size: string;
+  createdAt?: Date;
 }
 
 // CONSTANTS
