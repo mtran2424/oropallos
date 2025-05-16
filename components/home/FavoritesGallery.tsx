@@ -99,7 +99,7 @@ const FavoritesGallery = () => {
                       className="object-contain"
                     />}
                   </div>
-                  <h1 className="mt-4 text-lg font-semibold text-zinc-800">{product.name}</h1>
+                  <h1 className="mt-4 text-lg font-semibold text-zinc-800 text-center">{product.name}</h1>
 
                   <motion.button
                     whileHover={{ scale: 1.1 }}
