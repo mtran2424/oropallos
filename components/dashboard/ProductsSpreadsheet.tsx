@@ -64,14 +64,14 @@ const ProductsSpreadsheet = () => {
       case "price-desc":
         sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
-      case "newest-oldest":
+      case "oldest-newest":
         sorted.sort((a, b) => {
           const dateA = new Date(a.createdAt || 0);
           const dateB = new Date(b.createdAt || 0);
           return dateA.getTime() - dateB.getTime();
         });
         break;
-      case "oldest-newest":
+      case "newest-oldest":
         sorted.sort((a, b) => {
           const dateA = new Date(a.createdAt || 0);
           const dateB = new Date(b.createdAt || 0);
