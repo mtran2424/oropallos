@@ -182,6 +182,21 @@ const rtdTypes = [
 // Constant defining product categories, subcategories and types
 export const ProductCategories: ProductCategory[] = [
   {
+    name: "Liquor",
+    subcategories: [
+      { name: "Whiskey", types: whiskeyTypes, value: "Whiskey" },
+      { name: "Tequila", types: tequilaTypes, value: "Tequila" },
+      { name: "Vodka", types: vodkaTypes, value: "Vodka" },
+      { name: "Gin", types: [], value: "Gin" },
+      { name: "Rum", types: rumTypes, value: "Rum" },
+      { name: "Brandy", types: brandyTypes, value: "Brandy" },
+      { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
+      { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
+      {name: "Moonshine", types: [], value: "Moonshine"},
+    ],
+    value: "Liquor",
+  },
+  {
     name: "Red Wines",
     subcategories: [
       { name: "Dry", types: dryRedTypes, value: "Dry" },
@@ -227,21 +242,7 @@ export const ProductCategories: ProductCategory[] = [
     ],
     value: "Other_Wine",
   },
-  {
-    name: "Liquor",
-    subcategories: [
-      { name: "Whiskey", types: whiskeyTypes, value: "Whiskey" },
-      { name: "Tequila", types: tequilaTypes, value: "Tequila" },
-      { name: "Vodka", types: vodkaTypes, value: "Vodka" },
-      { name: "Gin", types: [], value: "Gin" },
-      { name: "Rum", types: rumTypes, value: "Rum" },
-      { name: "Brandy", types: brandyTypes, value: "Brandy" },
-      { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
-      { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
-      {name: "Moonshine", types: [], value: "Moonshine"},
-    ],
-    value: "Liquor",
-  }
+  
 ] as const;
 
 export const navBarElements = [
