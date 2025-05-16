@@ -40,10 +40,9 @@ const Collection = ({ products }: { products: Product[] }) => {
         sorted.sort((a, b) => {
           const dateA = new Date(a.createdAt || 0);
           const dateB = new Date(b.createdAt || 0);
-          return dateB.getTime() - dateA.getTime();
+          return dateA.getTime() - dateB.getTime();
         })
         break;
-
     }
 
     return sorted;

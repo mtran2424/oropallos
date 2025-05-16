@@ -19,6 +19,7 @@ export async function GET() {
         favorite: true,
         abv: true,
         size: true,
+        createdAt: true,
       },
     });
 

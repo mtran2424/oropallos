@@ -26,15 +26,21 @@ const EditProduct = ({ product, onEditProduct, products }: {
   const [imageUrl, setImageUrl] = useState(product.imageUrl);
   const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
   const [size, setSize] = useState(product.size);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
+  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
+  const [sizeSuggestions, setSizeSuggestions] = useState<string[]>([]);
+  const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  // Effect to fetch product names for suggestions
   useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
     if (name.length < 2) {
-      setSuggestions([]);
+      setNameSuggestions([]);
       return;
     }
 
+    // Unique array of product names
     const productNames = [
       ...new Set(products.map((product) => product.name))
     ]
@@ -43,16 +49,46 @@ const EditProduct = ({ product, onEditProduct, products }: {
     const matches = productNames.filter((product) =>
       product.toLowerCase().includes(name.toLowerCase())
     );
-    setSuggestions(matches);
-    setShowSuggestions(true);
+    setNameSuggestions(matches);
+    setShowNameSuggestions(true);
   }, [name, products]);
 
-  const handleSelectSuggestion = (suggestedName: string) => {
+  // Effect to fetch product names for suggestions
+  useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
+    if (size.length < 2) {
+      setSizeSuggestions([]);
+      return;
+    }
+
+    // Unique array of product names
+    const productSizes = [
+      ...new Set(products.map((product) => product.size))
+    ]
+
+    // Example local filtering. Replace with API fetch if needed.
+    const matches = productSizes.filter((product) =>
+      product.toLowerCase().includes(size.toLowerCase())
+    );
+
+    setSizeSuggestions(matches);
+    setShowSizeSuggestions(true);
+  }, [size, products]);
+
+  // Function to handle suggestion selection
+  const handleSelectNameSuggestion = (suggestedName: string) => {
     setName(suggestedName);
-    setShowSuggestions(false);
+    setShowNameSuggestions(false);
+  };
+
+  // Function to handle suggestion selection
+  const handleSelectSizeSuggestion = (suggestedName: string) => {
+    setSize(suggestedName);
+    setShowSizeSuggestions(false);
   };
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -85,6 +121,7 @@ const EditProduct = ({ product, onEditProduct, products }: {
     // Step 4: Get the secure URL from Cloudinary and set it
     if (uploadData.secure_url) {
       setImageUrl(uploadData.secure_url); // Cloudinary's public image URL
+      setLoading(false);
       console.log('Image uploaded successfully:', uploadData.secure_url);
     } else {
       console.error('Error uploading image:', uploadData.error);
@@ -98,6 +135,7 @@ const EditProduct = ({ product, onEditProduct, products }: {
   // Upon form submission, validate the input and send it to the backend
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     // Validate input fields
     if (!name || !price || !category || !subcategory) {
@@ -126,9 +164,11 @@ const EditProduct = ({ product, onEditProduct, products }: {
         }).then(() => {
           // Show success message
           toast.success(`Product ${name} edited successfully!`);
-
           // Close the modal after submission
           setEdit(false);
+        }).finally(() => {
+          // Reset loading state
+          setLoading(false);
         });
     } else {
       toast.error("Product ID is undefined.");
@@ -213,10 +253,10 @@ const EditProduct = ({ product, onEditProduct, products }: {
                       placeholder="Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      onFocus={() => name.length >= 2 && setShowSuggestions(true)}
-                      onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // delay to allow click
+                      onFocus={() => name.length >= 2 && setShowNameSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowNameSuggestions(false), 150)} // delay to allow click
                     />
-                    {showSuggestions && suggestions.length > 0 && (
+                    {showNameSuggestions && nameSuggestions.length > 0 && (
                       // Suggestions dropdown
                       <motion.ul
                         initial={{ height: 0, opacity: 0 }}
@@ -225,11 +265,11 @@ const EditProduct = ({ product, onEditProduct, products }: {
                         transition={{ duration: 0.5, ease: "easeInOut" }}
                         className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
                       >
-                        {suggestions.map((suggestion, idx) => (
+                        {nameSuggestions.map((suggestion, idx) => (
                           <motion.li
                             key={idx}
                             className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
-                            onClick={() => handleSelectSuggestion(suggestion)}
+                            onClick={() => handleSelectNameSuggestion(suggestion)}
                           >
                             {suggestion}
                           </motion.li>
@@ -333,14 +373,38 @@ const EditProduct = ({ product, onEditProduct, products }: {
 
                   {/* Size Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
-                  <input
-                    type="text"
-                    required
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="Size"
-                    onChange={(e) => setSize(e.target.value)}
-                    value={size}
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      required
+                      className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                      placeholder="Size"
+                      onChange={(e) => setSize(e.target.value)}
+                      onFocus={() => size.length >= 2 && setShowSizeSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowSizeSuggestions(false), 150)} // delay to allow click
+                      value={size}
+                    />
+                    {showSizeSuggestions && sizeSuggestions.length > 0 && (
+                      // Suggestions dropdown
+                      <motion.ul
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
+                      >
+                        {sizeSuggestions.map((suggestion, idx) => (
+                          <motion.li
+                            key={idx}
+                            className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
+                            onClick={() => handleSelectSizeSuggestion(suggestion)}
+                          >
+                            {suggestion}
+                          </motion.li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </div>
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
                     i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
                   </div>
@@ -401,7 +465,7 @@ const EditProduct = ({ product, onEditProduct, products }: {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         onClick={handleRemoveImage}
-                        className="relative text-red-600 hover:text-red-400 bg-white rounded-full"
+                        className="relative text-red-500 hover:text-red-400 bg-white rounded-full"
                         aria-label="Remove image"
                       >
                         <IoIosCloseCircle size={30} />
@@ -416,14 +480,21 @@ const EditProduct = ({ product, onEditProduct, products }: {
                     </div>
                   )}
 
-                  {/* TODO: Add loading spinner */}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    type="submit"
-                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                  >
-                    Submit
-                  </motion.button>
+                  {loading ? (
+                    // Loading spinner
+                    <div className="flex justify-center items-center py-2">
+                      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    // Submit button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      type="submit"
+                      className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                    >
+                      Submit
+                    </motion.button>
+                  )}
                 </form>
               </div>
             </motion.div>

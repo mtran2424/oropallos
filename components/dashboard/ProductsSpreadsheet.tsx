@@ -3,13 +3,14 @@ import { Product, ProductCategories, productTableColumns } from "@/components/gl
 import AddProduct from "@/components/utils/AddProduct";
 import { deleteProduct, favoriteProduct, getProducts } from "@/app/api/productapi";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MdDelete, MdFavorite } from "react-icons/md";
 import EditProduct from "../utils/EditProduct";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
 import CopyButton from "../ui/CopyButton";
+import { FaImage } from "react-icons/fa6";
 
 const PRODUCTS_PER_PAGE = 15;
 
@@ -22,7 +23,15 @@ const ProductsSpreadsheet = () => {
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("name-asc");
+  const [sortOption, setSortOption] = useState("newest-oldest");
+  const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
+
+  const toggleExpanded = (productId: string) => {
+    setExpandedImages((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
 
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredProducts = useMemo(() => {
@@ -41,7 +50,7 @@ const ProductsSpreadsheet = () => {
 
     // Choose sorting method
     const sorted = [...filtered];
-    
+
     switch (sortOption) {
       case "name-asc":
         sorted.sort((a, b) => a.name.localeCompare(b.name));
@@ -55,14 +64,14 @@ const ProductsSpreadsheet = () => {
       case "price-desc":
         sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
-      case "newest-oldest":
+      case "oldest-newest":
         sorted.sort((a, b) => {
           const dateA = new Date(a.createdAt || 0);
           const dateB = new Date(b.createdAt || 0);
           return dateA.getTime() - dateB.getTime();
         });
         break;
-        case "oldest-newest":
+      case "newest-oldest":
         sorted.sort((a, b) => {
           const dateA = new Date(a.createdAt || 0);
           const dateB = new Date(b.createdAt || 0);
@@ -159,24 +168,55 @@ const ProductsSpreadsheet = () => {
         return product.type;
       case "description":
         return (
-          <div>
+          <div
+            className="flex flex-col items-center justify-center space-y-2"
+          >
             <textarea
               readOnly
-              className="w-full h-[200px] border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-[90px] border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={product.description}
             ></textarea>
             {product.description && <CopyButton text={product.description} />}
           </div>)
       case "imageUrl":
-        return (
-          product.imageUrl ?
-            <>
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                width={300}
-                height={300}
-              />
+        if (product.id) {
+          // Check if the image is expanded
+          const isExpanded = expandedImages[product.id] ?? false;
+          return product.imageUrl ? (
+            <div className="flex flex-col items-center justify-center space-y-2">
+              {/* Button to toggle image expansion */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                onClick={() => product.id && toggleExpanded(product.id)}
+                className="text-2xl text-zinc-500 hover:text-blue-400 transition duration-200 ease-in-out"
+              >
+                {isExpanded ? "..." : <FaImage />}
+              </motion.button>
+
+              {/* Image */}
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    key="about"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      width={300}
+                      height={300}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Image URL */}
               <a
                 href={product.imageUrl}
                 target="_blank"
@@ -186,10 +226,11 @@ const ProductsSpreadsheet = () => {
                 {product.imageUrl}
               </a>
               <CopyButton text={product.imageUrl} />
-            </>
-            :
+            </div>
+          ) : (
             product.imageUrl
-        );
+          );
+        }
       case "abv":
         return product.abv ? `${product.abv}%` : "N/A";
       case "size":
@@ -223,6 +264,7 @@ const ProductsSpreadsheet = () => {
       try {
         const data = await getProducts();
         setProducts(data.products || []);
+        console.log(data.products);
       } catch (error) {
         console.error('Failed to fetch products', error);
       }
@@ -294,7 +336,6 @@ const ProductsSpreadsheet = () => {
 
         </div>
 
-
         {/* Search Bar */}
         <div className="flex flex-center items-center w-full max-w-7xl ">
           {isOpen ? (
@@ -357,14 +398,14 @@ const ProductsSpreadsheet = () => {
               <option value="name-desc">Name (Z-A)</option>
               <option value="price-asc">Price (Low → High)</option>
               <option value="price-desc">Price (High → Low)</option>
-              <option value="newest-oldest">Date (Oldest → Newest)</option>
-              <option value="oldest-newest">Date (Newest → Oldest)</option>
+              <option value="newest-oldest">Date (Newest → Oldest)</option>
+              <option value="oldest-newest">Date (Oldest → Newest)</option>
             </select>
           </div>
         </div>
 
 
-        <div className="flex max-w-[95vw] max-h-[60vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
+        <div className="flex max-w-[90vw] max-h-[60vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
           <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}
@@ -481,7 +522,7 @@ const ProductsSpreadsheet = () => {
           <span>Scroll horizontally to view all columns →</span>
         </div>
 
-        <div className="flex flex-col items-center justify-center w-full max-w-7xl">
+        <div className="flex flex-col items-center justify-center w-full max-w-7xl font-serif">
           {/* Showing Count */}
           <p className="text-md font-semibold mb-2 text-zinc-500">
             Showing {endIdx} of {sortedAndFilteredProducts.length} products
@@ -492,10 +533,12 @@ const ProductsSpreadsheet = () => {
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              className={`px-4 py-2 rounded ${currentPage === 1
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+              className={`px-4 py-2 rounded-full
+            border-1 border-red-900 
+            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
+            text-white disabled:text-white hover:text-red-900
+            transition-colors ease-in-out
+            disabled:cursor-not-allowed disabled:opacity-50`}
             >
               Prev
             </button>
@@ -505,10 +548,12 @@ const ProductsSpreadsheet = () => {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              className={`px-4 py-2 rounded ${currentPage === totalPages
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+              className={`px-4 py-2 rounded-full
+            border-1 border-red-900 
+            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
+            text-white disabled:text-white hover:text-red-900
+            transition-colors ease-in-out
+            disabled:cursor-not-allowed disabled:opacity-50`}
             >
               Next
             </button>

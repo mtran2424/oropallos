@@ -267,7 +267,7 @@ export const productTableColumns = [
   { field: "size", label: "Size", width: "200px" },
   { field: "abv", label: "ABV", width: "150px" },
   { field: "category", label: "Category", width: "200px" },
-  { field: "subcategory", label: "Subcategory", width: "200px" },
+  { field: "subcategory", label: "Subcategory", width: "220px" },
   { field: "type", label: "Type", width: "250px" },
   { field: "description", label: "Description", width: "1000px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
