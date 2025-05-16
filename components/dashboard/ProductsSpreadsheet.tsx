@@ -264,6 +264,7 @@ const ProductsSpreadsheet = () => {
       try {
         const data = await getProducts();
         setProducts(data.products || []);
+        console.log(data.products);
       } catch (error) {
         console.error('Failed to fetch products', error);
       }
@@ -397,8 +398,8 @@ const ProductsSpreadsheet = () => {
               <option value="name-desc">Name (Z-A)</option>
               <option value="price-asc">Price (Low → High)</option>
               <option value="price-desc">Price (High → Low)</option>
-              <option value="newest-oldest">Date (Oldest → Newest)</option>
-              <option value="oldest-newest">Date (Newest → Oldest)</option>
+              <option value="newest-oldest">Date (Newest → Oldest)</option>
+              <option value="oldest-newest">Date (Oldest → Newest)</option>
             </select>
           </div>
         </div>
@@ -532,10 +533,12 @@ const ProductsSpreadsheet = () => {
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              className={`px-4 py-2 rounded ${currentPage === 1
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+              className={`px-4 py-2 rounded-full
+            border-1 border-red-900 
+            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
+            text-white disabled:text-white hover:text-red-900
+            transition-colors ease-in-out
+            disabled:cursor-not-allowed disabled:opacity-50`}
             >
               Prev
             </button>
@@ -545,10 +548,12 @@ const ProductsSpreadsheet = () => {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              className={`px-4 py-2 rounded ${currentPage === totalPages
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+              className={`px-4 py-2 rounded-full
+            border-1 border-red-900 
+            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
+            text-white disabled:text-white hover:text-red-900
+            transition-colors ease-in-out
+            disabled:cursor-not-allowed disabled:opacity-50`}
             >
               Next
             </button>
