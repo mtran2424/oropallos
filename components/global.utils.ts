@@ -171,7 +171,7 @@ const cordialsTypes = [
   { name: "Amaretto", value: "Amaretto" },
   { name: "Creams", value: "Creams" },
   { name: "Schnapps", value: "Schnapps" },
-  { name: "General Liqeuers", value: "General_Liqeuers" },
+  { name: "General Liqueurs", value: "General_Liqueurs" },
 ];
 
 const rtdTypes = [
