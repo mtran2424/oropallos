@@ -24,15 +24,21 @@ const AddProduct = ({ onAddProduct, products }: {
   const [imageUrl, setImageUrl] = useState("");
   const [abv, setAbv] = useState<number | undefined>(undefined);
   const [size, setSize] = useState("750mL");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
+  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
+  const [sizeSuggestions, setSizeSuggestions] = useState<string[]>([]);
+  const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  // Effect to fetch product names for suggestions
   useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
     if (name.length < 2) {
-      setSuggestions([]);
+      setNameSuggestions([]);
       return;
     }
 
+    // Unique array of product names
     const productNames = [
       ...new Set(products.map((product) => product.name))
     ]
@@ -41,35 +47,67 @@ const AddProduct = ({ onAddProduct, products }: {
     const matches = productNames.filter((product) =>
       product.toLowerCase().includes(name.toLowerCase())
     );
-    setSuggestions(matches);
-    setShowSuggestions(true);
+    setNameSuggestions(matches);
+    setShowNameSuggestions(true);
   }, [name, products]);
 
-  const handleSelectSuggestion = (suggestedName: string) => {
+  // Effect to fetch product names for suggestions
+  useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
+    if (size.length < 2) {
+      setSizeSuggestions([]);
+      return;
+    }
+
+    // Unique array of product sizes
+    const productSizes = [
+      ...new Set(products.map((product) => product.size))
+    ]
+
+    // Example local filtering. Replace with API fetch if needed.
+    const matches = productSizes.filter((product) =>
+      product.toLowerCase().includes(size.toLowerCase())
+    );
+
+    setSizeSuggestions(matches);
+    setShowSizeSuggestions(true);
+  }, [size, products]);
+
+  // Function to handle suggestion selection
+  const handleSelectNameSuggestion = (suggestedName: string) => {
     setName(suggestedName);
-    setShowSuggestions(false);
+    setShowNameSuggestions(false);
   };
 
+  // Function to handle suggestion selection
+  const handleSelectSizeSuggestion = (suggestedName: string) => {
+    setSize(suggestedName);
+    setShowSizeSuggestions(false);
+  };
+
+  // Function to handle image upload to Cloudinary
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
+
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Step 1: Get the signature and timestamp from your API route
+    // Get the signature and timestamp from your API route
     const response = await fetch('/api/cloudinary-signature', {
       method: 'POST',
     });
     const data = await response.json();
 
-    // Step 2: Prepare the FormData for the image upload
+    // Prepare the FormData for the image upload
     const formData = new FormData();
     formData.append('file', file);
     formData.append('api_key', data.apiKey); // Cloudinary API Key
     formData.append('signature', data.signature); // Signed signature
     formData.append('timestamp', data.timestamp.toString()); // Timestamp
     formData.append('upload_preset', 'ml_default'); // Your upload preset
-    formData.append('folder', 'oropallos'); // (Optional) Specify folder in Cloudinary
+    formData.append('folder', 'oropallos'); // Folder in Cloudinary
 
-    // Step 3: Upload the image to Cloudinary
+    // Upload the image to Cloudinary
     const uploadRes = await fetch(
       `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
       {
@@ -80,9 +118,10 @@ const AddProduct = ({ onAddProduct, products }: {
 
     const uploadData = await uploadRes.json();
 
-    // Step 4: Get the secure URL from Cloudinary and set it
+    // Get the secure URL from Cloudinary and set it
     if (uploadData.secure_url) {
       setImageUrl(uploadData.secure_url); // Cloudinary's public image URL
+      setLoading(false);
       console.log('Image uploaded successfully:', uploadData.secure_url);
     } else {
       console.error('Error uploading image:', uploadData.error);
@@ -96,6 +135,7 @@ const AddProduct = ({ onAddProduct, products }: {
   // Upon form submission, validate the input and send it to the backend
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     // Validate input fields
     if (!name || !price || !category || !subcategory || !size) {
@@ -149,6 +189,8 @@ const AddProduct = ({ onAddProduct, products }: {
 
         // Close the modal after submission
         setAdd(false);
+      }).finally(() => {
+        setLoading(false);
       });
   };
 
@@ -230,10 +272,10 @@ const AddProduct = ({ onAddProduct, products }: {
                       placeholder="Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      onFocus={() => name.length >= 2 && setShowSuggestions(true)}
-                      onBlur={() => setTimeout(() => setShowSuggestions(false), 150)} // delay to allow click
+                      onFocus={() => name.length >= 2 && setShowNameSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowNameSuggestions(false), 150)} // delay to allow click
                     />
-                    {showSuggestions && suggestions.length > 0 && (
+                    {showNameSuggestions && nameSuggestions.length > 0 && (
                       // Suggestions dropdown
                       <motion.ul
                         initial={{ height: 0, opacity: 0 }}
@@ -242,11 +284,11 @@ const AddProduct = ({ onAddProduct, products }: {
                         transition={{ duration: 0.5, ease: "easeInOut" }}
                         className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
                       >
-                        {suggestions.map((suggestion, idx) => (
+                        {nameSuggestions.map((suggestion, idx) => (
                           <motion.li
                             key={idx}
                             className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
-                            onClick={() => handleSelectSuggestion(suggestion)}
+                            onClick={() => handleSelectNameSuggestion(suggestion)}
                           >
                             {suggestion}
                           </motion.li>
@@ -255,7 +297,7 @@ const AddProduct = ({ onAddProduct, products }: {
                     )}
                   </div>
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-                    i.e. {'\"'}Josh Red Blend{'\"'} or {'\"'}Recipe 21{'\"'}
+                    i.e. {'\"'}Tito{'\''}s Handmade Vodka{'\"'} or {'\"'}Rebellious Pinot Noir{'\"'}
                   </div>
 
                   <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Classification</div>
@@ -349,14 +391,39 @@ const AddProduct = ({ onAddProduct, products }: {
 
                   {/* Size Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
-                  <input
-                    type="text"
-                    required
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="Size"
-                    onChange={(e) => setSize(e.target.value)}
-                    value={size}
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      required
+                      className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                      placeholder="Size"
+                      onChange={(e) => setSize(e.target.value)}
+                      onFocus={() => size.length >= 2 && setShowSizeSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowSizeSuggestions(false), 150)} // delay to allow click
+                      value={size}
+                    />
+                    {showSizeSuggestions && sizeSuggestions.length > 0 && (
+                      // Suggestions dropdown
+                      <motion.ul
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
+                      >
+                        {sizeSuggestions.map((suggestion, idx) => (
+                          <motion.li
+                            key={idx}
+                            className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
+                            onClick={() => handleSelectSizeSuggestion(suggestion)}
+                          >
+                            {suggestion}
+                          </motion.li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </div>
+
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
                     i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
                   </div>
@@ -405,9 +472,9 @@ const AddProduct = ({ onAddProduct, products }: {
                     value={imageUrl}
                   />
                   <div className="text-sm font-medium text-zinc-500 text-left px-4 break-words">
-                    Please only use the URL field for reused images from Cloudinary. Preexisting 
+                    Please only use the URL field for reused images from Cloudinary. Preexisting
                     <br />
-                    URLs can be found under the image column in the spreadsheet. Duplicate 
+                    URLs can be found under the image column in the spreadsheet. Duplicate
                     <br />
                     image uploads get expensive eventually.
                   </div>
@@ -416,7 +483,7 @@ const AddProduct = ({ onAddProduct, products }: {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         onClick={handleRemoveImage}
-                        className="relative text-red-600 hover:text-red-500 bg-white rounded-full"
+                        className="relative text-red-500 hover:text-red-400 bg-white rounded-full"
                         aria-label="Remove image"
                       >
                         <IoIosCloseCircle size={30} />
@@ -431,14 +498,21 @@ const AddProduct = ({ onAddProduct, products }: {
                     </div>
                   )}
 
-                  {/* TODO: Add loading spinner */}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    type="submit"
-                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                  >
-                    Submit
-                  </motion.button>
+                  {loading ? (
+                    // Loading spinner
+                    <div className="flex justify-center items-center py-2">
+                      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    // Submit button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      type="submit"
+                      className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                    >
+                      Submit
+                    </motion.button>
+                  )}
                 </form>
               </div>
             </motion.div>
