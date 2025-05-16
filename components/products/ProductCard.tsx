@@ -16,7 +16,7 @@ const ProductCard = ({ product }: { product: Product }) => {
       }}
     >
       {/* Product Image */}
-      <div className="relative w-32 h-32 mx-auto mb-2 overflow-hidden rounded-lg">
+      <div className="relative w-35 h-35 mx-auto mb-2 overflow-hidden rounded-lg">
         {product.imageUrl ? (
           <motion.div
             className="w-full h-full"
@@ -28,8 +28,8 @@ const ProductCard = ({ product }: { product: Product }) => {
               src={product.imageUrl}
               alt={product.name}
               className="object-cover w-full h-full"
-              width={200}
-              height={200}
+              width={300}
+              height={300}
             />
           </motion.div>
         ) : (
