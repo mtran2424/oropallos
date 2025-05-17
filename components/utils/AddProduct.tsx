@@ -13,6 +13,7 @@ const AddProduct = ({ onAddProduct, products }: {
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [add, setAdd] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // States for form fields
   const [name, setName] = useState("");
@@ -24,24 +25,25 @@ const AddProduct = ({ onAddProduct, products }: {
   const [imageUrl, setImageUrl] = useState("");
   const [abv, setAbv] = useState<number | undefined>(undefined);
   const [size, setSize] = useState("750mL");
+
+  // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
   const [showNameSuggestions, setShowNameSuggestions] = useState(false);
+
   const [sizeSuggestions, setSizeSuggestions] = useState<string[]>([]);
   const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   // Effect to fetch product names for suggestions
   useEffect(() => {
     // If the name is less than 2 characters, clear suggestions
     if (name.length < 2) {
       setNameSuggestions([]);
+      setShowNameSuggestions(false);
       return;
     }
 
     // Unique array of product names
-    const productNames = [
-      ...new Set(products.map((product) => product.name))
-    ]
+    const productNames = [...new Set(products.map((product) => product.name))];
 
     // Example local filtering. Replace with API fetch if needed.
     const matches = productNames.filter((product) =>
@@ -56,6 +58,7 @@ const AddProduct = ({ onAddProduct, products }: {
     // If the name is less than 2 characters, clear suggestions
     if (size.length < 2) {
       setSizeSuggestions([]);
+      setShowSizeSuggestions(false);
       return;
     }
 
@@ -74,15 +77,14 @@ const AddProduct = ({ onAddProduct, products }: {
   }, [size, products]);
 
   // Function to handle suggestion selection
-  const handleSelectNameSuggestion = (suggestedName: string) => {
-    setName(suggestedName);
-    setShowNameSuggestions(false);
-  };
-
-  // Function to handle suggestion selection
-  const handleSelectSizeSuggestion = (suggestedName: string) => {
-    setSize(suggestedName);
-    setShowSizeSuggestions(false);
+  const handleSelectSuggestion = (field: string, suggested: string) => {
+    if (field === "name") {
+      setName(suggested);
+      setShowNameSuggestions(false);
+    } else if (field === "size") {
+      setSize(suggested);
+      setShowSizeSuggestions(false);
+    }
   };
 
   // Function to handle image upload to Cloudinary
@@ -288,7 +290,7 @@ const AddProduct = ({ onAddProduct, products }: {
                           <motion.li
                             key={idx}
                             className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
-                            onClick={() => handleSelectNameSuggestion(suggestion)}
+                            onClick={() => handleSelectSuggestion("name", suggestion)}
                           >
                             {suggestion}
                           </motion.li>
@@ -415,7 +417,7 @@ const AddProduct = ({ onAddProduct, products }: {
                           <motion.li
                             key={idx}
                             className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
-                            onClick={() => handleSelectSizeSuggestion(suggestion)}
+                            onClick={() => handleSelectSuggestion("size", suggestion)}
                           >
                             {suggestion}
                           </motion.li>
@@ -463,6 +465,7 @@ const AddProduct = ({ onAddProduct, products }: {
                     className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 transition-all duration-200 ease-in-out"
                   />
                   <label className="text-md font-semibold text-gray-600 w-full text-left px-2">Image Preview:</label>
+                  <div className="text-md font-semibold text-zinc-500 w-full text-left px-4">or</div>
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">URL</label>
                   <input
                     type="text"

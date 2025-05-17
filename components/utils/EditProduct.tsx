@@ -37,13 +37,12 @@ const EditProduct = ({ product, onEditProduct, products }: {
     // If the name is less than 2 characters, clear suggestions
     if (name.length < 2) {
       setNameSuggestions([]);
+      setShowNameSuggestions(false);
       return;
     }
 
     // Unique array of product names
-    const productNames = [
-      ...new Set(products.map((product) => product.name))
-    ]
+    const productNames = [...new Set(products.map((product) => product.name))];
 
     // Example local filtering. Replace with API fetch if needed.
     const matches = productNames.filter((product) =>
@@ -58,10 +57,11 @@ const EditProduct = ({ product, onEditProduct, products }: {
     // If the name is less than 2 characters, clear suggestions
     if (size.length < 2) {
       setSizeSuggestions([]);
+      setShowSizeSuggestions(false);
       return;
     }
 
-    // Unique array of product names
+    // Unique array of product sizes
     const productSizes = [
       ...new Set(products.map((product) => product.size))
     ]
@@ -76,15 +76,14 @@ const EditProduct = ({ product, onEditProduct, products }: {
   }, [size, products]);
 
   // Function to handle suggestion selection
-  const handleSelectNameSuggestion = (suggestedName: string) => {
-    setName(suggestedName);
-    setShowNameSuggestions(false);
-  };
-
-  // Function to handle suggestion selection
-  const handleSelectSizeSuggestion = (suggestedName: string) => {
-    setSize(suggestedName);
-    setShowSizeSuggestions(false);
+  const handleSelectSuggestion = (field: string, suggested: string) => {
+    if (field === "name") {
+      setName(suggested);
+      setShowNameSuggestions(false);
+    } else if (field === "size") {
+      setSize(suggested);
+      setShowSizeSuggestions(false);
+    }
   };
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -269,7 +268,7 @@ const EditProduct = ({ product, onEditProduct, products }: {
                           <motion.li
                             key={idx}
                             className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
-                            onClick={() => handleSelectNameSuggestion(suggestion)}
+                            onClick={() => handleSelectSuggestion("name", suggestion)}
                           >
                             {suggestion}
                           </motion.li>
@@ -397,7 +396,7 @@ const EditProduct = ({ product, onEditProduct, products }: {
                           <motion.li
                             key={idx}
                             className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
-                            onClick={() => handleSelectSizeSuggestion(suggestion)}
+                            onClick={() => handleSelectSuggestion("size", suggestion)}
                           >
                             {suggestion}
                           </motion.li>
