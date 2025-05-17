@@ -1,18 +1,10 @@
 // app/api/products/update/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
 
 // This function handles the PUT request to update a product by its ID
 export async function GET(req: NextRequest) {
   try {
-    // Check if user has access to this route
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    }
-
     // Get the id from the URL
     const id = req.nextUrl.pathname.split('/').pop();
 

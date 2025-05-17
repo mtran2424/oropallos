@@ -151,7 +151,7 @@ const ProductPage = () => {
         {/* Product Image and Content */}
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 w-full h-full max-w-7xl">
           {/* Image */}
-          <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-10">
+          <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-2 md:gap-10">
             {product && product.imageUrl ?
               <div className="relative w-full h-200 min-w-[300px] min-h-[300px]">
                 <Image
