@@ -43,7 +43,7 @@ const RelatedProducts = ({ currentProduct }: {
   const paginated = filtered.slice(startIdx, startIdx + PRODUCTS_PER_PAGE);
 
   return (
-    <div className="mt-20 w-full max-w-7xl px-10 font-serif">
+    <div className="mt-20 w-full max-w-7xl px-10 font-serif h-full">
       {/* Header */}
       <h2 className="text-2xl font-sans text-red-900 mb-6">Related Products</h2>
 
