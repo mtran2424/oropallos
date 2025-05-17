@@ -181,7 +181,7 @@ const rtdTypes = [
 
 const cocktailTypes = [
   {name: "Cocktail Enhancements", value: "Cocktail_Enhancements"},
-  {name: "Cocktail_Mixes", value: "Cocktail_Mixes"}
+  {name: "Cocktail Mixes", value: "Cocktail_Mixes"}
 ];
 
 // Constant defining product categories, subcategories and types
