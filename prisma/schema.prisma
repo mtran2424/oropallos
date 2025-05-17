@@ -41,6 +41,7 @@ enum ProductSubcategory {
   Cordials_Liqueurs_Schnapps
   Ready_To_Drink
   Moonshine
+  Cocktails
 }
 
 model Product {

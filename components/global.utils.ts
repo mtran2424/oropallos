@@ -179,6 +179,11 @@ const rtdTypes = [
   { name: "Bottled Cocktails", value: "Bottled_Cocktails" },
 ];
 
+const cocktailTypes = [
+  {name: "Cocktail Enhancements", value: "Cocktail_Enhancements"},
+  {name: "Cocktail_Mixes", value: "Cocktail_Mixes"}
+];
+
 // Constant defining product categories, subcategories and types
 export const ProductCategories: ProductCategory[] = [
   {
@@ -193,6 +198,7 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
       { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
       {name: "Moonshine", types: [], value: "Moonshine"},
+      {name: "Cocktails", types: cocktailTypes, value: "Cocktails"}
     ],
     value: "Liquor",
   },
