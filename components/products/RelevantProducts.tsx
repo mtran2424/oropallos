@@ -56,7 +56,7 @@ const RelatedProducts = ({ currentProduct }: {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: direction * -50 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 absolute w-full"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full h-full"
           >
             {paginated.map((product) => (
               <ProductCard key={product.id} product={product} />

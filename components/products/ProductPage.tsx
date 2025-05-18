@@ -139,7 +139,7 @@ const ProductPage = () => {
       </div>
 
       {/* Product Page */}
-      <div className="flex flex-col items-center h-full h-min-screen mt-10">
+      <div className="flex flex-col items-center h-full min-h-screen mt-10">
 
         {/* Product Header */}
         <div className="flex flex-col w-full items-start justify-start px-10 max-w-7xl">
@@ -151,14 +151,14 @@ const ProductPage = () => {
         {/* Product Image and Content */}
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 w-full h-full max-w-7xl">
           {/* Image */}
-          <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-2 md:gap-10">
+          <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-2">
             {product && product.imageUrl ?
-              <div className="relative w-full h-200 min-w-[300px] min-h-[300px]">
+              <div className="relative w-full md:h-200 min-w-[300px] min-h-[300px]">
                 <Image
                   src={product.imageUrl}
                   alt={product.name + " image"}
                   fill
-                  className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full p-5"
+                  className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full p-2"
                 />
               </div>
               :
