@@ -14,10 +14,11 @@ const AddProduct = ({ onAddProduct, products }: {
   const modalRef = useRef<HTMLDivElement>(null);
   const [add, setAdd] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   // States for form fields
   const [name, setName] = useState("");
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<number | undefined>(undefined);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
@@ -29,52 +30,37 @@ const AddProduct = ({ onAddProduct, products }: {
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
   const [showNameSuggestions, setShowNameSuggestions] = useState(false);
-
   const [sizeSuggestions, setSizeSuggestions] = useState<string[]>([]);
   const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
 
-  // Effect to fetch product names for suggestions
-  useEffect(() => {
-    // If the name is less than 2 characters, clear suggestions
-    if (name.length < 2) {
-      setNameSuggestions([]);
+  // Function to handle key down events for suggestions
+  const handleKeyDown = (field: string, e: React.KeyboardEvent) => {
+    const showSuggestions = field === "name" ? showNameSuggestions : showSizeSuggestions;
+    const suggestions = field === "name" ? nameSuggestions : sizeSuggestions;
+
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    // if (!showNameSuggestions || nameSuggestions.length === 0) return;
+
+    // Handle arrow keys for navigating suggestions
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev + 1) % suggestions.length);
+    }
+    // Handle arrow keys for navigating suggestions
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev === 0 ? suggestions.length - 1 : prev - 1
+      );
+    }
+    // Handle Enter key for selecting a suggestion
+    else if (e.key === "Enter" && highlightedIndex >= 0) {
+      e.preventDefault();
+      handleSelectSuggestion(field, suggestions[highlightedIndex]);
       setShowNameSuggestions(false);
-      return;
     }
-
-    // Unique array of product names
-    const productNames = [...new Set(products.map((product) => product.name))];
-
-    // Example local filtering. Replace with API fetch if needed.
-    const matches = productNames.filter((product) =>
-      product.toLowerCase().includes(name.toLowerCase())
-    );
-    setNameSuggestions(matches);
-    setShowNameSuggestions(true);
-  }, [name, products]);
-
-  // Effect to fetch product names for suggestions
-  useEffect(() => {
-    // If the name is less than 2 characters, clear suggestions
-    if (size.length < 2) {
-      setSizeSuggestions([]);
-      setShowSizeSuggestions(false);
-      return;
-    }
-
-    // Unique array of product sizes
-    const productSizes = [
-      ...new Set(products.map((product) => product.size))
-    ]
-
-    // Example local filtering. Replace with API fetch if needed.
-    const matches = productSizes.filter((product) =>
-      product.toLowerCase().includes(size.toLowerCase())
-    );
-
-    setSizeSuggestions(matches);
-    setShowSizeSuggestions(true);
-  }, [size, products]);
+  }
 
   // Function to handle suggestion selection
   const handleSelectSuggestion = (field: string, suggested: string) => {
@@ -122,11 +108,14 @@ const AddProduct = ({ onAddProduct, products }: {
 
     // Get the secure URL from Cloudinary and set it
     if (uploadData.secure_url) {
-      setImageUrl(uploadData.secure_url); // Cloudinary's public image URL
       setLoading(false);
+      setImageUrl(uploadData.secure_url); // Cloudinary's public image URL
       console.log('Image uploaded successfully:', uploadData.secure_url);
+      toast.success('Image uploaded successfully!');
     } else {
+      setLoading(false);
       console.error('Error uploading image:', uploadData.error);
+      toast.error('Error uploading image. Please try again.');
     }
   };
 
@@ -141,7 +130,8 @@ const AddProduct = ({ onAddProduct, products }: {
 
     // Validate input fields
     if (!name || !price || !category || !subcategory || !size) {
-      alert(`Please fill in all required fields.`);
+      toast.error(`Please fill in all required fields.`);
+      setLoading(false);
       return;
     }
 
@@ -180,13 +170,13 @@ const AddProduct = ({ onAddProduct, products }: {
 
         // Reset form fields after successful submission
         setName("");
-        setPrice(0);
+        setPrice(undefined);
         setCategory("");
         setSubcategory("");
         setType("");
         setDescription("");
         setImageUrl("");
-        setAbv(0);
+        setAbv(undefined);
         setSize("750mL");
 
         // Close the modal after submission
@@ -212,6 +202,49 @@ const AddProduct = ({ onAddProduct, products }: {
       closeEventModal();
     }
   }, []);
+
+  // Effect to fetch product names for suggestions
+  useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
+    if (name.length < 2) {
+      setNameSuggestions([]);
+      setShowNameSuggestions(false);
+      return;
+    }
+
+    // Unique array of product names
+    const productNames = [...new Set(products.map((product) => product.name))];
+
+    // Example local filtering. Replace with API fetch if needed.
+    const matches = productNames.filter((product) =>
+      product.toLowerCase().includes(name.toLowerCase())
+    );
+    setNameSuggestions(matches);
+    setShowNameSuggestions(true);
+  }, [name, products]);
+
+  // Effect to fetch product names for suggestions
+  useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
+    if (size.length < 2) {
+      setSizeSuggestions([]);
+      setShowSizeSuggestions(false);
+      return;
+    }
+
+    // Unique array of product sizes
+    const productSizes = [
+      ...new Set(products.map((product) => product.size))
+    ]
+
+    // Example local filtering. Replace with API fetch if needed.
+    const matches = productSizes.filter((product) =>
+      product.toLowerCase().includes(size.toLowerCase())
+    );
+
+    setSizeSuggestions(matches);
+    setShowSizeSuggestions(true);
+  }, [size, products]);
 
   // Add event listener for closing the modal when clicking outside of it
   useEffect(() => {
@@ -273,9 +306,13 @@ const AddProduct = ({ onAddProduct, products }: {
                       className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out w-full"
                       placeholder="Name"
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        setName(e.target.value)
+                        setHighlightedIndex(-1);
+                      }}
                       onFocus={() => name.length >= 2 && setShowNameSuggestions(true)}
                       onBlur={() => setTimeout(() => setShowNameSuggestions(false), 150)} // delay to allow click
+                      onKeyDown={(e) => handleKeyDown("name", e)}
                     />
                     {showNameSuggestions && nameSuggestions.length > 0 && (
                       // Suggestions dropdown
@@ -284,12 +321,16 @@ const AddProduct = ({ onAddProduct, products }: {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
-                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
+                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto max-h-[200px]"
                       >
-                        {nameSuggestions.map((suggestion, idx) => (
+                        {nameSuggestions.map((suggestion, index) => (
                           <motion.li
-                            key={idx}
-                            className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
+                            key={index}
+                            className={
+                              `px-4 py-2 rounded-lg transition duration-200 ease-in-out cursor-pointer 
+                              ${highlightedIndex === index ? "bg-blue-100" : "hover:bg-blue-50"}`
+                            }
+                            onMouseEnter={() => setHighlightedIndex(index)}
                             onClick={() => handleSelectSuggestion("name", suggestion)}
                           >
                             {suggestion}
@@ -384,8 +425,11 @@ const AddProduct = ({ onAddProduct, products }: {
                     min="0"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Price"
-                    onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
-                    value={price}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPrice(value === "" ? undefined : parseFloat(value));
+                    }}
+                    value={price || ""}
                   />
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
                     i.e. {'\"'}19.99{'\"'} - No $ sign needed
@@ -399,10 +443,14 @@ const AddProduct = ({ onAddProduct, products }: {
                       required
                       className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                       placeholder="Size"
-                      onChange={(e) => setSize(e.target.value)}
+                      value={size}
+                      onChange={(e) => {
+                        setSize(e.target.value)
+                        setHighlightedIndex(-1);
+                      }}
                       onFocus={() => size.length >= 2 && setShowSizeSuggestions(true)}
                       onBlur={() => setTimeout(() => setShowSizeSuggestions(false), 150)} // delay to allow click
-                      value={size}
+                      onKeyDown={(e) => handleKeyDown("size", e)}
                     />
                     {showSizeSuggestions && sizeSuggestions.length > 0 && (
                       // Suggestions dropdown
@@ -413,10 +461,14 @@ const AddProduct = ({ onAddProduct, products }: {
                         transition={{ duration: 0.5, ease: "easeInOut" }}
                         className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
                       >
-                        {sizeSuggestions.map((suggestion, idx) => (
+                        {sizeSuggestions.map((suggestion, index) => (
                           <motion.li
-                            key={idx}
-                            className="px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200 ease-in-out cursor-pointer"
+                            key={index}
+                            className={
+                              `px-4 py-2 rounded-lg transition duration-200 ease-in-out cursor-pointer 
+                              ${highlightedIndex === index ? "bg-blue-100" : "hover:bg-blue-50"}`
+                            }
+                            onMouseEnter={() => setHighlightedIndex(index)}
                             onClick={() => handleSelectSuggestion("size", suggestion)}
                           >
                             {suggestion}

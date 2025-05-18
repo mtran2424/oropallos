@@ -5,6 +5,7 @@ import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/footer/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import { MapProvider } from "@/components/providers/map-provider";
+import { Toaster } from "react-hot-toast";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -34,6 +35,29 @@ export default function RootLayout({
           className={`${montserrat.variable} ${merriweather.variable} bg-white antialiased`}
         >
           <Navbar />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              success: {
+                style: {
+                  background: '#333',
+                  color: '#fff',
+                },
+              },
+              error: {
+                style: {
+                  background: '#333',
+                  color: '#fff',
+                },
+              },
+              loading: {
+                style: {
+                  background: '#333',
+                  color: '#fff',
+                },
+              },
+            }}
+          />
           <MapProvider>
             {children}
           </MapProvider>
