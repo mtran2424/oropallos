@@ -18,12 +18,12 @@ const Products = () => {
 
   const [currentCategory, setCurrentCategory] = useState<ProductCategory | undefined>(
     categoryParam ? ProductCategories
-    .find((cat) => cat.value === categoryParam) : undefined
+      .find((cat) => cat.value === categoryParam) : undefined
   );
   const [currentSubcategory, setCurrentSubcategory] = useState<ProductSubcategory | undefined>(
     categoryParam && subcategoryParam ? ProductCategories
-    .find((cat) => cat.value === categoryParam)?.subcategories
-    .find((subcat) => subcat.value === subcategoryParam) : undefined
+      .find((cat) => cat.value === categoryParam)?.subcategories
+      .find((subcat) => subcat.value === subcategoryParam) : undefined
   );
   const [currentType, setCurrentType] = useState<string>(typeParam || "");
   const [expandedCategory, setExpandedCategory] = useState<boolean>(categoryParam ? true : false);
@@ -77,7 +77,7 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  //Ensure that the menu is closed when the window is resized
+  // Ensure that the menu is closed when the window is resized
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -356,7 +356,7 @@ const Products = () => {
 
               {/* Subcategories - Flavor Profiles, liquor types, etc... */}
               <AnimatePresence mode="wait">
-                { currentCategory && currentSubcategory &&
+                {currentCategory && currentSubcategory &&
                   <motion.div
                     key={currentSubcategory.name}
                     initial={{ opacity: 0, x: -50 }}

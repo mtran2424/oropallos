@@ -7,17 +7,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MdDelete, MdFavorite } from "react-icons/md";
 import EditProduct from "../utils/EditProduct";
 import Image from "next/image";
-import { IoMdClose } from "react-icons/io";
-import { FaSearch } from "react-icons/fa";
 import CopyButton from "../ui/CopyButton";
 import { FaImage } from "react-icons/fa6";
+import SearchBar from "../ui/SearchBar";
+import Pagination from "../ui/Pagination";
 
 const PRODUCTS_PER_PAGE = 15;
 
 // This component is responsible for crud operations on products
 const ProductsSpreadsheet = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isOpen, setIsOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
@@ -264,7 +263,6 @@ const ProductsSpreadsheet = () => {
       try {
         const data = await getProducts();
         setProducts(data.products || []);
-        console.log(data.products);
       } catch (error) {
         console.error('Failed to fetch products', error);
       }
@@ -291,8 +289,8 @@ const ProductsSpreadsheet = () => {
                 key={category.name}
                 onClick={() => toggleCategoryFilter(category.value)}
                 className={`text-xs px-2 py-1 rounded border font-semibold ${categoryFilters.includes(category.value)
-                  ? "text-zinc-200 bg-blue-500 border-blue-200"
-                  : "text-zinc-900 border-blue-200"
+                  ? "text-zinc-200 bg-red-900"
+                  : "text-red-900 border-red-900"
                   }`}
               >
                 {category.name}
@@ -323,8 +321,8 @@ const ProductsSpreadsheet = () => {
                       key={subcategory.value}
                       onClick={() => toggleSubcategoryFilter(subcategory.value)}
                       className={`text-xs px-2 py-1 rounded border font-semibold ${subcategoryFilters.includes(subcategory.value)
-                        ? "text-zinc-200 bg-blue-500 border-blue-200"
-                        : "text-zinc-900 border-blue-200"
+                        ? "text-zinc-200 bg-red-900"
+                        : "text-red-900 border-red-900"
                         }`}
                     >
                       {subcategory.name}
@@ -336,54 +334,11 @@ const ProductsSpreadsheet = () => {
 
         </div>
 
-        {/* Search Bar */}
-        <div className="flex flex-center items-center w-full max-w-7xl ">
-          {isOpen ? (
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              onClick={() => setIsOpen(false)}
-              className="text-gray-600 p-2 focus:outline-none"
-            >
-              <IoMdClose size={20} />
-            </motion.button>
-          ) : (
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              onClick={() => setIsOpen((prev) => !prev)}
-              className="text-gray-600 p-2 focus:outline-none"
-            >
-              <FaSearch size={20} />
-            </motion.button>
-          )}
-
-          {/* Search Input */}
-          <motion.input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            placeholder="Search by name, category, subcategory, or type..."
-            initial={{ width: 0, opacity: 0 }}
-            animate={{
-              width: isOpen ? "100%" : 0,
-              opacity: isOpen ? 1 : 0,
-              paddingLeft: isOpen ? "0.75rem" : "0rem",
-              paddingRight: isOpen ? "0.75rem" : "0rem",
-            }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-            style={{ whiteSpace: "nowrap" }}
-          />
-        </div>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          handleSearchChange={handleSearchChange}
+        />
 
         <div className="flex flex-row w-full whitespace-nowrap">
           <AddProduct onAddProduct={handleAddProduct} products={products} />
@@ -529,39 +484,14 @@ const ProductsSpreadsheet = () => {
           </p>
 
           {/* Pagination */}
-          <div className="flex items-center space-x-2 mb-8">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              className={`px-4 py-2 rounded-full
-            border-1 border-red-900 
-            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
-            text-white disabled:text-white hover:text-red-900
-            transition-colors ease-in-out
-            disabled:cursor-not-allowed disabled:opacity-50`}
-            >
-              Prev
-            </button>
-            <span className="text-lg font-medium">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              className={`px-4 py-2 rounded-full
-            border-1 border-red-900 
-            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
-            text-white disabled:text-white hover:text-red-900
-            transition-colors ease-in-out
-            disabled:cursor-not-allowed disabled:opacity-50`}
-            >
-              Next
-            </button>
-          </div>
+          <Pagination
+            prevClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            nextClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
 
         </div>
-
-
       </div>
     </div>
   );

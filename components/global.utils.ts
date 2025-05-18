@@ -271,7 +271,7 @@ export const productHeaders = [
 // Headers for product tables in admin view
 export const productTableColumns = [
   { field: "id", label: "Product ID", width: "200px" },
-  { field: "name", label: "Name", width: "200px" },
+  { field: "name", label: "Name", width: "300px" },
   { field: "price", label: "Price", width: "150px" },
   { field: "size", label: "Size", width: "200px" },
   { field: "abv", label: "ABV", width: "150px" },

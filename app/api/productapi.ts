@@ -72,6 +72,12 @@ export const getProducts = async () => {
   return res.json();
 }
 
+/**
+ * Fetches a single product by its ID from the server.
+ * 
+ * @param id string
+ * @returns {product: Product} - The product object.
+ */
 export const getProduct = async (id: string) => {
   const res = await fetch(`/api/products/get/${id}`, {
     method: 'GET',
@@ -82,6 +88,11 @@ export const getProduct = async (id: string) => {
   return res.json();
 }
 
+/**
+ * Fetches all products marked as favorites from the server.
+ * 
+ * @returns {products: Product[]} - An array of products.
+ */
 export const getFavorites = async () => {
   const res = await fetch('/api/products/get/favorites', {
     method: 'GET',
@@ -92,6 +103,13 @@ export const getFavorites = async () => {
   return res.json();
 };
 
+/**
+ * Sets favorite status of a product.
+ * 
+ * @param id String
+ * @param favorite Boolean
+ * @returns {product: Product} - The updated product object.
+ */
 export const favoriteProduct = async (id: string, favorite: boolean) => {
   const res = await fetch(`/api/products/update/favorite/${id}`, {
     method: 'PUT',

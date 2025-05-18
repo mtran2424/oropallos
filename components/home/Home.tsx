@@ -7,6 +7,7 @@ import { RiTempColdFill } from "react-icons/ri";
 import HomeGallery from "./HomeGallery";
 import Link from "next/link";
 import FavoritesGallery from "./FavoritesGallery";
+import ExpandButton from "@/components/ui/ExpandButton";
 
 const Home = () => {
   const [expandDiscount, setExpandDiscount] = useState(false);
@@ -56,21 +57,15 @@ const Home = () => {
             )}
           </AnimatePresence>
 
-          <motion.button
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            onClick={() => setExpandIntro(!expandIntro)}
-            className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
-          >
+          <ExpandButton onClick={() => setExpandIntro(!expandIntro)}>
             {expandIntro ? "Read less" : "Read more"}
-          </motion.button>
+          </ExpandButton>
         </div>
 
+        {/* Image Section */}
         <HomeGallery />
 
-        {/* TODO: Michelles Picks */}
+        {/* Michelle's Picks */}
         <FavoritesGallery />
 
 
@@ -108,16 +103,9 @@ const Home = () => {
               )}
             </AnimatePresence>
 
-            <motion.button
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              onClick={() => setExpandDiscount(!expandDiscount)}
-              className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
-            >
+            <ExpandButton onClick={() => setExpandDiscount(!expandDiscount)}>
               {expandDiscount ? "Read less" : "Read more"}
-            </motion.button>
+            </ExpandButton>
           </div>
         </div>
 

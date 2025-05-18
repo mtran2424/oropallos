@@ -2,15 +2,14 @@ import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { Product } from "@/components/global.utils";
-import { FaSearch } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
+import SearchBar from "@/components/ui/SearchBar";
+import Pagination from "@/components/ui/Pagination";
 
 const PRODUCTS_PER_PAGE = 24;
 
 const Collection = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
   const [sortOption, setSortOption] = useState("popular");
 
   // Search + Sort
@@ -67,60 +66,12 @@ const Collection = ({ products }: { products: Product[] }) => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full font-serif px-4">
 
-      <div className="flex flex-col gap-2 md:flex-row items-center w-full max-w-7xl">
-        {/* Search Bar */}
-        <div className="flex flex-center items-center w-full mt-2 max-w-7xl">
-          {isOpen ? (
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              onClick={() => {
-                setIsOpen(false);
-                setSearchTerm("");
-              }}
-              className="text-gray-600 p-2 focus:outline-none"
-            >
-              <IoMdClose size={20} />
-            </motion.button>
-          ) : (
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              onClick={() => {
-                setIsOpen((prev) => !prev);
-              }}
-              className="text-gray-600 p-2 focus:outline-none"
-            >
-              <FaSearch size={20} />
-            </motion.button>
-          )}
-
-          {/* Search Input */}
-          <motion.input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            placeholder="Search by name, category, subcategory, or type..."
-            initial={{ width: 0, opacity: 0 }}
-            animate={{
-              width: isOpen ? "100%" : 0,
-              opacity: isOpen ? 1 : 0,
-              paddingLeft: isOpen ? "0.75rem" : "0rem",
-              paddingRight: isOpen ? "0.75rem" : "0rem",
-            }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
-            style={{ whiteSpace: "nowrap" }}
-          />
-        </div>
+      <div className="flex flex-col gap-2 md:flex-row items-center w-full max-w-7xl mt-2">
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          handleSearchChange={handleSearchChange}
+        />
 
         {/* Sort Dropdown */}
         <div className="flex justify-center md:justify-end w-full md:w-fit max-w-7xl">
@@ -160,41 +111,12 @@ const Collection = ({ products }: { products: Product[] }) => {
       </p>
 
       {/* Pagination */}
-      <div className="flex items-center space-x-2 mb-8">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className={`px-4 py-2 rounded-full
-            border-1 border-red-900 
-            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
-            text-white disabled:text-white hover:text-red-900
-            transition-colors ease-in-out
-            disabled:cursor-not-allowed disabled:opacity-50`}
-        >
-          Prev
-        </motion.button>
-        <span className="text-lg font-medium">
-          Page {currentPage} of {totalPages}
-        </span>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className={`px-4 py-2 rounded-full
-            border-1 border-red-900 
-            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
-            text-white disabled:text-white hover:text-red-900
-            transition-colors ease-in-out
-            disabled:cursor-not-allowed disabled:opacity-50`}
-        >
-          Next
-        </motion.button>
-      </div>
+      <Pagination
+        prevClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        nextClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 };

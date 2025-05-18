@@ -1,4 +1,4 @@
-// app/api/products/get/route.ts
+// app/api/products/get/favorites/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 

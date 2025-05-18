@@ -4,6 +4,7 @@ import { Product } from "@/components/global.utils";
 import ProductCard from "@/components/products/ProductCard";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Pagination from "@/components/ui/Pagination";
 
 const PRODUCTS_PER_PAGE = 3;
 
@@ -48,7 +49,7 @@ const RelatedProducts = ({ currentProduct }: {
       <h2 className="text-2xl font-sans text-red-900 mb-6">Related Products</h2>
 
       {/* Products Display */}
-      <div className="relative min-h-[300px]">
+      <div className="relative min-h-[300px] mb-8">
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={page}
@@ -67,49 +68,18 @@ const RelatedProducts = ({ currentProduct }: {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-8">
-          {/* Previous Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            onClick={() => {
-              setDirection(-1);
-              setPage((p) => Math.max(1, p - 1));
-            }}
-            disabled={page === 1}
-            className={`px-4 py-2 rounded-full
-            border-1 border-red-900 
-            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
-            text-white disabled:text-white hover:text-red-900
-            transition-colors ease-in-out
-            disabled:cursor-not-allowed disabled:opacity-50`}
-          >
-            Previous
-          </motion.button>
-          <span className="text-sm font-medium">
-            Page {page} of {totalPages}
-          </span>
-          {/* Next Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            onClick={() => {
-              setDirection(1);
-              setPage((p) => Math.min(totalPages, p + 1));
-            }}
-            disabled={page === totalPages}
-            className={`px-4 py-2 rounded-full
-            border-1 border-red-900 
-            bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
-            text-white disabled:text-white hover:text-red-900
-            transition-colors ease-in-out
-            disabled:cursor-not-allowed disabled:opacity-50`}
-          >
-            Next
-          </motion.button>
-        </div>
+        <Pagination
+          prevClick={() => {
+            setDirection(-1);
+            setPage((p) => Math.max(1, p - 1));
+          }}
+          nextClick={() => {
+            setDirection(1);
+            setPage((p) => Math.min(totalPages, p + 1));
+          }}
+          currentPage={page}
+          totalPages={totalPages}
+        />
       )}
     </div>
   );

@@ -7,6 +7,7 @@ import OropallosStoreFront from "@/components/assets/photos/oropallos-storefront
 import { Map } from "@/components/map/Map";
 import { CiPhone } from "react-icons/ci";
 import { FaFacebookF } from "react-icons/fa";
+import ExpandButton from "@/components/ui/ExpandButton";
 
 const About = () => {
   const [expandAbout, setExpandAbout] = useState(false);
@@ -50,16 +51,9 @@ const About = () => {
               )}
             </AnimatePresence>
 
-            <motion.button
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              onClick={() => setExpandAbout(!expandAbout)}
-              className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
-            >
-              {expandAbout ? "Read less" : "Read more"}
-            </motion.button>
+            <ExpandButton onClick={() => setExpandAbout(!expandAbout)}>
+              {expandAbout ? "Read Less" : "Read More"}
+            </ExpandButton>
           </div>
 
           {/* Image Section */}
