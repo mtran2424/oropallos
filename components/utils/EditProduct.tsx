@@ -8,9 +8,8 @@ import Image from "next/image";
 import { IoIosCloseCircle } from "react-icons/io";
 
 // This component is a button that opens a modal for adding a product
-const EditProduct = ({ product, onEditProduct, products }: {
+const EditProduct = ({ product, products }: {
   product: Product,
-  onEditProduct: () => void;
   products: Product[];
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -152,8 +151,6 @@ const EditProduct = ({ product, onEditProduct, products }: {
     if (product.id) {
       editProduct(product.id, productData)
         .then(() => {
-          onEditProduct();
-        }).then(() => {
           // Show success message
           toast.success(`Product ${name} edited successfully!`);
           // Close the modal after submission

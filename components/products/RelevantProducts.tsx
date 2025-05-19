@@ -1,33 +1,23 @@
 "use client";
-import { getProducts } from "@/app/api/productapi";
 import { Product } from "@/components/global.utils";
 import ProductCard from "@/components/products/ProductCard";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Pagination from "@/components/ui/Pagination";
 
 const PRODUCTS_PER_PAGE = 3;
 
-const RelatedProducts = ({ currentProduct }: {
-  currentProduct: Product;
-}) => {
-  const [products, setProducts] = useState<Product[]>([]);
+const RelatedProducts = (
+  {
+    currentProduct,
+    products
+  }: {
+    currentProduct: Product;
+    products: Product[];
+  }) => {
+  // const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [direction, setDirection] = useState<1 | -1>(1); // for slide animation
-
-  // Fetch products from the API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data.products || []);
-      } catch (error) {
-        console.error("Failed to fetch products", error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
 
   // Filter products based on the current product's subcategory
   const filtered = products

@@ -92,6 +92,7 @@ const Navbar = () => {
               src={logo}
               alt="Oropallo's Discount Wine and Liquor Logo"
               height={100}
+              priority
               className="h-12 w-auto"
             />
           </motion.div>

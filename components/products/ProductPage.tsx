@@ -2,19 +2,18 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { redirect, useParams } from "next/navigation";
 import { Product } from "@/components/global.utils";
-import { useEffect, useState } from "react";
-import { getProduct } from "@/app/api/productapi";
+import { useState } from "react";
 import Image from "next/image";
 import { FaChevronRight, FaWineBottle } from "react-icons/fa";
 import { MdWaterDrop } from "react-icons/md";
 import { CiImageOff } from "react-icons/ci";
 import RelatedProducts from "./RelevantProducts";
 import { useRouter } from "next/navigation";
+import ExpandButton from "../ui/ExpandButton";
 
 const MAX_DESC_LENGTH = 200;
 
-const ProductPage = () => {
-  const [product, setProduct] = useState<Product>();
+const ProductPage = ({ products }: { products: Product[] }) => {
 
   // Get the product ID from the URL
   const params = useParams();
@@ -23,21 +22,10 @@ const ProductPage = () => {
   const router = useRouter();
 
   // Manage the state of the description expansion
+  const product = products ? products.find((p) => p.id === id) : undefined;
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const truncatedText = product?.description?.slice(0, MAX_DESC_LENGTH) + '...';
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const data = await getProduct(id);
-        setProduct(data.product);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
   return (
     <motion.div
       initial={{ x: "-100%", opacity: 0 }}
@@ -158,6 +146,7 @@ const ProductPage = () => {
                   src={product.imageUrl}
                   alt={product.name + " image"}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full p-2"
                 />
               </div>
@@ -194,16 +183,10 @@ const ProductPage = () => {
                 </p>}
 
               {product && product.description &&
-                <motion.button
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  onClick={() => setIsDescExpanded(!isDescExpanded)}
-                  className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border border-red-900 transition-colors font-serif"
-                >
+                <ExpandButton onClick={() => setIsDescExpanded(!isDescExpanded)}>
                   {isDescExpanded ? "Read less" : "Read more"}
-                </motion.button>}
+                </ExpandButton>
+              }
             </div>
 
             {/* Price and sizing */}
@@ -233,7 +216,7 @@ const ProductPage = () => {
 
         {/* Related Products Section */}
         {product &&
-          <RelatedProducts currentProduct={product} />
+          <RelatedProducts currentProduct={product} products={products} />
         }
       </div>
     </motion.div>
