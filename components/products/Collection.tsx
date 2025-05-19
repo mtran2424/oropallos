@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { Product } from "@/components/global.utils";
@@ -11,6 +11,12 @@ const Collection = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("popular");
+  const productsRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll to products grid on pagination/search/sort change
+  useEffect(() => {
+    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentPage, searchTerm, sortOption]);
 
   // Search + Sort
   const sortedAndFilteredProducts = useMemo(() => {
@@ -92,6 +98,7 @@ const Collection = ({ products }: { products: Product[] }) => {
       {/* Products Grid */}
       <AnimatePresence mode="wait">
         <motion.div
+          ref={productsRef}
           key={currentPage + searchTerm + sortOption}
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}

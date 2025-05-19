@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Product, ProductCategories, productTableColumns } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
 import { deleteProduct, favoriteProduct } from "@/app/api/productapi";
@@ -15,13 +15,19 @@ import Pagination from "../ui/Pagination";
 const PRODUCTS_PER_PAGE = 15;
 
 // This component is responsible for crud operations on products
-const ProductsSpreadsheet = ({products}:{products: Product[]}) => {
+const ProductsSpreadsheet = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest-oldest");
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
+  const productsRef = useRef<HTMLTableElement | null>(null);
+
+  // Scroll to products grid on pagination/search/sort change
+  useEffect(() => {
+    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentPage, searchTerm, sortOption]);
 
   const toggleExpanded = (productId: string) => {
     setExpandedImages((prev) => ({
@@ -334,7 +340,7 @@ const ProductsSpreadsheet = ({products}:{products: Product[]}) => {
           <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}
-            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
+            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }} ref={productsRef}>
               {/* Table Headers */}
               <thead className="sticky top-0 bg-white z-20">
                 <tr>
