@@ -4,12 +4,12 @@ import { Product, ProductCategories, ProductCategory, ProductSubcategory } from 
 import { FaChevronRight, FaFilter } from "react-icons/fa6";
 import { useEffect, useMemo, useState } from "react";
 import Collection from "./Collection";
-import { getProducts } from "@/app/api/productapi";
+// import { getProducts } from "@/app/api/productapi";
 import { IoMdClose } from "react-icons/io";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // Products component - Displays a list of products with filters for categories, subcategories, and types
-const Products = () => {
+const Products = ({products}: {products: Product[]}) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoryParam = searchParams.get("category");
@@ -30,7 +30,7 @@ const Products = () => {
   const [expandedSubcategory, setExpandedSubcategory] = useState<boolean>(subcategoryParam ? true : false);
   const [seeMoreCategories, setSeeMoreCategories] = useState<boolean>(false);
   const [seeMoreTypes, setSeeMoreTypes] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  // const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
 
   // Apply filters and products
@@ -64,18 +64,18 @@ const Products = () => {
 
 
   // Fetch products from the server when the component mounts or refreshes
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data.products || []);
-      } catch (error) {
-        console.error('Failed to fetch products', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProducts = async () => {
+  //     try {
+  //       const data = await getProducts();
+  //       setProducts(data.products || []);
+  //     } catch (error) {
+  //       console.error('Failed to fetch products', error);
+  //     }
+  //   };
 
-    fetchProducts();
-  }, []);
+  //   fetchProducts();
+  // }, []);
 
   // Ensure that the menu is closed when the window is resized
   useEffect(() => {

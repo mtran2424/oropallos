@@ -10,7 +10,7 @@ import { Product } from "@/components/global.utils";
  * @returns 
  */
 export const createProduct = async (product: Product) => {
-  const res = await fetch('/api/products/create', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export const createProduct = async (product: Product) => {
  * @returns result of the edit operation
  */
 export const editProduct = async (id: string, product: Product) => {
-  const res = await fetch(`/api/products/update/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products/update/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export const editProduct = async (id: string, product: Product) => {
  * @returns result of the delete operation
  */
 export const deleteProduct = async (id: string) => {
-  const res = await fetch(`/api/products/remove/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products/remove/${id}`, {
     method: 'DELETE',
   });
   if (!res.ok) {
@@ -63,7 +63,7 @@ export const deleteProduct = async (id: string) => {
  * @returns {products: Product[]} - An array of products.
  */
 export const getProducts = async () => {
-  const res = await fetch('/api/products/get', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products/get`, {
     method: 'GET',
   });
   if (!res.ok) {
