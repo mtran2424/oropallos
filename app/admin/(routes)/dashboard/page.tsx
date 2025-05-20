@@ -1,10 +1,8 @@
-import { getProducts } from "@/app/api/productapi";
 import Dashboard from "@/components/dashboard/Dashboard";
 
-export default async function Page() {
-  const data = await getProducts();
+export default function Page() {
 
   return (
-    <Dashboard products={data.products}/>
+    <Dashboard />
   );
 }

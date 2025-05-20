@@ -1,21 +1,21 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Product, ProductCategories, productTableColumns } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
-import { deleteProduct, favoriteProduct } from "@/app/api/productapi";
+import { deleteProduct, favoriteProduct, getProducts } from "@/app/api/productapi";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { MdDelete, MdFavorite } from "react-icons/md";
-import EditProduct from "../utils/EditProduct";
+import EditProduct from "@/components/utils/EditProduct";
 import Image from "next/image";
-import CopyButton from "../ui/CopyButton";
+import CopyButton from "@/components/ui/CopyButton";
 import { FaImage } from "react-icons/fa6";
-import SearchBar from "../ui/SearchBar";
-import Pagination from "../ui/Pagination";
+import SearchBar from "@/components/ui/SearchBar";
+import Pagination from "@/components/ui/Pagination";
 
 const PRODUCTS_PER_PAGE = 15;
 
 // This component is responsible for crud operations on products
-const ProductsSpreadsheet = ({ products }: { products: Product[] }) => {
+const ProductsSpreadsheet = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
@@ -23,6 +23,8 @@ const ProductsSpreadsheet = ({ products }: { products: Product[] }) => {
   const [sortOption, setSortOption] = useState("newest-oldest");
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
   const productsRef = useRef<HTMLTableElement | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [refresh, setRefresh] = useState(false);
 
   // Scroll to products grid on pagination/search/sort change
   useEffect(() => {
@@ -102,6 +104,17 @@ const ProductsSpreadsheet = ({ products }: { products: Product[] }) => {
   const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, sortedAndFilteredProducts.length);
   const currentProducts = sortedAndFilteredProducts.slice(startIdx, endIdx);
+
+// Refresh product list when a new product is added
+  const handleAddProduct = () => {
+    // setProducts((prevProducts) => [...prevProducts, product]);
+    setRefresh(!refresh);
+  }
+
+  // Refresh product list when a product is edited
+  const handleEditProduct = () => {
+    setRefresh(!refresh);
+  }
 
   // Send a delete request to the server to remove the product and refresh the list
   const handleDeleteProduct = async (id: string) => {
@@ -247,6 +260,19 @@ const ProductsSpreadsheet = ({ products }: { products: Product[] }) => {
     );
   };
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data.products || []);
+      } catch (error) {
+        console.error('Failed to fetch products', error);
+      }
+    };
+
+    fetchProducts();
+  }, [refresh]);
+
   return (
     <div>
       <div className="flex flex-col justify-between items-start mb-3 space-y-4 px-2">
@@ -317,7 +343,7 @@ const ProductsSpreadsheet = ({ products }: { products: Product[] }) => {
         />
 
         <div className="flex flex-row w-full whitespace-nowrap">
-          <AddProduct products={products} />
+          <AddProduct onAddProduct={handleAddProduct} products={products} />
           {/* Sort Dropdown */}
           <div className="flex justify-end w-full">
             <select
@@ -430,7 +456,7 @@ const ProductsSpreadsheet = ({ products }: { products: Product[] }) => {
                         </motion.button>
 
                         {/* Edit Product Button */}
-                        <EditProduct product={product} products={products} />
+                        <EditProduct onEditProduct={handleEditProduct} product={product} products={products} />
                       </td>
 
                     </tr>

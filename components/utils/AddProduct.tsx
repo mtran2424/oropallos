@@ -7,7 +7,8 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 
 // This component is a button that opens a modal for adding a product
-const AddProduct = ({ products }: {
+const AddProduct = ({ onAddProduct, products }: {
+  onAddProduct: () => void;
   products: Product[]
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -151,6 +152,7 @@ const AddProduct = ({ products }: {
     // Send the product data to the backend API to create a new product
     createProduct(productData)
       .then(() => {
+        onAddProduct();
         // Show success message
         toast.success(`Product ${name} added successfully!`);
 
