@@ -10,7 +10,7 @@ const PRODUCTS_PER_PAGE = 24;
 const Collection = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("popular");
+  const [sortOption, setSortOption] = useState("relevant");
   const productsRef = useRef<HTMLDivElement | null>(null);
 
   // Scroll to products grid on pagination/search/sort change
@@ -41,7 +41,7 @@ const Collection = ({ products }: { products: Product[] }) => {
       case "price-desc":
         sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
-      case "popular":
+      case "relevant":
         sorted.sort((a, b) => {
           const dateA = new Date(a.createdAt || 0);
           const dateB = new Date(b.createdAt || 0);
@@ -86,7 +86,7 @@ const Collection = ({ products }: { products: Product[] }) => {
             onChange={handleSortChange}
             className="border border-gray-300 rounded px-3 py-2 text-sm"
           >
-            <option value="popular">Most Popular</option>
+            <option value="relevant">Most Relevant</option>
             <option value="name-asc">Name (A-Z)</option>
             <option value="name-desc">Name (Z-A)</option>
             <option value="price-asc">Price (Low → High)</option>

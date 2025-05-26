@@ -77,6 +77,7 @@ const sweetRedTypes = [
 const semiRedTypes = [
   { name: "Table Wine", value: "Table_Wine" },
   { name: "Beaujolais", value: "Beaujolais" },
+  { name: "Semi Sweet Red Blend", value: "Semi_Sweet_Red_Blend" },
 ];
 
 const dryWhiteTypes = [
@@ -90,6 +91,7 @@ const dryWhiteTypes = [
   { name: "White Malbec", value: "White_Malbec" },
   { name: "White Bordeaux", value: "White_Bordeaux" },
   { name: "White Côtes du Rhône", value: "White_Cotes_du_Rhone" },
+  { name: "White Blend", value: "White_Blend" },
 ];
 
 const sweetWhiteTypes = [
