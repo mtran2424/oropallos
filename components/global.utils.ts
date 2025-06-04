@@ -73,7 +73,6 @@ const sweetRedTypes = [
   { name: "Lambrusco", value: "Lambrusco" },
   { name: "Table Wine", value: "Table_Wine" },
   { name: "Chocolate Wine", value: "Chocolate_Wine" },
-  { name: "Port", value: "Port"}
 ];
 
 const semiRedTypes = [
