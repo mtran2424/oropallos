@@ -64,6 +64,7 @@ const dryRedTypes = [
   { name: "Nero d'Avola", value: "Nero_dAvola" },
   { name: "Amarone", value: "Amarone" },
   { name: "Côtes du Rhône", value: "Cotes_du_Rhone" },
+  { name: "Table Wine", value: "Table_Wine" },
 ];
 
 const sweetRedTypes = [
