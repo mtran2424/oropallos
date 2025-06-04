@@ -174,9 +174,9 @@ const Products = () => {
               className={`hidden md:flex w-full items-center justify-center space-x-16 px-5 mt-2`}
             >
 
-              {currentCategory && (currentCategory.subcategories.length > 5 ?
-                (!seeMoreTypes ? currentCategory.subcategories.slice(0, 5) :
-                  currentCategory.subcategories.slice(5, currentCategory.subcategories.length)) :
+              {currentCategory && (currentCategory.subcategories.length > 6 ?
+                (!seeMoreTypes ? currentCategory.subcategories.slice(0, 6) :
+                  currentCategory.subcategories.slice(6, currentCategory.subcategories.length)) :
                 currentCategory.subcategories)
                 .map((subcategory, index) => (
                   <motion.div
