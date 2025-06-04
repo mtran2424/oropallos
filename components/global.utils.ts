@@ -48,6 +48,7 @@ const dryRedTypes = [
   { name: "Merlot", value: "Merlot" },
   { name: "Pinot Noir", value: "Pinot_Noir" },
   { name: "Red Blend", value: "Red_Blend" },
+  { name: "Burgundy", value: "Burgundy" },
   { name: "Malbec", value: "Malbec" },
   { name: "Cabernet Franc", value: "Cabernet_Franc" },
   { name: "Sangiovese", value: "Sangiovese" },
