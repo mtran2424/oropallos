@@ -73,6 +73,7 @@ const sweetRedTypes = [
   { name: "Lambrusco", value: "Lambrusco" },
   { name: "Table Wine", value: "Table_Wine" },
   { name: "Chocolate Wine", value: "Chocolate_Wine" },
+  { name: "Port", value: "Port"}
 ];
 
 const semiRedTypes = [
@@ -93,6 +94,8 @@ const dryWhiteTypes = [
   { name: "White Bordeaux", value: "White_Bordeaux" },
   { name: "White Côtes du Rhône", value: "White_Cotes_du_Rhone" },
   { name: "White Blend", value: "White_Blend" },
+  { name: "White Table Wine", value: "White_Table_Wine" },
+  { name: "Blanc de Noir", value: "Blanc_de_Noir" },
 ];
 
 const sweetWhiteTypes = [
@@ -104,6 +107,7 @@ const sweetWhiteTypes = [
 const semiWhiteTypes = [
   { name: "Riesling", value: "Riesling" },
   { name: "Gewürztraminer", value: "Gewurztraminer" },
+  { name: "Table Wine", value: "Table_Wine" },
 ];
 
 const drySparklingTypes = [
