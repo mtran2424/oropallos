@@ -42,6 +42,7 @@ enum ProductSubcategory {
   Ready_To_Drink
   Moonshine
   Cocktails
+  Wine_Based_Beverages
 }
 
 model Product {

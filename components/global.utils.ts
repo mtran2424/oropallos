@@ -204,8 +204,8 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Brandy", types: brandyTypes, value: "Brandy" },
       { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
       { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
-      {name: "Moonshine", types: [], value: "Moonshine"},
-      {name: "Cocktails", types: cocktailTypes, value: "Cocktails"}
+      { name: "Moonshine", types: [], value: "Moonshine"},
+      { name: "Cocktails", types: cocktailTypes, value: "Cocktails"}
     ],
     value: "Liquor",
   },
@@ -252,6 +252,7 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Box Wine", types: [], value: "Box_Wine" },
       { name: "Organic", types: [], value: "Organic"},
       { name: "Low Calorie", types: [], value: "Low_Calorie" },
+      { name: "Wine Based Beverages", types: [], value: "Wine_Based_Beverages" },
     ],
     value: "Other_Wine",
   },
