@@ -43,8 +43,7 @@ enum ProductSubcategory {
   Moonshine
   Cocktails
   Wine_Based_Beverages
-  Sake
-  Soju
+  Asian_Wine
 }
 
 model Product {
