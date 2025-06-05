@@ -254,6 +254,8 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Organic", types: [], value: "Organic"},
       { name: "Low Calorie", types: [], value: "Low_Calorie" },
       { name: "Wine Based Beverages", types: [], value: "Wine_Based_Beverages" },
+      { name: "Sake", types: [], value: "Sake" },
+      { name: "Soju", types: [], value: "Soju" },
     ],
     value: "Other_Wine",
   },
