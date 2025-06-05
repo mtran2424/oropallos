@@ -43,7 +43,7 @@ enum ProductSubcategory {
   Moonshine
   Cocktails
   Wine_Based_Beverages
-  Asian_Wine
+  Asian_Wines
 }
 
 model Product {
