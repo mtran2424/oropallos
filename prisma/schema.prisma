@@ -44,6 +44,8 @@ enum ProductSubcategory {
   Cocktails
   Wine_Based_Beverages
   Asian_Wines
+  Kosher_Wines
+  Mead
 }
 
 model Product {

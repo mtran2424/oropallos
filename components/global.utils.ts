@@ -255,6 +255,8 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Low Calorie", types: [], value: "Low_Calorie" },
       { name: "Wine Based Beverages", types: [], value: "Wine_Based_Beverages" },
       { name: "Asian Wines", types: [], value: "Asian_Wines" },
+      { name: "Kosher Wines", types: [], value: "Kosher_Wines" },
+      { name: "Mead", types: [], value: "Mead" },
     ],
     value: "Other_Wine",
   },
