@@ -65,6 +65,7 @@ const dryRedTypes = [
   { name: "Amarone", value: "Amarone" },
   { name: "Côtes du Rhône", value: "Cotes_du_Rhone" },
   { name: "Table Wine", value: "Table_Wine" },
+  { name: "Valpolicella", value: "Valpolicella" },
 ];
 
 const sweetRedTypes = [
