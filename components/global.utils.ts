@@ -97,6 +97,8 @@ const dryWhiteTypes = [
   { name: "White Blend", value: "White_Blend" },
   { name: "White Table Wine", value: "White_Table_Wine" },
   { name: "Blanc de Noir", value: "Blanc_de_Noir" },
+  { name: "Sancerre", value: "Sancerre" },
+  { name: "Chablis", value: "Chablis" },
 ];
 
 const sweetWhiteTypes = [
