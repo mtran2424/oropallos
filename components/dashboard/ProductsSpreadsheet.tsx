@@ -124,6 +124,7 @@ const ProductsSpreadsheet = () => {
         .then((res) => {
           if (res.status === 200) {
             toast.success('Product deleted successfully');
+            setRefresh(!refresh);
           }
           else {
             console.error('Failed to delete product');
