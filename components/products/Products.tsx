@@ -1,12 +1,14 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { Product, ProductCategories, ProductCategory, ProductSubcategory } from "@/components/global.utils";
+import { Product, ProductCategories, ProductCategory, ProductSubcategory, ProductType } from "@/components/global.utils";
 import { FaChevronRight, FaFilter } from "react-icons/fa6";
 import { useEffect, useMemo, useState } from "react";
 import Collection from "./Collection";
 import { getProducts } from "@/app/api/productapi";
 import { IoMdClose } from "react-icons/io";
 import { useRouter, useSearchParams } from "next/navigation";
+import CategoryDropdownFilter from "../utils/CategoryDropdownFilter";
+import SubcategoryDropdownFilter from "../utils/SubcategoryDropdownFilter";
 
 // Products component - Displays a list of products with filters for categories, subcategories, and types
 const Products = () => {
@@ -62,6 +64,70 @@ const Products = () => {
     }
   };
 
+  const handleCategoryClick = (event: string, category: ProductCategory) => {
+    if (event === "select") {
+      if (currentCategory?.name === category.name) {
+        setCurrentCategory(undefined);
+        setExpandedCategory(false);
+        const currentPath = window.location.pathname;
+        router.push(currentPath)
+      } else {
+        setCurrentCategory(category);
+        setExpandedCategory(true);
+        router.push(`/products?category=${category.value}`);
+      }
+      setCurrentSubcategory(undefined)
+      setExpandedSubcategory(false);
+      setCurrentType("")
+    }
+    else if (event === "see more") {
+      setSeeMoreCategories(!seeMoreCategories);
+      setCurrentCategory(undefined);
+      setCurrentSubcategory(undefined)
+      setExpandedSubcategory(false);
+      setCurrentType("")
+      const currentPath = window.location.pathname;
+      router.push(currentPath)
+    }
+  }
+
+  const handleSubcategoryClick = (event: string, subcategory: ProductSubcategory) => {
+    if (event === "select") {
+      // Unselect subcategory if already selected
+      if (currentSubcategory && currentSubcategory.name === subcategory.name) {
+        setCurrentSubcategory(undefined);
+        setExpandedSubcategory(false);
+        router.push(`/products?category=${currentCategory?.value}`);
+      }
+      else {
+        // Expand subcategory if not already selected
+        setCurrentSubcategory(subcategory);
+        setExpandedSubcategory(true);
+        router.push(`/products?category=${currentCategory?.value}&subcategory=${subcategory.value}`);
+      }
+
+      setCurrentType("");
+    }
+    else if (event === "see more") {
+      setSeeMoreTypes(!seeMoreTypes);
+      router.push(`/products?category=${currentCategory?.value}`);
+      setCurrentSubcategory(undefined);
+      setExpandedSubcategory(false);
+    };
+  };
+
+  const handleTypeClick = (type: ProductType) => {
+    // Logic to handle type filter
+    if (currentType === type.name) {
+      router.push(`/products?category=${currentCategory?.value}&subcategory=${currentSubcategory?.value}`);
+      setCurrentType("");
+    }
+    else {
+      router.push(`/products?category=${currentCategory?.value}&subcategory=${currentSubcategory?.value}&type=${type.value}`);
+      setCurrentType(type.value);
+    }
+  }
+
 
   // Fetch products from the server when the component mounts or refreshes
   useEffect(() => {
@@ -95,151 +161,20 @@ const Products = () => {
   return (
     <div>
       {/* Main Category List */}
-      <AnimatePresence mode="wait">
-        <motion.ul
-          key={seeMoreCategories.toString()}
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="hidden md:flex flex-row w-full items-center justify-center space-x-16 p-2 mt-25 overflow-hidden"
-        >
-          {/* General Categories - Show up to 4 */}
-          {((!seeMoreCategories ? ProductCategories.slice(0, 4) : ProductCategories.slice(4, 6))
-          ).map((category, index) => (
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              key={index}
-              onClick={() => {
-                if (currentCategory?.name === category.name) {
-                  setCurrentCategory(undefined);
-                  setExpandedCategory(false);
-                  const currentPath = window.location.pathname;
-                  router.push(currentPath)
-                } else {
-                  setCurrentCategory(category);
-                  setExpandedCategory(true);
-                  router.push(`/products?category=${category.value}`);
-                }
-                setCurrentSubcategory(undefined)
-                setExpandedSubcategory(false);
-                setCurrentType("")
-              }}
-              className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center"
-            >
-              <motion.div animate={currentCategory?.name === category.name ? { rotate: 90 } : {}}>
-                <FaChevronRight className="mr-2" />
-              </motion.div>
-              <li className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-                {category.name}
-              </li>
-            </motion.div>
-          ))}
+      <div className="flex mt-25"></div>
+      <CategoryDropdownFilter
+        options={ProductCategories}
+        currentOption={currentCategory}
+        handleClick={handleCategoryClick}
+      />
 
-          {<motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            onClick={() => {
-              setSeeMoreCategories(!seeMoreCategories);
-              setCurrentCategory(undefined);
-              setCurrentSubcategory(undefined)
-              setExpandedSubcategory(false);
-              setCurrentType("")
-              const currentPath = window.location.pathname;
-              router.push(currentPath)
-            }}
-            className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-          >
-            <li className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-              ...
-            </li>
-          </motion.div>
-          }
-        </motion.ul>
-      </AnimatePresence>
-
-      {/* Expanded Category */}
-      <AnimatePresence mode="wait">
-        {expandedCategory && currentCategory &&
-          <div className="items-center justify-center">
-            {/* Subcategories - Show up to 5 */}
-            <motion.ul
-              key={currentCategory.name + seeMoreTypes.toString()}
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-              className={`hidden md:flex w-full items-center justify-center space-x-16 px-5 mt-2`}
-            >
-
-              {currentCategory && (currentCategory.subcategories.length > 6 ?
-                (!seeMoreTypes ? currentCategory.subcategories.slice(0, 6) :
-                  currentCategory.subcategories.slice(6, currentCategory.subcategories.length)) :
-                currentCategory.subcategories)
-                .map((subcategory, index) => (
-                  <motion.div
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -50 }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    key={index}
-                    onClick={() => {
-                      // Unselect subcategory if already selected
-                      if (currentSubcategory && currentSubcategory.name === subcategory.name) {
-                        setCurrentSubcategory(undefined);
-                        setExpandedSubcategory(false);
-                        router.push(`/products?category=${currentCategory.value}`);
-                      }
-                      else {
-                        // Expand subcategory if not already selected
-                        setCurrentSubcategory(subcategory);
-                        setExpandedSubcategory(true);
-                        router.push(`/products?category=${currentCategory.value}&subcategory=${subcategory.value}`);
-                      }
-
-                      setCurrentType("");
-                    }}
-                    className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-                  >
-                    <motion.div
-                      animate={currentSubcategory && currentSubcategory.name === subcategory.name ? { rotate: 90 } : {}}
-                    >
-                      <FaChevronRight className="mr-2" />
-                    </motion.div>
-
-                    <li className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-                      {subcategory.name}
-                    </li>
-                  </motion.div>
-                ))}
-
-              {/* See More Button */}
-              {currentCategory && currentCategory.subcategories.length > 5 &&
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  onClick={() => {
-                    setSeeMoreTypes(!seeMoreTypes);
-                    router.push(`/products?category=${currentCategory.value}`);
-                    setCurrentSubcategory(undefined);
-                    setExpandedSubcategory(false);
-                  }}
-                  className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-                >
-
-                  <li className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-                    ...
-                  </li>
-                </motion.div>}
-            </motion.ul>
-          </div>
-        }
-      </AnimatePresence>
+      {expandedCategory && currentCategory &&
+        <SubcategoryDropdownFilter
+          options={currentCategory.subcategories}
+          currentOption={currentSubcategory}
+          handleClick={handleSubcategoryClick}
+        />
+      }
 
       {/* Expanded Subcategory */}
       <AnimatePresence mode="wait">
@@ -269,15 +204,7 @@ const Products = () => {
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                     key={index}
                     onClick={() => {
-                      // Logic to handle type filter
-                      if (currentType === type.name) {
-                        router.push(`/products?category=${currentCategory.value}&subcategory=${currentSubcategory}`);
-                        setCurrentType("");
-                      }
-                      else {
-                        router.push(`/products?category=${currentCategory.value}&subcategory=${currentSubcategory}&type=${type}`);
-                        setCurrentType(type.value);
-                      }
+                      handleTypeClick(type);
                     }}
                     className="col-span-4 text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
                   >
