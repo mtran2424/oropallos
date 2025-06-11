@@ -143,6 +143,7 @@ const ProductsSpreadsheet = () => {
         .then((res) => {
           if (res.status === 200) {
             toast.success('Favorite changed successfully');
+            setRefresh(!refresh);
           }
         });
     } catch (error) {
