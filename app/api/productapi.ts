@@ -65,6 +65,7 @@ export const deleteProduct = async (id: string) => {
 export const getProducts = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products/get`, {
     method: 'GET',
+    cache: 'no-store',
   });
   if (!res.ok) {
     throw new Error('Failed to fetch products');
@@ -79,8 +80,9 @@ export const getProducts = async () => {
  * @returns {product: Product} - The product object.
  */
 export const getProduct = async (id: string) => {
-  const res = await fetch(`/api/products/get/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products/get/${id}`, {
     method: 'GET',
+    cache: 'no-store',
   });
   if (!res.ok) {
     throw new Error('Failed to fetch products');
@@ -96,6 +98,7 @@ export const getProduct = async (id: string) => {
 export const getFavorites = async () => {
   const res = await fetch('/api/products/get/favorites', {
     method: 'GET',
+    cache: 'no-store',
   });
   if (!res.ok) {
     throw new Error('Failed to fetch products');

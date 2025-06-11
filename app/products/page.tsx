@@ -1,8 +1,9 @@
 import Products from "@/components/products/Products";
+import { getProducts } from "../api/productapi";
 
-export default function Page() {
-
+export default async function Page() {
+  const data = await getProducts();
   return (
-    <Products />
+    <Products products={data.products}/>
   );
 }
