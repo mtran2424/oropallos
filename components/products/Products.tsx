@@ -18,6 +18,7 @@ const Products = ({products}:{products:Product[]}) => {
   const subcategoryParam = searchParams.get("subcategory");
   const typeParam = searchParams.get("type");
 
+  // Current filter states
   const [currentCategory, setCurrentCategory] = useState<ProductCategory | undefined>(
     categoryParam ? ProductCategories
       .find((cat) => cat.value === categoryParam) : undefined
@@ -28,11 +29,12 @@ const Products = ({products}:{products:Product[]}) => {
       .find((subcat) => subcat.value === subcategoryParam) : undefined
   );
   const [currentType, setCurrentType] = useState<string>(typeParam || "");
+
+  // State for expanded categories and subcategories
   const [expandedCategory, setExpandedCategory] = useState<boolean>(categoryParam ? true : false);
   const [expandedSubcategory, setExpandedSubcategory] = useState<boolean>(subcategoryParam ? true : false);
   const [seeMoreCategories, setSeeMoreCategories] = useState<boolean>(false);
   const [seeMoreTypes, setSeeMoreTypes] = useState<boolean>(false);
-  // const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
 
   // Apply filters and products
@@ -64,6 +66,7 @@ const Products = ({products}:{products:Product[]}) => {
     }
   };
 
+  // Sets category based on click or unsets if already selected
   const handleCategoryClick = (event: string, category: ProductCategory) => {
     if (event === "select") {
       if (currentCategory?.name === category.name) {
@@ -91,6 +94,7 @@ const Products = ({products}:{products:Product[]}) => {
     }
   }
 
+  // Sets subcategory based on click or unsets if already selected
   const handleSubcategoryClick = (event: string, subcategory: ProductSubcategory) => {
     if (event === "select") {
       // Unselect subcategory if already selected
@@ -116,6 +120,7 @@ const Products = ({products}:{products:Product[]}) => {
     };
   };
 
+  // Sets type based on click or unsets if already selected
   const handleTypeClick = (type: ProductType) => {
     // Logic to handle type filter
     if (currentType === type.name) {
@@ -127,21 +132,6 @@ const Products = ({products}:{products:Product[]}) => {
       setCurrentType(type.value);
     }
   }
-
-
-  // Fetch products from the server when the component mounts or refreshes
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const data = await getProducts();
-  //       setProducts(data.products || []);
-  //     } catch (error) {
-  //       console.error('Failed to fetch products', error);
-  //     }
-  //   };
-
-  //   fetchProducts();
-  // }, []);
 
   // Ensure that the menu is closed when the window is resized
   useEffect(() => {
@@ -161,7 +151,7 @@ const Products = ({products}:{products:Product[]}) => {
   return (
     <div>
       {/* Main Category List */}
-      <div className="flex mt-25"></div>
+      <div className="md:flex md:mt-25"></div>
       <CategoryDropdownFilter
         options={ProductCategories}
         currentOption={currentCategory}
@@ -404,11 +394,7 @@ const Products = ({products}:{products:Product[]}) => {
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   onClick={() => {
-                    if (currentCategory?.name === category.name) {
-                      setCurrentCategory(undefined);
-                    } else {
-                      setCurrentCategory(category);
-                    }
+                    handleCategoryClick("select", category);
                   }}
                   className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center"
                 >
@@ -445,7 +431,7 @@ const Products = ({products}:{products:Product[]}) => {
                           whileTap={{ scale: 0.9 }}
                           transition={{ duration: 0.2, ease: "easeInOut" }}
                           onClick={() =>
-                            setCurrentSubcategory(isActive ? undefined : subcategory)
+                            handleSubcategoryClick("select", subcategory)
                           }
                           className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center"
                         >
@@ -477,8 +463,6 @@ const Products = ({products}:{products:Product[]}) => {
                       Types
                     </label>
                     {currentSubcategory.types.map((type, index) => {
-                      const isActive = currentType === type.name;
-
                       return (
                         <motion.div
                           key={index}
@@ -486,7 +470,7 @@ const Products = ({products}:{products:Product[]}) => {
                           whileTap={{ scale: 0.9 }}
                           transition={{ duration: 0.2, ease: "easeInOut" }}
                           onClick={() =>
-                            setCurrentType(isActive ? "" : type.name)
+                            handleTypeClick(type)
                           }
                           className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center"
                         >

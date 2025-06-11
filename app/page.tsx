@@ -1,9 +1,9 @@
 import Home from "@/components/home/Home";
+import { getFavorites } from "./api/productapi";
 
-const Page = () => {
+export default async function Page() {
+  const data = await getFavorites();
   return ( 
-    <Home />
+    <Home favorites={data.products}/>
    );
 }
- 
-export default Page;

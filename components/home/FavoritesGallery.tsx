@@ -1,13 +1,11 @@
-import { getFavorites } from "@/app/api/productapi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Product } from "@/components/global.utils";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
 import { redirect } from "next/navigation";
 
-const FavoritesGallery = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+const FavoritesGallery = ({ products }: { products: Product[] }) => {
   const [current, setCurrent] = useState(0);
 
   // Function to handle the previous and next button clicks
@@ -22,19 +20,6 @@ const FavoritesGallery = () => {
     if (offset === 1 || (current === products.length - 1 && index === 0)) return 'right';
     return 'hidden';
   };
-
-  // Fetch products from the API when the component mounts
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getFavorites();
-        setProducts(data.products || []);
-      } catch (error) {
-        console.error("Failed to fetch products", error);
-      }
-    };
-    fetchProducts();
-  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center px-10">

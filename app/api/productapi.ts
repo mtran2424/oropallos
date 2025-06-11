@@ -96,7 +96,7 @@ export const getProduct = async (id: string) => {
  * @returns {products: Product[]} - An array of products.
  */
 export const getFavorites = async () => {
-  const res = await fetch('/api/products/get/favorites', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/products/get/favorites`, {
     method: 'GET',
     cache: 'no-store',
   });

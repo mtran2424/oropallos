@@ -8,8 +8,9 @@ import HomeGallery from "./HomeGallery";
 import Link from "next/link";
 import FavoritesGallery from "./FavoritesGallery";
 import ExpandButton from "@/components/ui/ExpandButton";
+import { Product } from "@/components/global.utils";
 
-const Home = () => {
+const Home = ({ favorites }: { favorites: Product[] }) => {
   const [expandDiscount, setExpandDiscount] = useState(false);
   const [expandIntro, setExpandIntro] = useState(false);
   return (
@@ -66,7 +67,7 @@ const Home = () => {
         <HomeGallery />
 
         {/* Michelle's Picks */}
-        <FavoritesGallery />
+        <FavoritesGallery products={favorites}/>
 
 
         {/* Discounts Section */}
