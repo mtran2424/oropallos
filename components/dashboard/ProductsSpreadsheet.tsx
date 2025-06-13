@@ -12,7 +12,7 @@ import { FaImage } from "react-icons/fa6";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
 
-const PRODUCTS_PER_PAGE = 20;
+const PRODUCTS_PER_PAGE = 25;
 
 // This component is responsible for crud operations on products
 const ProductsSpreadsheet = () => {
@@ -262,6 +262,7 @@ const ProductsSpreadsheet = () => {
     );
   };
 
+  // Fetch products on component mount and when refresh state changes
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -275,6 +276,7 @@ const ProductsSpreadsheet = () => {
     fetchProducts();
   }, [refresh]);
 
+  // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -368,7 +370,7 @@ const ProductsSpreadsheet = () => {
         </div>
 
 
-        <div className="flex max-w-[90vw] max-h-[70vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
+        <div className="flex max-w-[90vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
           <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}

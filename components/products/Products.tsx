@@ -9,9 +9,10 @@ import { IoMdClose } from "react-icons/io";
 import { useRouter, useSearchParams } from "next/navigation";
 import CategoryDropdownFilter from "../utils/CategoryDropdownFilter";
 import SubcategoryDropdownFilter from "../utils/SubcategoryDropdownFilter";
+import FilterPath from "../utils/FilterPath";
 
 // Products component - Displays a list of products with filters for categories, subcategories, and types
-const Products = ({products}:{products:Product[]}) => {
+const Products = ({ products }: { products: Product[] }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoryParam = searchParams.get("category");
@@ -221,105 +222,39 @@ const Products = ({products}:{products:Product[]}) => {
         <div className="flex flex-col items-center">
 
           <div className="grid grid-cols-1 max-w-7xl w-full justify-center">
-            {/* Filter Header */}
-            <h2 className="text-lg font-bold text-zinc-900 px-5">Filters</h2>
+            <FilterPath
+              category={currentCategory}
+              subcategory={currentSubcategory}
+              type={currentType}
+              onClearClick={() => {
+                // Unset filters and params and collapse filter dropdowns
+                setCurrentCategory(undefined);
+                setCurrentSubcategory(undefined);
+                setCurrentType("");
+                setExpandedCategory(false)
+                setExpandedSubcategory(false);
+                const currentPath = window.location.pathname;
+                router.push(currentPath);
+              }}
+              onCategoryClick={() => {
+                // Set category and show subcategories
+                router.push(`/products?category=${currentCategory?.value}`)
+                setCurrentSubcategory(undefined);
+                setCurrentType("");
 
-            {/* Filter Path - Clears current filters on click */}
-            <div className="flex flex-row items-center px-5 font-serif text-md">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                onClick={() => {
-                  setCurrentCategory(undefined);
-                  setCurrentSubcategory(undefined);
-                  setCurrentType("");
-
-                  setExpandedCategory(false)
-                  setExpandedSubcategory(false);
-                  const currentPath = window.location.pathname;
-                  router.push(currentPath);
-
-                }}
-              >
-                Products
-              </motion.button>
-
-              {/* General Categories - Red Wine, White Wine, Liquor, etc... */}
-              <AnimatePresence mode="wait">
-                {currentCategory &&
-                  <motion.div
-                    key={currentCategory.name}
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="flex flex-row items-center"
-                  >
-                    <FaChevronRight className="mx-2" />
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      onClick={() => {
-                        router.push(`/products?category=${currentCategory.value}`)
-                        setCurrentSubcategory(undefined);
-                        setCurrentType("");
-
-                        setExpandedSubcategory(false);
-                      }}
-                    >
-                      {currentCategory?.name}
-                    </motion.button>
-                  </motion.div>
-                }
-              </AnimatePresence>
-
-              {/* Subcategories - Flavor Profiles, liquor types, etc... */}
-              <AnimatePresence mode="wait">
-                {currentCategory && currentSubcategory &&
-                  <motion.div
-                    key={currentSubcategory.name}
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="flex flex-row items-center"
-                  >
-                    <FaChevronRight className="mx-2" />
-
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      onClick={() => {
-                        setCurrentType("");
-                        router.push(`/products?category=${currentCategory.value}&subcategory=${currentSubcategory.value}`)
-                      }}
-                    >
-                      {currentSubcategory?.name}
-                    </motion.button>
-                  </motion.div>
-                }
-              </AnimatePresence>
-
-
-              <AnimatePresence mode="wait">
-                {currentType &&
-                  <motion.div
-                    key={currentType}
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="flex flex-row items-center"
-                  >
-                    <FaChevronRight className="mx-2" />
-                    {currentType.split("_").join(" ")}
-                  </motion.div>
-                }
-              </AnimatePresence>
-            </div>
+                // Collapse types
+                setExpandedSubcategory(false);
+              }}
+              onSubcategoryClick={() => {
+                // Unset types and set params for subcategory
+                setCurrentType("");
+                router.push(`/products?category=${currentCategory?.value}&subcategory=${currentSubcategory?.value}`);
+              }}
+              onTypeClick={() => {
+                // Unset type
+                setCurrentType("");
+              }}
+            />
           </div>
         </div>
 

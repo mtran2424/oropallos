@@ -4,12 +4,14 @@ import { redirect, useParams } from "next/navigation";
 import { Product } from "@/components/global.utils";
 import { useState } from "react";
 import Image from "next/image";
-import { FaChevronRight, FaWineBottle } from "react-icons/fa";
+import { FaWineBottle } from "react-icons/fa";
 import { MdWaterDrop } from "react-icons/md";
 import { CiImageOff } from "react-icons/ci";
 import RelatedProducts from "./RelevantProducts";
 import { useRouter } from "next/navigation";
 import ExpandButton from "../ui/ExpandButton";
+import FilterPath from "../utils/FilterPath";
+import { ProductCategory } from "@/components/global.utils";
 
 const MAX_DESC_LENGTH = 200;
 
@@ -37,92 +39,15 @@ const ProductPage = ({ products }: { products: Product[] }) => {
       {/* Product Filter path component */}
       <div className="flex flex-col items-center mb-5">
         <div className="grid grid-cols-1 max-w-7xl w-full justify-center">
-          {/* Filter Path */}
-          <div className="flex flex-row items-center px-5 font-serif text-md">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              onClick={() => {
-                redirect("/products");
-              }}
-            >
-              Products
-            </motion.button>
-
-            {/* General Categories - Red Wine, White Wine, Liquor, etc... */}
-            <AnimatePresence mode="wait">
-              {product && product.category &&
-                <motion.div
-                  key={product.category}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="flex flex-row items-center"
-                >
-                  <FaChevronRight className="mx-2" />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    onClick={() => {
-                      router.push(`/products?category=${product.category}`);
-                    }}
-                  >
-                    {product?.category.split("_").join(" ")}
-                  </motion.button>
-                </motion.div>
-              }
-            </AnimatePresence>
-
-            {/* Subcategories - Flavor Profiles, liquor types, etc... */}
-            <AnimatePresence mode="wait">
-              {product && product.subcategory &&
-                <motion.div
-                  key={product.subcategory}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="flex flex-row items-center"
-                >
-                  <FaChevronRight className="mx-2" />
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    onClick={() => {
-                      router.push(`/products?category=${product.category}&subcategory=${product.subcategory}`);
-                    }}
-                  >
-                    {product.subcategory.split("_").join(" ")}
-                  </motion.button>
-                </motion.div>
-              }
-            </AnimatePresence>
-
-
-            <AnimatePresence mode="wait">
-              {product && product.type &&
-                <motion.div
-                  key={product.type}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="flex flex-row items-center"
-                  onClick={() => {
-                    router.push(`/products?category=${product.category}&subcategory=${product.subcategory}&type=${product.type}`);
-                  }}
-                >
-                  <FaChevronRight className="mx-2" />
-                  {product.type.split("_").join(" ")}
-                </motion.div>
-              }
-            </AnimatePresence>
-          </div>
+          <FilterPath
+            category={product && ({ name: product.category.split("_").join(" "), value: product.category, subcategories: [] } as ProductCategory)}
+            subcategory={product && { name: product.subcategory.split("_").join(" "), value: product.subcategory, types: [] }}
+            type={product?.type}
+            onClearClick={() => redirect("/products")}
+            onCategoryClick={() => router.push(`/products?category=${product?.category}`)}
+            onSubcategoryClick={() => router.push(`/products?category=${product?.category}&subcategory=${product?.subcategory}`)}
+            onTypeClick={() => router.push(`/products?category=${product?.category}&subcategory=${product?.subcategory}&type=${product?.type}`)}
+          />
         </div>
       </div>
 
