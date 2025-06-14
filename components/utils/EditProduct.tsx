@@ -42,8 +42,6 @@ const EditProduct = ({ onEditProduct, product, products }: {
 
     if (!showSuggestions || suggestions.length === 0) return;
 
-    // if (!showNameSuggestions || nameSuggestions.length === 0) return;
-
     // Handle arrow keys for navigating suggestions
     if (e.key === "ArrowDown") {
       e.preventDefault();

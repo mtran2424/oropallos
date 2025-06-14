@@ -15,7 +15,7 @@ import Pagination from "@/components/ui/Pagination";
 const PRODUCTS_PER_PAGE = 25;
 
 // This component is responsible for crud operations on products
-const ProductsSpreadsheet = () => {
+const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
@@ -23,7 +23,7 @@ const ProductsSpreadsheet = () => {
   const [sortOption, setSortOption] = useState("newest-oldest");
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
   const productsRef = useRef<HTMLTableElement | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [refresh, setRefresh] = useState(false);
 
   // Scroll to products grid on pagination/search/sort change
