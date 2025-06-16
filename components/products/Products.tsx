@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import CategoryDropdownFilter from "../utils/CategoryDropdownFilter";
 import SubcategoryDropdownFilter from "../utils/SubcategoryDropdownFilter";
 import FilterPath from "../utils/FilterPath";
+import TypeDropdownFilter from "../utils/TypeDropdownFilter";
 
 // Products component - Displays a list of products with filters for categories, subcategories, and types
 const Products = ({ products }: { products: Product[] }) => {
@@ -167,46 +168,16 @@ const Products = ({ products }: { products: Product[] }) => {
         />
       }
 
-      {/* Expanded Subcategory */}
+      {/* Type Dropdown Filter - appears when subcategory is selected */}
       <AnimatePresence mode="wait">
-        {expandedSubcategory &&
-          currentSubcategory && currentSubcategory.types.length > 0 &&
-          <div className="items-center justify-center">
-            {/* Show all types */}
-            <motion.ul
-              key={currentSubcategory.name}
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className={`hidden md:grid 
-                ${currentSubcategory && currentSubcategory.types.length === 2 ? "grid-cols-8"
-                  : currentSubcategory && currentSubcategory.types.length === 3 ? "grid-cols-12"
-                    : "grid-cols-12 lg:grid-cols-16"
-                }
-              w-full items-start justify-center px-5 mt-2`}
-            >
-              {/* If liquor subcategory is selected, show liquor subtypes */}
-              {currentCategory && currentSubcategory && currentSubcategory.types
-                .map((type, index) => (
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    key={index}
-                    onClick={() => {
-                      handleTypeClick(type);
-                    }}
-                    className="col-span-4 text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer flex flex-row items-center justify-center"
-                  >
-                    <li className="text-md lg:text-lg whitespace-nowrap font-serif cursor-pointer underline-animate">
-                      {type.name}
-                    </li>
-                  </motion.div>
-                ))}
-            </motion.ul>
-          </div>
-        }
+        {expandedSubcategory && currentSubcategory && currentSubcategory.types.length > 0 && (
+          <TypeDropdownFilter
+            currentCategory={currentCategory}
+            currentSubcategory={currentSubcategory}
+            handleTypeClick={handleTypeClick}
+            key={currentSubcategory.name}
+          />
+        )}
       </AnimatePresence>
 
       {/* Main Content */}
