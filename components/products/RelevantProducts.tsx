@@ -24,6 +24,7 @@ const RelatedProducts = (
     .filter(
       (p) =>
         p.id !== currentProduct.id &&
+        p.category === currentProduct.category &&
         p.subcategory === currentProduct.subcategory
     )
     .sort((a, b) => a.name.localeCompare(b.name));
