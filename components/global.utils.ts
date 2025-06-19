@@ -157,6 +157,7 @@ const tequilaTypes = [
   { name: "Cristalino", value: "Cristalino" },
   { name: "Flavored", value: "Flavored"},
   { name: "Mezcal", value: "Mezcal" },
+  { name: "Joven", value: "Joven" },
 ];
 
 const vodkaTypes = [

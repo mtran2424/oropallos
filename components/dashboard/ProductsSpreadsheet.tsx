@@ -41,8 +41,13 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredProducts = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    const sanitize = (str: string) => str.replace(/[^a-z0-9]/gi, '').toLowerCase();
-
+    const sanitize = (str: string) =>
+      str
+        .normalize('NFD') // decompose accented characters into base + accent
+        .replace(/[\u0300-\u036f]/g, '') // remove accents
+        .replace(/[^a-z0-9]/gi, '') // remove non-alphanumerics
+        .toLowerCase();
+        
     const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type]
         .filter(Boolean)
@@ -107,7 +112,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, sortedAndFilteredProducts.length);
   const currentProducts = sortedAndFilteredProducts.slice(startIdx, endIdx);
 
-// Refresh product list when a new product is added
+  // Refresh product list when a new product is added
   const handleAddProduct = () => {
     // setProducts((prevProducts) => [...prevProducts, product]);
     setRefresh(!refresh);
