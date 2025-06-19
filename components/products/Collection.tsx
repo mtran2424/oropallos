@@ -21,10 +21,12 @@ const Collection = ({ products }: { products: Product[] }) => {
   // Search + Sort
   const sortedAndFilteredProducts = useMemo(() => {
     const term = searchTerm.toLowerCase();
+    const sanitize = (str: string) => str.replace(/[^a-z0-9]/gi, '').toLowerCase();
+
     const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type]
         .filter(Boolean)
-        .some((field) => field.toLowerCase().includes(term))
+        .some((field) => sanitize(field).includes(sanitize(term)))
     );
 
     const sorted = [...filtered];
