@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Product, ProductCategories, productTableColumns } from "@/components/global.utils";
+import { Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
 import { deleteProduct, favoriteProduct, getProducts } from "@/app/api/productapi";
 import toast from "react-hot-toast";
@@ -41,12 +41,6 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredProducts = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    const sanitize = (str: string) =>
-      str
-        .normalize('NFD') // decompose accented characters into base + accent
-        .replace(/[\u0300-\u036f]/g, '') // remove accents
-        .replace(/[^a-z0-9]/gi, '') // remove non-alphanumerics
-        .toLowerCase();
         
     const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type]

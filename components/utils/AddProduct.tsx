@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { IoIosAdd, IoIosCloseCircle } from "react-icons/io";
-import { Product, ProductCategories } from "@/components/global.utils";
+import { Product, ProductCategories, sanitize } from "@/components/global.utils";
 import { createProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -203,7 +203,7 @@ const AddProduct = ({ onAddProduct, products }: {
 
     // Example local filtering. Replace with API fetch if needed.
     const matches = productNames.filter((product) =>
-      product.toLowerCase().includes(name.toLowerCase())
+      sanitize(product).toLowerCase().includes(sanitize(name.toLowerCase()))
     );
     setNameSuggestions(matches);
     setShowNameSuggestions(true);

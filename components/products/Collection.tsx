@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
-import { Product } from "@/components/global.utils";
+import { Product, sanitize } from "@/components/global.utils";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
 
@@ -21,12 +21,6 @@ const Collection = ({ products }: { products: Product[] }) => {
   // Search + Sort
   const sortedAndFilteredProducts = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    const sanitize = (str: string) =>
-      str
-        .normalize('NFD') // decompose accented characters into base + accent
-        .replace(/[\u0300-\u036f]/g, '') // remove accents
-        .replace(/[^a-z0-9]/gi, '') // remove non-alphanumerics
-        .toLowerCase();
 
     const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type]

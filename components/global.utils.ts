@@ -146,7 +146,7 @@ const whiskeyTypes = [
   { name: "Irish", value: "Irish" },
   { name: "Canadian", value: "Canadian" },
   { name: "Japanese", value: "Japanese" },
-  { name: "Flavored", value: "Flavored"}
+  { name: "Flavored", value: "Flavored" }
 ];
 
 const tequilaTypes = [
@@ -155,7 +155,7 @@ const tequilaTypes = [
   { name: "Añejo", value: "Anejo" },
   { name: "Extra Añejo", value: "Extra_Anejo" },
   { name: "Cristalino", value: "Cristalino" },
-  { name: "Flavored", value: "Flavored"},
+  { name: "Flavored", value: "Flavored" },
   { name: "Mezcal", value: "Mezcal" },
   { name: "Joven", value: "Joven" },
 ];
@@ -191,8 +191,8 @@ const rtdTypes = [
 ];
 
 const cocktailTypes = [
-  {name: "Cocktail Enhancements", value: "Cocktail_Enhancements"},
-  {name: "Cocktail Mixes", value: "Cocktail_Mixes"}
+  { name: "Cocktail Enhancements", value: "Cocktail_Enhancements" },
+  { name: "Cocktail Mixes", value: "Cocktail_Mixes" }
 ];
 
 // Constant defining product categories, subcategories and types
@@ -208,8 +208,8 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Brandy", types: brandyTypes, value: "Brandy" },
       { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
       { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
-      { name: "Moonshine", types: [], value: "Moonshine"},
-      { name: "Cocktails", types: cocktailTypes, value: "Cocktails"}
+      { name: "Moonshine", types: [], value: "Moonshine" },
+      { name: "Cocktails", types: cocktailTypes, value: "Cocktails" }
     ],
     value: "Liquor",
   },
@@ -254,7 +254,7 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Cooking", types: cookingTypes, value: "Cooking" },
       { name: "Vermouth", types: vermouthTypes, value: "Vermouth" },
       { name: "Box Wine", types: [], value: "Box_Wine" },
-      { name: "Organic", types: [], value: "Organic"},
+      { name: "Organic", types: [], value: "Organic" },
       { name: "Low Calorie", types: [], value: "Low_Calorie" },
       { name: "Wine Based Beverages", types: [], value: "Wine_Based_Beverages" },
       { name: "Asian Wines", types: [], value: "Asian_Wines" },
@@ -263,7 +263,7 @@ export const ProductCategories: ProductCategory[] = [
     ],
     value: "Other_Wine",
   },
-  
+
 ] as const;
 
 export const navBarElements = [
@@ -296,3 +296,11 @@ export const productTableColumns = [
   { field: "description", label: "Description", width: "1000px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
 ] as const;
+
+// Utility function to sanitize strings for search
+export const sanitize = (str: string) =>
+  str
+    .normalize('NFD') // decompose accented characters into base + accent
+    .replace(/[\u0300-\u036f]/g, '') // remove accents
+    .replace(/[^a-z0-9]/gi, '') // remove non-alphanumerics
+    .toLowerCase();

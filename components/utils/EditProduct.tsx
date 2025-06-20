@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import { Product, ProductCategories } from "@/components/global.utils";
+import { Product, ProductCategories, sanitize } from "@/components/global.utils";
 import { editProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -196,7 +196,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
 
     // Example local filtering. Replace with API fetch if needed.
     const matches = productNames.filter((product) =>
-      product.toLowerCase().includes(name.toLowerCase())
+      sanitize(product).toLowerCase().includes(sanitize(name.toLowerCase()))
     );
     setNameSuggestions(matches);
     setShowNameSuggestions(true);
