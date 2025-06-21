@@ -169,6 +169,8 @@ const rumTypes = [
   { name: "Light Rum", value: "Light_Rum" },
   { name: "Dark Rum", value: "Dark_Rum" },
   { name: "Spiced Rum", value: "Spiced_Rum" },
+  { name: "Gold Rum", value: "Gold_Rum" },
+  { name: "Black Rum", value: "Black_Rum" },
   { name: "Flavored Rum", value: "Flavored_Rum" },
 ];
 
