@@ -1,0 +1,436 @@
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { Product, sanitize } from "@/components/global.utils";
+import { createProduct } from "@/app/api/productapi";
+import { AnimatePresence, motion } from "framer-motion";
+import toast from "react-hot-toast";
+import Image from "next/image";
+import { IoIosAdd, IoIosCloseCircle } from "react-icons/io";
+
+// This component is a button that opens a modal for adding a product
+const AddSize = ({
+  onAddSize,
+  product,
+  products
+}: {
+  onAddSize: () => void;
+  product: Product,
+  products: Product[];
+}) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [addSize, setAddSize] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  // States for form fields
+  const [name, setName] = useState(product.name);
+  const [price, setPrice] = useState<number | undefined>(undefined);
+  const [description, setDescription] = useState(product.description);
+  const [category, setCategory] = useState(product.category);
+  const [subcategory, setSubcategory] = useState(product.subcategory);
+  const [type, setType] = useState(product.type);
+  const [imageUrl, setImageUrl] = useState(product.imageUrl);
+  const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
+  const [size, setSize] = useState('750mL');
+
+  // States for suggestions
+  const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
+  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
+  const [sizeSuggestions, setSizeSuggestions] = useState<string[]>([]);
+  const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
+
+  // Function to handle key down events for suggestions
+  const handleKeyDown = (field: string, e: React.KeyboardEvent) => {
+    const showSuggestions = field === "name" ? showNameSuggestions : showSizeSuggestions;
+    const suggestions = field === "name" ? nameSuggestions : sizeSuggestions;
+
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    // Handle arrow keys for navigating suggestions
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev + 1) % suggestions.length);
+    }
+    // Handle arrow keys for navigating suggestions
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev === 0 ? suggestions.length - 1 : prev - 1
+      );
+    }
+    // Handle Enter key for selecting a suggestion
+    else if (e.key === "Enter" && highlightedIndex >= 0) {
+      e.preventDefault();
+      handleSelectSuggestion(field, suggestions[highlightedIndex]);
+      setShowNameSuggestions(false);
+    }
+  }
+
+  // Function to handle suggestion selection
+  const handleSelectSuggestion = (field: string, suggested: string) => {
+    if (field === "name") {
+      setName(suggested);
+      setShowNameSuggestions(false);
+    } else if (field === "size") {
+      setSize(suggested);
+      setShowSizeSuggestions(false);
+    }
+  };
+
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Step 1: Get the signature and timestamp from your API route
+    const response = await fetch('/api/cloudinary-signature', {
+      method: 'POST',
+    });
+    const data = await response.json();
+
+    // Step 2: Prepare the FormData for the image upload
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('api_key', data.apiKey); // Cloudinary API Key
+    formData.append('signature', data.signature); // Signed signature
+    formData.append('timestamp', data.timestamp.toString()); // Timestamp
+    formData.append('upload_preset', 'ml_default'); // Your upload preset
+    formData.append('folder', 'oropallos'); // (Optional) Specify folder in Cloudinary
+
+    // Step 3: Upload the image to Cloudinary
+    const uploadRes = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    const uploadData = await uploadRes.json();
+
+    // Step 4: Get the secure URL from Cloudinary and set it
+    if (uploadData.secure_url) {
+      setImageUrl(uploadData.secure_url); // Cloudinary's public image URL
+      setLoading(false);
+      toast.success("Image uploaded successfully!");
+      console.log('Image uploaded successfully:', uploadData.secure_url);
+    } else {
+      setLoading(false);
+      toast.error("Image upload failed. Please try again.");
+      console.error('Error uploading image:', uploadData.error);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageUrl("");
+  };
+
+  // Upon form submission, validate the input and send it to the backend
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Validate input fields
+    if (!name || !price || !category || !subcategory || !size) {
+      toast.error(`Please fill in all required fields.`);
+      setLoading(false);
+      return;
+    }
+
+    // Construct product data object to be sent to the API
+    const productData = {
+      name: name,
+      description: description,
+      price: price,
+      category: category,
+      subcategory: subcategory,
+      type: type,
+      imageUrl: imageUrl,
+      favorite: product.favorite,
+      abv: abv,
+      size: size,
+    };
+
+    // Send the product data to the backend API to create a new product
+    createProduct(productData)
+      .then(() => {
+        onAddSize();
+        // Show success message
+        toast.success(`Product ${name} - ${size} added successfully!`);
+
+        // Reset form fields after successful submission
+        setName("");
+        setPrice(undefined);
+        setCategory("");
+        setSubcategory("");
+        setType("");
+        setDescription("");
+        setImageUrl("");
+        setAbv(undefined);
+        setSize("750mL");
+
+        // Close the modal after submission
+        setAddSize(false);
+      }).finally(() => {
+        setLoading(false);
+      });
+  };
+
+  // Open the modal for adding a product
+  const openEventModal = () => {
+    setAddSize(true);
+  };
+
+  // Close the modal for adding a product
+  const closeEventModal = () => {
+    setAddSize(false);
+  };
+
+  // Close the modal when clicking outside of it
+  const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      closeEventModal();
+    }
+  }, []);
+
+  // Effect to fetch product names for suggestions
+  useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
+    if (name.length < 2) {
+      setNameSuggestions([]);
+      setShowNameSuggestions(false);
+      return;
+    }
+
+    // Unique array of product names
+    const productNames = [...new Set(products.map((product) => product.name))];
+
+    // Example local filtering. Replace with API fetch if needed.
+    const matches = productNames.filter((product) =>
+      sanitize(product).toLowerCase().includes(sanitize(name.toLowerCase()))
+    );
+    setNameSuggestions(matches);
+    setShowNameSuggestions(true);
+  }, [name, products]);
+
+  // Effect to fetch product names for suggestions
+  useEffect(() => {
+    // If the name is less than 2 characters, clear suggestions
+    if (size.length < 2) {
+      setSizeSuggestions([]);
+      setShowSizeSuggestions(false);
+      return;
+    }
+
+    // Unique array of product sizes
+    const productSizes = [
+      ...new Set(products.map((product) => product.size))
+    ]
+
+    // Example local filtering. Replace with API fetch if needed.
+    const matches = productSizes.filter((product) =>
+      product.toLowerCase().includes(size.toLowerCase())
+    );
+
+    setSizeSuggestions(matches);
+    setShowSizeSuggestions(true);
+  }, [size, products]);
+
+  // Add event listener for closing the modal when clicking outside of it
+  useEffect(() => {
+    if (addSize) {
+      document.addEventListener('mousedown', closeModalOnOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', closeModalOnOutsideClick);
+    };
+  }, [closeModalOnOutsideClick, addSize]);
+
+  return (
+    <>
+      {/* Add event button */}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
+        className="flex flex-row text-md items-center text-blue-500 hover:text-blue-300 p-1"
+        onClick={openEventModal}>
+        <IoIosAdd size={25} />
+      </motion.button>
+
+      {/* Modal for adding event */}
+      <AnimatePresence mode="wait">
+        {addSize && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, x: "-100%" }}
+              animate={{ opacity: 1, x: "0" }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              ref={modalRef}
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-auto border-1 border-zinc-500"
+            >
+              {/* Modal Header */}
+              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Add Product Size</h3>
+
+              {/* Close Modal Button */}
+              <div className="absolute top-4 right-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  className="text-lg text-blue-500 hover:text-zinc-200"
+                  onClick={closeEventModal}
+                >
+                  Close
+                </motion.button>
+              </div>
+
+              {/* Form for adding event */}
+              <div className="mt-6 w-full border-t-1 border-zinc-500 text-sm sm:text-md rounded-lg p-4">
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                  {name}
+
+                  <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
+
+                  {/* Price Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="Price"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPrice(value === "" ? undefined : parseFloat(value));
+                    }}
+                    value={price || ""}
+                  />
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    i.e. {'\"'}19.99{'\"'} - No $ sign needed
+                  </div>
+
+                  {/* Size Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
+                  <div>
+                    <input
+                      type="text"
+                      required
+                      className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                      placeholder="Size"
+                      value={size}
+                      onChange={(e) => {
+                        setSize(e.target.value)
+                        setHighlightedIndex(-1);
+                      }}
+                      onFocus={() => size.length >= 2 && setShowSizeSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowSizeSuggestions(false), 150)} // delay to allow click
+                      onKeyDown={(e) => handleKeyDown("size", e)}
+                    />
+                    {showSizeSuggestions && sizeSuggestions.length > 0 && (
+                      // Suggestions dropdown
+                      <motion.ul
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
+                      >
+                        {sizeSuggestions.map((suggestion, index) => (
+                          <motion.li
+                            key={index}
+                            className={
+                              `px-4 py-2 rounded-lg transition duration-200 ease-in-out cursor-pointer 
+                              ${highlightedIndex === index ? "bg-blue-100" : "hover:bg-blue-50"}`
+                            }
+                            onMouseEnter={() => setHighlightedIndex(index)}
+                            onClick={() => handleSelectSuggestion("size", suggestion)}
+                          >
+                            {suggestion}
+                          </motion.li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </div>
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
+                  </div>
+
+                  {/* Description Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
+                  <textarea
+                    className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="Product Description"
+                    onChange={(e) => setDescription(e.target.value)}
+                    value={description}
+                  ></textarea>
+
+                  {/* Image Upload Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="w-full text-gray-600 bg-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                  />
+                  <div className="text-md font-semibold text-zinc-500 w-full text-left px-4">or</div>
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">URL</label>
+                  <input
+                    type="text"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="URL"
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    value={imageUrl}
+                  />
+                  <div className="text-sm font-medium text-zinc-500 text-left px-4 break-words">
+                    Please only use the URL field for reused images from Cloudinary.
+                    <br />
+                    Preexisting URLs can be found under the image column in the spreadsheet.
+                    <br />
+                    Duplicate image uploads get expensive quickly.
+                  </div>
+                  {imageUrl && (
+                    <div className="relative inline-block px-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        onClick={handleRemoveImage}
+                        className="relative text-red-500 hover:text-red-400 bg-white rounded-full"
+                        aria-label="Remove image"
+                      >
+                        <IoIosCloseCircle size={30} />
+                      </motion.button>
+                      <Image
+                        src={imageUrl}
+                        width={200}
+                        height={200}
+                        alt="Uploaded image"
+                        className="rounded-md"
+                      />
+                    </div>
+                  )}
+
+                  {loading ? (
+                    // Loading spinner
+                    <div className="flex justify-center items-center py-2">
+                      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    // Submit button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      type="submit"
+                      className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                    >
+                      Submit
+                    </motion.button>
+                  )}
+                </form>
+              </div>
+            </motion.div>
+          </div >
+        )}
+
+      </AnimatePresence >
+
+    </>
+  );
+}
+
+export default AddSize;

@@ -11,6 +11,7 @@ import CopyButton from "@/components/ui/CopyButton";
 import { FaImage } from "react-icons/fa6";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
+import AddSize from "../utils/AddSize";
 
 const PRODUCTS_PER_PAGE = 25;
 
@@ -41,7 +42,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredProducts = useMemo(() => {
     const term = searchTerm.toLowerCase();
-        
+
     const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type]
         .filter(Boolean)
@@ -398,7 +399,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
                   <th
                     className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                    style={{ width: "200px" }}
+                    style={{ width: "300px" }}
                   >
                     <strong>Actions</strong>
                   </th>
@@ -446,26 +447,32 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
                         </motion.button>
                       </td>
 
+                      {/* Actions Column */}
                       <td
                         className="px-4 py-3 text-sm align-center"
                         style={{
-                          width: "200px",
-                          maxWidth: "200px",
+                          width: "300px",
+                          maxWidth: "300px",
                           whiteSpace: "pre-line",
                         }}
                       >
-                        {/* Remove Product Button */}
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="text-center text-red-500 hover:text-red-400"
-                          onClick={() => handleDeleteProduct(product.id || "")}
-                        >
-                          <MdDelete size={30} />
-                        </motion.button>
+                        <div className="flex flex-row">
+                          {/* Remove Product Button */}
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="text-center text-red-500 hover:text-red-400"
+                            onClick={() => handleDeleteProduct(product.id || "")}
+                          >
+                            <MdDelete size={30} />
+                          </motion.button>
 
-                        {/* Edit Product Button */}
-                        <EditProduct onEditProduct={handleEditProduct} product={product} products={products} />
+                          {/* Edit Product Button */}
+                          <EditProduct onEditProduct={handleEditProduct} product={product} products={products} />
+
+                          {/* Add Another Product Size */}
+                          <AddSize onAddSize={handleAddProduct} product={product} products={products} />
+                        </div>
                       </td>
 
                     </tr>
