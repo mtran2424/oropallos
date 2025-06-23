@@ -212,7 +212,8 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
       { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
       { name: "Moonshine", types: [], value: "Moonshine" },
-      { name: "Cocktails", types: cocktailTypes, value: "Cocktails" }
+      { name: "Cocktails", types: cocktailTypes, value: "Cocktails" },
+      { name: "Spirits", types: [], value: "Spirits" },
     ],
     value: "Liquor",
   },

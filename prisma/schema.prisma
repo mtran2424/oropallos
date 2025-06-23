@@ -46,6 +46,7 @@ enum ProductSubcategory {
   Asian_Wines
   Kosher_Wines
   Mead
+  Spirits
 }
 
 model Product {
