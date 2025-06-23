@@ -146,7 +146,8 @@ const whiskeyTypes = [
   { name: "Irish", value: "Irish" },
   { name: "Canadian", value: "Canadian" },
   { name: "Japanese", value: "Japanese" },
-  { name: "Flavored", value: "Flavored" }
+  { name: "Flavored", value: "Flavored" },
+  { name: "Rye", value: "Rye" },
 ];
 
 const tequilaTypes = [
