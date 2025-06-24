@@ -235,6 +235,19 @@ const EditProduct = ({ onEditProduct, product, products }: {
     };
   }, [closeModalOnOutsideClick, edit]);
 
+  // Reset form fields when product changes
+  useEffect(() => {
+    setName(product.name);
+    setPrice(product.price || undefined);
+    setDescription(product.description);
+    setCategory(product.category);
+    setSubcategory(product.subcategory);
+    setType(product.type);
+    setImageUrl(product.imageUrl);
+    setAbv(product.abv || undefined);
+    setSize(product.size);
+  }, [product]);
+
   return (
     <>
       {/* Edit event button */}

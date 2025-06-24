@@ -245,6 +245,18 @@ const AddSize = ({
     };
   }, [closeModalOnOutsideClick, addSize]);
 
+  useEffect(() => {
+    // Reset form fields when product changes
+    setName(product.name);
+    setDescription(product.description);
+    setCategory(product.category);
+    setSubcategory(product.subcategory);
+    setType(product.type);
+    setImageUrl(product.imageUrl);
+    setAbv(product.abv || undefined);
+    setSize(product.size);
+  }, [product]);
+
   return (
     <>
       {/* Add event button */}
