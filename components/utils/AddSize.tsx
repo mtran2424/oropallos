@@ -299,6 +299,18 @@ const AddSize = ({
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {name}
 
+                  <div>
+                    <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Existing Sizes</div>
+                    {products.filter(p => p.name === product?.name).map((product, index) => (
+                      <p
+                        className="text-md font-serif text-zinc-500"
+                        key={index}
+                      >
+                        {product?.size}
+                      </p>
+                    ))}
+                  </div>
+
                   <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
                   {/* Price Field */}
