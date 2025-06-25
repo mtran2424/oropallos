@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import ExpandButton from "../ui/ExpandButton";
 import FilterPath from "../utils/FilterPath";
 import { ProductCategory } from "@/components/global.utils";
+import AvailableSizes from "./AvailableSizes";
 
 const MAX_DESC_LENGTH = 200;
 
@@ -57,7 +58,7 @@ const ProductPage = ({ products }: { products: Product[] }) => {
         {/* Product Header */}
         <div className="flex flex-col w-full items-start justify-start px-10 max-w-7xl">
           <h1 className="text-2xl sm:text-3xl font-sans text-center sm:text-start text-red-900 mb-4">
-            {product?.name}
+            {product?.name} - {product?.size}
           </h1>
         </div>
 
@@ -134,6 +135,8 @@ const ProductPage = ({ products }: { products: Product[] }) => {
                 {product?.abv ? `ABV: ${product?.abv.toFixed(1)}%` : "ABV: Not Available"}
               </p>
             </div>
+
+            <AvailableSizes currentProduct={product} products={products} />
 
           </div>
 
