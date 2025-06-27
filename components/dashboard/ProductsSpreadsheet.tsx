@@ -289,6 +289,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
         {/* Header */}
         <h1 className="text-2xl font-semibold text-zinc-900">Products</h1>
+
         {/* Filters for categories */}
         <div>
           <h2 className="text-lg font-bold text-zinc-900 mb-1">Filters</h2>
@@ -346,6 +347,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
         </div>
 
+        {/* Search Bar Component */}
         <SearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -354,6 +356,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
         <div className="flex flex-row w-full whitespace-nowrap">
           <AddProduct onAddProduct={handleAddProduct} products={products} />
+
           {/* Sort Dropdown */}
           <div className="flex justify-end w-full">
             <select
@@ -371,8 +374,10 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
           </div>
         </div>
 
-
+        {/* Data Table */}
         <div className="flex max-w-[90vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
+
+          {/* Spreadsheet */}
           <div className="flex overflow-auto w-[100vw]">
 
             {/* Product Table Start */}
@@ -495,21 +500,21 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
           <span>Scroll horizontally to view all columns →</span>
         </div>
 
-        <div className="flex flex-col items-center justify-center w-full max-w-7xl font-serif">
-          {/* Showing Count */}
-          <p className="text-md font-semibold mb-2 text-zinc-500">
-            Showing {endIdx} of {sortedAndFilteredProducts.length} products
-          </p>
+      </div>
+      <div className="flex flex-col items-center justify-center w-full font-serif">
+        {/* Showing Count */}
+        <p className="text-md font-semibold mb-2 text-zinc-500">
+          Showing {endIdx} of {sortedAndFilteredProducts.length} products
+        </p>
 
-          {/* Pagination */}
-          <Pagination
-            prevClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            nextClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            currentPage={currentPage}
-            totalPages={totalPages}
-          />
+        {/* Pagination */}
+        <Pagination
+          prevClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          nextClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          currentPage={currentPage}
+          totalPages={totalPages}
+        />
 
-        </div>
       </div>
     </div>
   );

@@ -57,6 +57,7 @@ const AddProduct = ({ onAddProduct, products }: {
       e.preventDefault();
       handleSelectSuggestion(field, suggestions[highlightedIndex]);
       setShowNameSuggestions(false);
+      setShowSizeSuggestions(false);
     }
   }
 

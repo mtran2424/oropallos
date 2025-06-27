@@ -73,39 +73,8 @@ const Navbar = () => {
             <UserButton />
           </SignedIn>
         </div>
-
-        {/* MENU TOGGLE BUTTON */}
-        {/* <motion.button
-          onClick={() => setOpen(!open)}
-          className='md:hidden z-50 px-5'
-          whileHover={{ scale: 1.1 }}
-        >
-          <AnimatePresence mode="wait">
-            {open ? (
-              <motion.div
-                key={"close"}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="hover:text-[#FFBA04] transition duration-300 ease-in-out"
-              >
-                <IoMdClose size={30} />
-              </motion.div>
-            ) : (
-              <motion.div
-                key={"menu"}
-                initial={{ scaleX: 0, opacity: 0 }}
-                animate={{ scaleX: 1, opacity: 1 }}
-                exit={{ scaleX: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="hover:text-[#FFBA04] transition duration-300 ease-in-out"
-              >
-                <FiMenu size={30} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.button> */}
+        
+        {/* Mobile Menu Button */}
         <MobileMenu />
       </div>
     </motion.nav>
