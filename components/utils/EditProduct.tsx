@@ -414,7 +414,6 @@ const EditProduct = ({ onEditProduct, product, products }: {
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
                   <input
                     inputMode="decimal"
-                    pattern="^\d*\.?\d*$"
                     type="text"
                     step="0.01"
                     min="0"
