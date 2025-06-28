@@ -56,8 +56,6 @@ const AddProduct = ({ onAddProduct, products }: {
     else if (e.key === "Enter" && highlightedIndex >= 0) {
       e.preventDefault();
       handleSelectSuggestion(field, suggestions[highlightedIndex]);
-      setShowNameSuggestions(false);
-      setShowSizeSuggestions(false);
     }
   }
 

@@ -61,7 +61,6 @@ const AddSize = ({
     else if (e.key === "Enter" && highlightedIndex >= 0) {
       e.preventDefault();
       handleSelectSuggestion(field, suggestions[highlightedIndex]);
-      setShowNameSuggestions(false);
     }
   }
 
