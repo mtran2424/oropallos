@@ -244,7 +244,7 @@ export const ProductCategories: ProductCategory[] = [
     value: "Sparkling_Wine",
   },
   {
-    name: "Rose Wines",
+    name: "Rosé Wines",
     subcategories: [
       { name: "Dry", types: [], value: "Dry" },
       { name: "Sweet", types: [], value: "Sweet" },
