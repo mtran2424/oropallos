@@ -21,7 +21,7 @@ const AvailableSizes = ({
           <Link
             href={`/products/${product?.id}`}
             className="underline-animate hover:text-red-900 transition-colors duration-300">
-            {product?.size}
+            {product?.size} - {product?.price.toFixed(2)} USD
           </Link>
         </p>
       ))}
