@@ -94,11 +94,13 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
+    setExpandedImages({}); // Reset expanded images on search change
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(e.target.value);
     setCurrentPage(1);
+    setExpandedImages({}); // Reset expanded images on sort change
   };
 
   // For pagination
@@ -277,6 +279,10 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
     fetchProducts();
   }, [refresh]);
+
+  useEffect(() => {
+    setExpandedImages({}); // Reset expanded images on search change
+  }, [searchTerm, currentPage]);
 
   // Scroll to top on component mount
   useEffect(() => {
