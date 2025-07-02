@@ -44,7 +44,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
     const term = searchTerm.toLowerCase();
 
     const filtered = products.filter((product) =>
-      [product.name, product.category, product.subcategory, product.type]
+      [product.name, product.category, product.subcategory, product.type, product.size]
         .filter(Boolean)
         .some((field) => sanitize(field).includes(sanitize(term)))
     )
