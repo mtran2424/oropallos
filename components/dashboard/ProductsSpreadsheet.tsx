@@ -141,6 +141,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
     }
   };
 
+  // Function to toggle favorite status of a product
   const handleFavoriteToggle = async (id: string, product: Product) => {
     try {
       await favoriteProduct(id, !product.favorite)
@@ -507,6 +508,8 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         </div>
 
       </div>
+
+      {/* Pagination Section */}
       <div className="flex flex-col items-center justify-center w-full font-serif">
         {/* Showing Count */}
         <p className="text-md font-semibold mb-2 text-zinc-500">
