@@ -9,13 +9,13 @@ const Header = () => {
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: "easeOut" }}
-      className="fixed top-0 w-full h-10 bg-[#FFBA04] z-50 whitespace-nowrap"
+      className="fixed top-0 w-full h-10 bg-slate-400 z-50 whitespace-nowrap"
     >
       {/* Header Body */}
       <div className="flex flex-row items-start justify-start gap-5 px-10">
         <a
-          href="tel:+15186217283"
-          className="text-zinc-200 font-semibold hover:text-red-900 underline-animate transition-colors items-center justify-center p-2"
+          href="tel:+15187983988"
+          className="text-zinc-600 font-semibold hover:text-red-900 underline-animate transition-colors items-center justify-center p-2"
         >
           <CiPhone className="inline-block mr-1" />
           Call
@@ -47,7 +47,7 @@ const Header = () => {
               duration: 15,
               ease: "linear",
             }}
-            className="absolute whitespace-nowrap text-red-900 font-semibold"
+            className="absolute whitespace-nowrap text-zinc-600 font-semibold"
           >
             Announcements feature coming soon!
           </motion.div>
