@@ -40,6 +40,13 @@ export interface Product {
   createdAt?: Date;
 }
 
+export interface Announcement {
+  id?: string;
+  content: string;
+  endDate: Date;
+  createdAt?: Date;
+}
+
 // CONSTANTS
 
 // Constants for types of each subcategory
