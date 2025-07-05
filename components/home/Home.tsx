@@ -19,7 +19,7 @@ const Home = ({ favorites }: { favorites: Product[] }) => {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="my-35"
+      className="my-40"
     >
       {/* Home Content */}
       <div className="flex flex-col items-center h-full h-min-screen mt-10 gap-20">

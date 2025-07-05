@@ -153,7 +153,7 @@ const Products = ({ products }: { products: Product[] }) => {
   return (
     <div>
       {/* Main Category List */}
-      <div className="md:flex md:mt-25"></div>
+      <div className="md:flex mt-35"></div>
       <CategoryDropdownFilter
         options={ProductCategories}
         currentOption={currentCategory}

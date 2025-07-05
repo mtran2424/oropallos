@@ -6,6 +6,7 @@ import Footer from "@/components/footer/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import { MapProvider } from "@/components/providers/map-provider";
 import { Toaster } from "react-hot-toast";
+import Header from "@/components/header/Header";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -34,6 +35,7 @@ export default function RootLayout({
         <body
           className={`${montserrat.variable} ${merriweather.variable} bg-white antialiased`}
         >
+          <Header />
           <Navbar />
           <Toaster
             position="top-right"

@@ -35,7 +35,7 @@ const ProductPage = ({ products }: { products: Product[] }) => {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="my-25"
+      className="my-35"
     >
       {/* Product Filter path component */}
       <div className="flex flex-col items-center mb-5">

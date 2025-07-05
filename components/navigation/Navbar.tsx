@@ -14,7 +14,7 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 w-full h-20 text-red-900 bg-white z-50"
+      className="fixed top-0 w-full h-25 text-red-900 bg-white z-50 mt-10"
     >
       <div className="flex items-center justify-between p-5 max-w-screen-xl mx-auto font-serif">
         {/* Logo button */}

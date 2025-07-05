@@ -17,7 +17,7 @@ const About = () => {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="mt-35"
+      className="mt-40"
     >
       <div className="flex flex-col items-center justify-start h-full min-h-screen gap-20 font-serif">
 
