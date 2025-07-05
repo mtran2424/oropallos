@@ -1,9 +1,33 @@
 "use client";
+
+import { getAnnouncements } from "@/app/api/announcementapi";
+import { Announcement } from "@/lib/generated/prisma";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { CiPhone } from "react-icons/ci";
 import { FaFacebookF } from "react-icons/fa";
 
 const Header = () => {
+  const [announcements, setAnnouncements] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const data = await getAnnouncements();
+        const now = new Date();
+
+        const validAnnouncements = (data.announcements || [])
+          .filter((a: Announcement) => !a.endDate || new Date(a.endDate) > now)
+
+        setAnnouncements(validAnnouncements.map((a : Announcement) => a.content));
+      } catch (error) {
+        console.error("Failed to fetch announcements", error);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
+
   return (
     <motion.header
       initial={{ opacity: 0, y: 100 }}
@@ -39,23 +63,40 @@ const Header = () => {
         </motion.div>
 
         <div className="relative overflow-hidden w-[70vw] h-10 flex items-center justify-center">
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: ["-200%", "200%"] }}
-            transition={{
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 15,
-              ease: "linear",
-            }}
-            className="absolute whitespace-nowrap text-white font-semibold"
-          >
-            Announcements feature coming soon!
-          </motion.div>
+          {/* Announcement Scrolling Text */}
+          {announcements.length > 0 ? (
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: ["-200%", "200%"] }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 15,
+                ease: "linear",
+              }}
+              className="absolute text-white font-semibold"
+            >
+              {announcements.join(" | ")}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: ["-200%", "200%"] }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 15,
+                ease: "linear",
+              }}
+              className="absolute whitespace-nowrap text-white font-semibold"
+            >
+              Stop by our store for the best deals on wine and liquor!
+            </motion.div>
+          )}
         </div>
       </div>
     </motion.header>
   );
-}
+};
 
 export default Header;
