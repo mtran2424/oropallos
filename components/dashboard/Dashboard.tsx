@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import ProductsSpreadsheet from "./ProductsSpreadsheet";
-import { Product } from "@/components/global.utils";
+import { Announcement, Product } from "@/components/global.utils";
+import AnnouncementsSpreadsheet from "./AnnouncementsSpreadsheet";
 
-const Dashboard = ({ products }: { products: Product[] }) => {
+const Dashboard = ({ products, announcements }: { products: Product[], announcements: Announcement[] }) => {
   // Admin check
   const { isSignedIn } = useUser();
 
@@ -32,6 +33,8 @@ const Dashboard = ({ products }: { products: Product[] }) => {
         </h1>
 
         <ProductsSpreadsheet initialProducts={products} />
+
+        <AnnouncementsSpreadsheet initialAnnouncements={announcements} />
       </div>
     </motion.div>
   );

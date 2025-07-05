@@ -43,7 +43,7 @@ export interface Product {
 export interface Announcement {
   id?: string;
   content: string;
-  endDate: Date;
+  endDate: string;
   createdAt?: Date;
 }
 
@@ -306,6 +306,13 @@ export const productTableColumns = [
   { field: "type", label: "Type", width: "250px" },
   { field: "description", label: "Description", width: "1000px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
+] as const;
+
+// Headers for product tables in admin view
+export const announcementTableColumns = [
+  { field: "id", label: "Announcement ID", width: "200px" },
+  { field: "content", label: "Content", width: "1000px" },
+  { field: "endDate", label: "End Date", width: "150px" },
 ] as const;
 
 // Utility function to sanitize strings for search
