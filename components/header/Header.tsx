@@ -10,6 +10,23 @@ import { FaFacebookF } from "react-icons/fa";
 const Header = () => {
   const [announcements, setAnnouncements] = useState<string[]>([]);
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showing, setShowing] = useState(true);
+
+  useEffect(() => {
+    if (announcements.length === 0) return;
+
+    const timeout = setTimeout(() => {
+      setShowing(false); // start sliding out
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % announcements.length);
+        setShowing(true); // slide in next
+      }, 500); // slide out duration
+    }, 3000); // how long it stays visible
+
+    return () => clearTimeout(timeout);
+  }, [announcements, currentIndex, showing]);
+
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
@@ -19,7 +36,7 @@ const Header = () => {
         const validAnnouncements = (data.announcements || [])
           .filter((a: Announcement) => !a.endDate || new Date(a.endDate) > now)
 
-        setAnnouncements(validAnnouncements.map((a : Announcement) => a.content));
+        setAnnouncements(validAnnouncements.map((a: Announcement) => a.content));
       } catch (error) {
         console.error("Failed to fetch announcements", error);
       }
@@ -63,37 +80,28 @@ const Header = () => {
         </motion.div>
 
         <div className="relative overflow-hidden w-[70vw] h-10 flex items-center justify-center">
-          {/* Announcement Scrolling Text */}
           {announcements.length > 0 ? (
             <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: ["-200%", "200%"] }}
-              transition={{
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 15,
-                ease: "linear",
-              }}
-              className="absolute text-white font-semibold"
+              key={currentIndex + showing.toString()} // re-trigger animation
+              initial={{ x: showing ? "-1000%" : "0%" }}
+              animate={{ x: showing ? "0%" : "1000%" }}
+              transition={{ duration: .9, ease: "easeInOut" }}
+              className="absolute text-white font-semibold whitespace-nowrap"
             >
-              {announcements.join(" | ")}
+              {announcements[currentIndex]}
             </motion.div>
           ) : (
             <motion.div
               initial={{ x: "100%" }}
-              animate={{ x: ["-200%", "200%"] }}
-              transition={{
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 15,
-                ease: "linear",
-              }}
-              className="absolute whitespace-nowrap text-white font-semibold"
+              animate={{ x: "0%" }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="absolute text-white font-semibold whitespace-nowrap"
             >
               Stop by our store for the best deals on wine and liquor!
             </motion.div>
           )}
         </div>
+
       </div>
     </motion.header>
   );
