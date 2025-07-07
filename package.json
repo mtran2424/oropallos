@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.19.1",
+    "@clerk/nextjs": "^6.23.3",
     "@prisma/client": "^6.9.0",
     "@react-google-maps/api": "^2.20.6",
     "cloudinary": "^2.6.1",

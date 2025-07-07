@@ -1,18 +1,18 @@
 // app/api/products/add/route.ts
 import { NextResponse, NextRequest } from 'next/server';
 import { db } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { currentUser } from '@clerk/nextjs/server';
 
 // This function handles the POST request to create a new product
 export async function POST(req: NextRequest) {
   try {
     // Check for user
-    const { userId } = await auth();
+    const user = await currentUser();
 
-    if (!userId) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
+
     // Parse the request body to get product details
     const body = await req.json();
     const { name, description, price, category, subcategory, type, imageUrl, favorite, abv, size } = body;
