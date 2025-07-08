@@ -322,3 +322,41 @@ export const sanitize = (str: string) =>
     .replace(/[\u0300-\u036f]/g, '') // remove accents
     .replace(/[^a-z0-9]/gi, '') // remove non-alphanumerics
     .toLowerCase();
+
+
+/**
+ * Get the date array from a string in the format yyyy-mm-dd to be converted to numerics
+ * and placed in array from left to right
+ * @param date 
+ * @returns 
+ */
+export const getDateObject = (date: string) => {
+  const formatted = date.split("T")[0].split("-"); // Remove time part if present
+  return {
+    year: Number(formatted[0]),
+    month: Number(formatted[1]) - 1,
+    day: Number(formatted[2]),
+  }
+}
+/**
+ * Formats given date object to a format specified by string
+ * Formats available: yyyy-mm-dd, mm/dd/yyyy
+ * yyyy-mm-dd by default
+ * @param date
+ * @returns 
+ */
+export const formatDate = (date: Date | null | undefined, format?: string) => {
+  if (date === null || date === undefined) return null; // Handle null or undefined date
+
+  if (format && format === "mm/dd/yyyy") {
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${mm}/${dd}/${yyyy}`;
+  }
+  const mm = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
+  const dd = String(date.getDate()).padStart(2, '0');
+  const yyyy = date.getFullYear();
+
+  return `${yyyy}-${mm}-${dd}`;
+}

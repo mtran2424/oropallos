@@ -27,6 +27,7 @@ const Header = () => {
     return () => clearTimeout(timeout);
   }, [announcements, currentIndex, showing]);
 
+  // Fetch announcements on mount
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {

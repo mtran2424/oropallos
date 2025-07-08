@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Announcement, announcementTableColumns, sanitize } from "@/components/global.utils";
+import { Announcement, announcementTableColumns, getDateObject, sanitize } from "@/components/global.utils";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
@@ -135,7 +135,7 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
         return (
           <div className="flex flex-col items-center justify-center space-y-2">
             <span className="text-sm text-zinc-600">
-              {new Date(announcement.endDate).toLocaleDateString("en-US", {
+              {new Date(getDateObject(announcement.endDate).year, getDateObject(announcement.endDate).month, getDateObject(announcement.endDate).day).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
