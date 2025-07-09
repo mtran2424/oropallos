@@ -1,5 +1,4 @@
 "use client";
-
 import { getAnnouncements } from "@/app/api/announcementapi";
 import { Announcement } from "@/lib/generated/prisma";
 import { motion } from "framer-motion";
@@ -17,10 +16,14 @@ const Header = () => {
     if (announcements.length === 0) return;
 
     const timeout = setTimeout(() => {
-      setShowing(false); // start sliding out
+      setShowing(false);
+      // start sliding out
       setTimeout(() => {
+        // Increment index to get next announcement on slide out
         setCurrentIndex((prev) => (prev + 1) % announcements.length);
-        setShowing(true); // slide in next
+
+        // slide in next
+        setShowing(true);
       }, 500); // slide out duration
     }, 3000); // how long it stays visible
 
@@ -35,7 +38,7 @@ const Header = () => {
         const now = new Date();
 
         const validAnnouncements = (data.announcements || [])
-          .filter((a: Announcement) => !a.endDate || new Date(a.endDate) > now)
+          .filter((a: Announcement) => !a.endDate || new Date(a.endDate) >= now)
 
         setAnnouncements(validAnnouncements.map((a: Announcement) => a.content));
       } catch (error) {
