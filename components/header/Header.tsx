@@ -58,6 +58,8 @@ const Header = () => {
     >
       {/* Header Body */}
       <div className="flex flex-row items-start justify-start gap-5 px-10">
+
+        {/* Telephone Button */}
         <a
           href="tel:+15187983988"
           className="text-white font-semibold hover:text-red-900 underline-animate transition-colors items-center justify-center p-2"
@@ -83,6 +85,7 @@ const Header = () => {
           </a>
         </motion.div>
 
+        {/* Announcement Section */}
         <div className="relative overflow-hidden w-[70vw] h-10 flex items-center justify-center">
           {announcements.length > 0 ? (
             <motion.div
@@ -95,6 +98,7 @@ const Header = () => {
               {announcements[currentIndex]}
             </motion.div>
           ) : (
+            // Fallback message if no announcements are available
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: "0%" }}

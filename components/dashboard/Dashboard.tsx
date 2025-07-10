@@ -27,13 +27,14 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
       className="mt-25"
     >
       <div className="flex flex-col w-full h-full min-h-screen items-center justify-start">
+        {/* Header */}
         <h1
           className="text-2xl sm:text-2xl font-serif font-semibold text-center sm:text-start text-red-900 mb-4">
           Administrative Dashboard
         </h1>
 
+        {/* Spreadsheets */}
         <ProductsSpreadsheet initialProducts={products} />
-
         <AnnouncementsSpreadsheet initialAnnouncements={announcements} />
       </div>
     </motion.div>

@@ -84,7 +84,6 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
 
   // Refresh announcement list when a new announcement is added
   const handleAddAnnouncement = () => {
-    // setAnnouncements((prevAnnouncements) => [...prevAnnouncements, announcement]);
     setRefresh(!refresh);
   }
 
@@ -120,6 +119,7 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
       case "id":
         return announcement.id;
       case "content":
+        // Render content as a textarea with copy button
         return (
           <div
             className="flex flex-col items-center justify-center space-y-2"
@@ -132,6 +132,7 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
             {announcement.content && <CopyButton text={announcement.content} />}
           </div>)
       case "endDate":
+        // Render end date as a formatted date string
         return (
           <div className="flex flex-col items-center justify-center space-y-2">
             <span className="text-sm text-zinc-600">

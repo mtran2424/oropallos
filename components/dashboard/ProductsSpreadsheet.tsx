@@ -111,7 +111,6 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
   // Refresh product list when a new product is added
   const handleAddProduct = () => {
-    // setProducts((prevProducts) => [...prevProducts, product]);
     setRefresh(!refresh);
   }
 
@@ -281,8 +280,9 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
     fetchProducts();
   }, [refresh]);
 
+  // Reset expanded images on search change
   useEffect(() => {
-    setExpandedImages({}); // Reset expanded images on search change
+    setExpandedImages({});
   }, [searchTerm, currentPage]);
 
   // Scroll to top on component mount
