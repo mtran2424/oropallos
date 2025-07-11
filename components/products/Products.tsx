@@ -68,6 +68,17 @@ const Products = ({ products }: { products: Product[] }) => {
     }
   };
 
+  const handleClearClick = () => {
+    // Unset filters and params and collapse filter dropdowns
+    setCurrentCategory(undefined);
+    setCurrentSubcategory(undefined);
+    setCurrentType("");
+    setExpandedCategory(false);
+    setExpandedSubcategory(false);
+    const currentPath = window.location.pathname;
+    router.push(currentPath);
+  }
+
   // Sets category based on click or unsets if already selected
   const handleCategoryClick = (event: string, category: ProductCategory) => {
     if (event === "select") {
@@ -288,8 +299,19 @@ const Products = ({ products }: { products: Product[] }) => {
             {/* Header */}
             <h2 className="text-lg font-semibold text-zinc-900 mt-2 ml-2">Filters</h2>
 
+            {/* Clear Filter Modal Button */}
+            <div className="absolute top-4 right-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="text-md text-blue-500 hover:text-zinc-200"
+                onClick={handleClearClick}
+              >
+                Clear
+              </motion.button>
+            </div>
+
             {/* Dropdown filters */}
-            <div className="flex flex-col items-start gap-4 p-5 overflow-y-auto h-[90vh]">
+            <div className="flex flex-col items-start gap-4 p-5 overflow-y-auto h-[90vh] pb-25">
 
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2 underline">Categories</label>
               {/* Category List */}
