@@ -169,7 +169,7 @@ const tequilaTypes = [
 ];
 
 const vodkaTypes = [
-  { name: "Plain", value: "Plain" },
+  { name: "Unflavored", value: "Unflavored" },
   { name: "Flavored", value: "Flavored" },
 ];
 
