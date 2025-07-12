@@ -161,6 +161,17 @@ const Products = ({ products }: { products: Product[] }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowTooltip(true);
+      setTimeout(() => setShowTooltip(false), 2500); // Hide after 2.5s
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div>
       {/* Main Category List */}
@@ -199,6 +210,9 @@ const Products = ({ products }: { products: Product[] }) => {
         transition={{ duration: 1, ease: "easeInOut" }}
         className="md:mt-0 mt-25"
       >
+        <div className="md:hidden text-left text-md text-gray-400 mt-10 px-5">
+          Please use the funnel button on the bottom right to access the product filters on mobile devices.
+        </div>
 
         {/* Product Filter path component */}
         <div className="flex flex-col items-center">
@@ -240,10 +254,24 @@ const Products = ({ products }: { products: Product[] }) => {
           </div>
         </div>
 
+        <AnimatePresence>
+          {showTooltip && (
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 50 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="fixed bottom-27 right-5 bg-zinc-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50"
+            >
+              Use me for product filters
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Mobile Filter Button */}
         <motion.button
           onClick={() => setOpen(!open)}
-          className='md:hidden fixed z-60 bottom-10 right-5 px-5'
+          className='md:hidden fixed z-60 bottom-10 right-5 p-3 bg-zinc-800 rounded-full'
           whileHover={{ scale: 1.1 }}
         >
           {/* Filter Icon */}
@@ -255,7 +283,7 @@ const Products = ({ products }: { products: Product[] }) => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="hover:text-[#FFBA04] transition duration-300 ease-in-out"
+                className="hover:text-[#FFBA04] text-white transition duration-300 ease-in-out"
               >
                 {/* Close filter icon */}
                 <IoMdClose size={30} />
@@ -267,7 +295,7 @@ const Products = ({ products }: { products: Product[] }) => {
                 animate={{ scaleY: 1, opacity: 1 }}
                 exit={{ scaleY: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="hover:text-[#FFBA04] transition duration-300 ease-in-out"
+                className="hover:text-[#FFBA04] text-white transition duration-300 ease-in-out"
               >
                 {/* Filter icon */}
                 <FaFilter size={35} />
