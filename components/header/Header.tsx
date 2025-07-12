@@ -24,8 +24,8 @@ const Header = () => {
 
         // slide in next
         setShowing(true);
-      }, 500); // slide out duration
-    }, 3000); // how long it stays visible
+      }, 10000); // slide out duration
+    }, 10000); // how long it stays visible
 
     return () => clearTimeout(timeout);
   }, [announcements, currentIndex, showing]);
@@ -90,9 +90,14 @@ const Header = () => {
           {announcements.length > 0 ? (
             <motion.div
               key={currentIndex + showing.toString()} // re-trigger animation
-              initial={{ x: showing ? "-1000%" : "0%" }}
-              animate={{ x: showing ? "0%" : "1000%" }}
-              transition={{ duration: .9, ease: "easeInOut" }}
+              initial={{ x: "100%" }}
+              animate={{ x: ["-200%", "200%"] }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 15,
+                ease: "linear",
+              }}
               className="absolute text-white font-semibold whitespace-nowrap"
             >
               {announcements[currentIndex]}
@@ -101,8 +106,13 @@ const Header = () => {
             // Fallback message if no announcements are available
             <motion.div
               initial={{ x: "100%" }}
-              animate={{ x: "0%" }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+              animate={{ x: ["-200%", "200%"] }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 15,
+                ease: "linear",
+              }}
               className="absolute text-white font-semibold whitespace-nowrap"
             >
               Stop by our store for the best deals on wine and liquor!
