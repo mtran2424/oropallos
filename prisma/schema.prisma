@@ -15,6 +15,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrderStatus {
+  UNPAID
+  PAID
+}
+
 enum ProductCategory {
   Red_Wine
   White_Wine
@@ -63,6 +68,8 @@ model Product {
   price    Float
   imageUrl String?
 
+  orderItems OrderItem[]
+
   favorite  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -75,4 +82,26 @@ model Announcement {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id     String @id @default(uuid())
+  userId String
+  status OrderStatus @default(UNPAID)
+
+  orderItems OrderItem[]
+  pickupDay String @default("Friday")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
