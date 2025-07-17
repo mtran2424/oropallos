@@ -1,6 +1,6 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import ProductsSpreadsheet from "./ProductsSpreadsheet";
@@ -26,7 +26,7 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="mt-25"
+      className="mt-35"
     >
       <div className="flex flex-col w-full h-full min-h-screen items-center justify-start">
         {/* Header */}
@@ -38,10 +38,10 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
         {/* Tab Buttons */}
         <div className="flex flex-row justify-center relative w-full bg-zinc-200">
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             className={`px-6 py-3 text-md z-10 ${tab === 'products'
               ? 'bg-white text-zinc-900'
-              : 'text-blue-500 hover:text-zinc-700 bg-zinc-200'
+              : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
               } rounded-t-xl shadow-t-xl border-t-1 border-r-1 border-zinc-300`}
             onClick={() => setTab('products')}
             disabled={tab === 'products'}
@@ -50,10 +50,10 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
           </motion.button>
 
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             className={`px-6 py-3 text-md z-10 ${tab === 'announcements'
               ? 'bg-white text-zinc-900'
-              : 'text-blue-500 hover:text-zinc-700 bg-zinc-200'
+              : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
               } rounded-t-xl shadow-t-xl border-t-1 border-r-1 border-zinc-300`}
             onClick={() => setTab('announcements')}
             disabled={tab === 'announcements'}
@@ -63,8 +63,32 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
         </div>
 
         {/* Spreadsheets */}
-        {tab === 'products' && <ProductsSpreadsheet initialProducts={products} />}
-        {tab === 'announcements' && <AnnouncementsSpreadsheet initialAnnouncements={announcements} />}
+        <AnimatePresence mode="wait">
+          {tab === 'products' && (
+            <motion.div
+              key="products"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="mt-10"
+            >
+              <ProductsSpreadsheet initialProducts={products} />
+            </motion.div>
+          )}
+          {tab === 'announcements' && (
+            <motion.div
+              key="announcements"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="mt-10"
+            >
+              <AnnouncementsSpreadsheet initialAnnouncements={announcements} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
