@@ -63,17 +63,17 @@ const ProductPage = ({ products }: { products: Product[] }) => {
         </div>
 
         {/* Product Image and Content */}
-        <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 w-full h-full max-w-7xl">
+        <div className="flex flex-col md:flex-row items-start justify-center gap-5 p-10 w-full h-full max-w-7xl">
           {/* Image */}
           <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-2">
             {product && product.imageUrl ?
-              <div className="relative w-full md:h-200 min-w-[300px] min-h-[300px]">
+              <div className="relative w-full md:h-175 md:w-100 min-w-[300px] min-h-[175px]">
                 <Image
                   src={product.imageUrl}
                   alt={product.name + " image"}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-contain transform scale-110 hover:scale-100 transition-transform duration-700 ease-out w-full p-2"
+                  className="object-cover transform scale-75 hover:scale-90 transition-transform duration-700 ease-out w-full"
                 />
               </div>
               :
