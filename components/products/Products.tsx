@@ -272,7 +272,6 @@ const Products = ({ products }: { products: Product[] }) => {
         <motion.button
           onClick={() => setOpen(!open)}
           className='md:hidden fixed z-60 bottom-10 right-5 p-3 bg-zinc-800 rounded-full'
-          whileHover={{ scale: 1.1 }}
         >
           {/* Filter Icon */}
           <AnimatePresence mode="wait">
