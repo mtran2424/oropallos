@@ -67,7 +67,7 @@ const ProductPage = ({ products }: { products: Product[] }) => {
           {/* Image */}
           <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-2">
             {product && product.imageUrl ?
-              <div className="relative w-full h-full min-h-[800px] min-w-[800px]">
+              <div className="relative w-full h-full min-h-[100vw] min-w-[100vw] md:min-h-[50vw] md:min-w-[50vw]">
                 <Image
                   src={product.imageUrl}
                   alt={product.name + " image"}
