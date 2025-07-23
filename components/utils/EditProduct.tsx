@@ -539,8 +539,8 @@ const EditProduct = ({ onEditProduct, product, products }: {
                       </motion.button>
                       <Image
                         src={imageUrl}
-                        width={200}
-                        height={200}
+                        width={400}
+                        height={400}
                         alt="Uploaded image"
                         className="rounded-md"
                       />
