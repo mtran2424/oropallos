@@ -1,4 +1,5 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Tailwind, React, Prisma backend, Clerk auth.
 
 ## Getting Started
 
@@ -16,18 +17,19 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
+Must include DATABASE_URL variable linked to database server. NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY from Clerk for backend auth operations. CLOUDINARY_URL, NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, NEXT_PUBLIC_UPLOAD_PRESET, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET from Cloudinary for photo upload and hosting. NEXT_PUBLIC_GOOGLE_MAPS_API_KEY for Google Maps API. NEXT_PUBLIC_SITE_URL must be URL hosting backend API (cannot be cross-site).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Before running development server:
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# if haven't set up yet
+npx prisma init
+# generate ORM for backend
+npx prisma generate
+# set ORM
+npx prisma db push
+```
 
 ## Deploy on Vercel
 
