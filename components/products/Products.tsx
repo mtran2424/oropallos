@@ -261,7 +261,7 @@ const Products = ({ products }: { products: Product[] }) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 50 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="fixed bottom-27 right-5 bg-zinc-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50"
+              className="md:hidden fixed bottom-27 right-5 bg-zinc-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50"
             >
               Use me for product filters
             </motion.div>

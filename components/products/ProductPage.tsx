@@ -13,6 +13,7 @@ import ExpandButton from "../ui/ExpandButton";
 import FilterPath from "../utils/FilterPath";
 import { ProductCategory } from "@/components/global.utils";
 import AvailableSizes from "./AvailableSizes";
+import { IoIosArrowBack } from "react-icons/io";
 
 const MAX_DESC_LENGTH = 200;
 
@@ -37,6 +38,19 @@ const ProductPage = ({ products }: { products: Product[] }) => {
       transition={{ duration: 1, ease: "easeInOut" }}
       className="my-35"
     >
+      {/* Back Button */}
+      <div className="flex justify-start items-center w-full max-w-7xl p-5 mt-5">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          onClick={() => redirect("/products")}
+          className="text-red-900 text-lg"
+        >
+          <IoIosArrowBack 
+            size={30}
+          />
+        </motion.button>
+      </div>
+      
       {/* Product Filter path component */}
       <div className="flex flex-col items-center mb-5">
         <div className="grid grid-cols-1 max-w-7xl w-full justify-center">
