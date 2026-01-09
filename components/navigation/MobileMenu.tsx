@@ -14,28 +14,36 @@ const MobileMenu = () => {
   };
 
   // Menu container animation variants
+  // const menuContainerVariants = {
+  //   hidden: {
+  //     opacity: 0,
+  //     height: 0,
+  //     transition: {
+  //       when: "afterChildren",
+  //       staggerChildren: 0.05,
+  //       staggerDirection: -1
+  //     }
+  //   },
+  //   visible: {
+  //     opacity: 1,
+  //     height: 'auto',
+  //     transition: {
+  //       when: "beforeChildren",
+  //       staggerChildren: 0.1,
+  //       duration: 0.5
+  //     }
+  //   }
+  // };
   const menuContainerVariants = {
-    hidden: {
-      opacity: 0,
-      height: 0,
-      transition: {
-        when: "afterChildren",
-        staggerChildren: 0.05,
-        staggerDirection: -1
-      }
+    inactive: {
+      x: '100%', // starts completely off the screen to the right
+      transition: { type: 'tween', duration: 0.3 }
     },
-    visible: {
-      opacity: 1,
-      height: 'auto',
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-        ease: [0.6, 0.05, 0.01, 0.9],
-        duration: 0.5
-      }
+    active: {
+      x: 0, // slides into view
+      transition: { type: 'tween', duration: 0.3 }
     }
-  };
-
+  } as const;
   // Menu item animation variants
   const menuItemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -60,15 +68,15 @@ const MobileMenu = () => {
   };
 
   //Ensure that the menu is closed when the window is resized
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth >= 1024) {
-          setOpen(false)
-        }
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setOpen(false)
       }
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
-    }, [])
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <div>
