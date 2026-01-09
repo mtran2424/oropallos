@@ -58,15 +58,15 @@ const Products = ({ products }: { products: Product[] }) => {
 
   // Menu container animation variants
   const menuContainerVariants = {
-    hidden: {
+    inactive: {
       x: '100%', // starts completely off the screen to the right
       transition: { type: 'tween', duration: 0.3 }
     },
-    visible: {
+    active: {
       x: 0, // slides into view
       transition: { type: 'tween', duration: 0.3 }
     }
-  };
+  } as const;
 
   const handleClearClick = () => {
     // Unset filters and params and collapse filter dropdowns
