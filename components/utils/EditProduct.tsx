@@ -510,7 +510,6 @@ const EditProduct = ({ onEditProduct, product, products }: {
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
                   <input
                     type="text"
-                    required
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="UPC"
                     value={upc}
