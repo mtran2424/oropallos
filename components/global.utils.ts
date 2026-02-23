@@ -37,6 +37,7 @@ export interface Product {
   favorite: boolean;
   abv?: number;
   size: string;
+  upc?: string;
   createdAt?: Date;
 }
 
@@ -306,6 +307,7 @@ export const productTableColumns = [
   { field: "type", label: "Type", width: "250px" },
   { field: "description", label: "Description", width: "1000px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
+  { field: "upc", label: "UPC", width: "200px" },
 ] as const;
 
 // Headers for product tables in admin view

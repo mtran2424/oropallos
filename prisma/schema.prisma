@@ -67,6 +67,7 @@ model Product {
 
   price    Float
   imageUrl String?
+  upc      String?
 
   favorite  Boolean  @default(false)
   createdAt DateTime @default(now())

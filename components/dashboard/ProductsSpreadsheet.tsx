@@ -243,6 +243,8 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         return product.abv ? `${product.abv}%` : "N/A";
       case "size":
         return product.size;
+      case "upc":
+        return product.upc;
       default:
         return null;
     }

@@ -28,6 +28,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
   const [imageUrl, setImageUrl] = useState(product.imageUrl);
   const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
   const [size, setSize] = useState(product.size);
+  const [upc, setUpc] = useState(product.upc);
 
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
@@ -145,6 +146,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
       favorite: product.favorite,
       abv: abv,
       size: size,
+      upc: upc,
     };
 
     if (product.id) {
@@ -246,6 +248,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
     setImageUrl(product.imageUrl);
     setAbv(product.abv || undefined);
     setSize(product.size);
+    setUpc(product.upc);
   }, [product]);
 
   return (
@@ -502,6 +505,19 @@ const EditProduct = ({ onEditProduct, product, products }: {
                     onChange={(e) => setDescription(e.target.value)}
                     value={description}
                   ></textarea>
+
+                  {/* UPC Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
+                  <input
+                    type="text"
+                    required
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="UPC"
+                    value={upc}
+                    onChange={(e) => {
+                      setUpc(e.target.value)
+                    }}
+                  />
 
                   {/* Image Upload Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>

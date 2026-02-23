@@ -26,6 +26,7 @@ const AddProduct = ({ onAddProduct, products }: {
   const [imageUrl, setImageUrl] = useState("");
   const [abv, setAbv] = useState<number | undefined>(undefined);
   const [size, setSize] = useState("750mL");
+  const [upc, setUpc] = useState("");
 
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
@@ -144,6 +145,7 @@ const AddProduct = ({ onAddProduct, products }: {
       favorite: false,
       abv: abv,
       size: size,
+      upc: upc,
     };
 
     // Send the product data to the backend API to create a new product
@@ -163,6 +165,7 @@ const AddProduct = ({ onAddProduct, products }: {
         setImageUrl("");
         setAbv(undefined);
         setSize("750mL");
+        setUpc("");
 
         // Close the modal after submission
         setAdd(false);
@@ -494,6 +497,19 @@ const AddProduct = ({ onAddProduct, products }: {
                     placeholder="Product Description"
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
+
+                  {/* UPC Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
+                  <input
+                    type="text"
+                    required
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="UPC"
+                    value={upc}
+                    onChange={(e) => {
+                      setUpc(e.target.value)
+                    }}
+                  />
 
                   {/* Image Upload Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
