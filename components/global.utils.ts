@@ -284,6 +284,11 @@ export const navBarElements = [
   { label: "Products", path: "/products" },
 ] as const;
 
+export const adminNavBarElements = [
+  { label: "Dashboard", path: "/admin/dashboard" },
+  { label: "Register", path: "/admin/register" },
+] as const;
+
 // Headers for product tables
 export const productHeaders = [
   "Name",

@@ -3,20 +3,20 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
-import { navBarElements } from "@/components/global.utils";
+import { adminNavBarElements } from "@/components/global.utils";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import MobileMenu from "./MobileMenu";
 
-const Navbar = () => {
+const AdminNavbar = () => {
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 w-full h-20 text-red-900 bg-white z-50 mt-10"
+      className="fixed top-0 w-full h-25 text-red-900 bg-white z-50 mt-10"
     >
-      <div className="flex flex-row items-center justify-between p-5 max-w-7xl mx-auto font-serif">
+      <div className="flex items-center justify-between p-5 max-w-7xl mx-auto font-serif">
         {/* Logo button */}
         <Link href="/" className="absolute left-1/2 transfrom -translate-x-1/2 mt-10 md:mt-0 md:static md:translate-x-0 cursor-pointer">
           <motion.div
@@ -37,10 +37,10 @@ const Navbar = () => {
         {/* Navigation links */}
         <div className="hidden md:flex space-x-5 lg:space-x-10">
           {/* Admin Dashboard Link */}
-          <SignedIn>
+          {/* <SignedIn>
             <Link
               href="/admin/dashboard"
-              className="text-md text-[#FFBA04] font-semibold"
+              className="text-lg text-[#FFBA04] font-semibold"
             >
               <motion.div
                 whileHover={{ scale: 1.1 }}
@@ -50,10 +50,10 @@ const Navbar = () => {
                 Dashboard
               </motion.div>
             </Link>
-          </SignedIn>
+          </SignedIn> */}
 
           {/* Links to other pages */}
-          {navBarElements.map((element, index) => (
+          {adminNavBarElements.map((element, index) => (
             <Link
               key={index}
               href={element.path}
@@ -81,4 +81,4 @@ const Navbar = () => {
   );
 }
 
-export default Navbar;
+export default AdminNavbar;

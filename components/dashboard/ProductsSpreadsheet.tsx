@@ -181,7 +181,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
           >
             <textarea
               readOnly
-              className="w-full h-[90px] border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-22.5 border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={product.description}
             ></textarea>
             {product.description && <CopyButton text={product.description} />}
@@ -387,7 +387,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         <div className="flex max-w-[90vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
 
           {/* Spreadsheet */}
-          <div className="flex overflow-auto w-[100vw]">
+          <div className="flex overflow-auto w-screen">
 
             {/* Product Table Start */}
             <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }} ref={productsRef}>

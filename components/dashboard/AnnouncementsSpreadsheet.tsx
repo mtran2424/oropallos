@@ -126,7 +126,7 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
           >
             <textarea
               readOnly
-              className="w-full h-[90px] border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-22.5 border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={announcement.content}
             ></textarea>
             {announcement.content && <CopyButton text={announcement.content} />}
@@ -206,7 +206,7 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
         <div className="flex max-w-[90vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
 
           {/* Spreadsheet */}
-          <div className="flex overflow-auto w-[100vw]">
+          <div className="flex overflow-auto w-screen">
 
             {/* Announcement Table Start */}
             <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }} ref={announcementsRef}>

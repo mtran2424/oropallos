@@ -37,8 +37,8 @@ export default function RootLayout({
         <body
           className={`${montserrat.variable} ${merriweather.variable} bg-white antialiased`}
         >
-          <Header />
-          <Navbar />
+          {/* <Header /> */}
+          {/* <Navbar /> */}
           <Analytics />
           <SpeedInsights />
           <Toaster
@@ -67,7 +67,7 @@ export default function RootLayout({
           <MapProvider>
             {children}
           </MapProvider>
-          <Footer />
+          {/* <Footer /> */}
         </body>
       </html>
     </ClerkProvider>

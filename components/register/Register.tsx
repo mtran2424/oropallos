@@ -3,19 +3,18 @@ import { useUser } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import ProductsSpreadsheet from "./ProductsSpreadsheet";
 import { Announcement, Product } from "@/components/global.utils";
-import AnnouncementsSpreadsheet from "./AnnouncementsSpreadsheet";
+import Transaction from "./Transaction";
 
-const Dashboard = ({ products, announcements }: { products: Product[], announcements: Announcement[] }) => {
-  const [tab, setTab] = useState<'products' | 'announcements'>('products');
-
+const Register = ({ }: {}) => {
   // Admin check
   const { isSignedIn } = useUser();
+  const [page, setPage] = useState<string>("Transaction");
 
   useEffect(() => {
     // if user is not signed in, redirect to home page
     if (!isSignedIn) {
+      console.log("signed-in")
       redirect('/');
     }
   }, [isSignedIn]);
@@ -26,44 +25,59 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="mt-25"
     >
-      <div className="flex flex-col w-full h-full min-h-screen items-center justify-start">
+      <motion.div
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="fixed top-0 w-full h-20 text-white bg-zinc-700 z-50"
+      >
+        <div className="grid grid-cols-4">
+          <button
+            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            onClick={() => {
+              setPage("Transaction")
+            }}
+          >
+            Transaction
+          </button>
+          <button
+            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            onClick={() => {
+              setPage("Manager")
+            }}
+          >
+            Manager
+          </button>
+          <button
+            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            onClick={() => {
+              setPage("Journal")
+            }}
+          >
+            Journal
+          </button>
+          <button
+            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            onClick={() => {
+              setPage("Close")
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </motion.div>
+      <div className="flex flex-col w-full h-full min-h-screen items-center justify-start mt-25">
         {/* Header */}
         <h1
           className="text-2xl sm:text-2xl font-serif font-semibold text-center sm:text-start text-red-900 mb-4">
-          Administrative Dashboard
+          {page}
         </h1>
 
-        {/* Tab Buttons */}
-        <div className="flex flex-row justify-center relative w-full bg-zinc-200">
-          <motion.button
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className={`px-6 py-3 text-md z-10 ${tab === 'products'
-              ? 'bg-white text-zinc-900'
-              : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
-              } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
-            onClick={() => setTab('products')}
-            disabled={tab === 'products'}
-          >
-            Products
-          </motion.button>
-
-          <motion.button
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className={`px-6 py-3 text-md z-10 ${tab === 'announcements'
-              ? 'bg-white text-zinc-900'
-              : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
-              } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
-            onClick={() => setTab('announcements')}
-            disabled={tab === 'announcements'}
-          >
-            Announcements
-          </motion.button>
-        </div>
+        {page === "Transaction" && <Transaction />}
 
         {/* Spreadsheets */}
-        <AnimatePresence mode="wait">
+        {/* <AnimatePresence mode="wait">
           {tab === 'products' && (
             <motion.div
               key="products"
@@ -88,10 +102,10 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
               <AnnouncementsSpreadsheet initialAnnouncements={announcements} />
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
       </div>
     </motion.div>
   );
 }
 
-export default Dashboard;
+export default Register;
