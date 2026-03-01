@@ -277,7 +277,7 @@ const AddSize = ({
               exit={{ opacity: 0, x: "100%" }}
               transition={{ duration: 0.3 }}
               ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-auto border-1 border-zinc-500"
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-auto border border-zinc-500"
             >
               {/* Modal Header */}
               <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Add Product Size</h3>
@@ -294,7 +294,7 @@ const AddSize = ({
               </div>
 
               {/* Form for adding event */}
-              <div className="mt-6 w-full border-t-1 border-zinc-500 text-sm sm:text-md rounded-lg p-4">
+              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md rounded-lg p-4">
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {name}
 
@@ -403,7 +403,7 @@ const AddSize = ({
                     onChange={(e) => setImageUrl(e.target.value)}
                     value={imageUrl}
                   />
-                  <div className="text-sm font-medium text-zinc-500 text-left px-4 break-words">
+                  <div className="text-sm font-medium text-zinc-500 text-left px-4 wrap-break-word">
                     Please only use the URL field for reused images from Cloudinary.
                     <br />
                     Preexisting URLs can be found under the image column in the spreadsheet.

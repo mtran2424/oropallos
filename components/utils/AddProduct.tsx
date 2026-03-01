@@ -266,7 +266,7 @@ const AddProduct = ({ onAddProduct, products }: {
               exit={{ opacity: 0, x: "100%" }}
               transition={{ duration: 0.3 }}
               ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border-1 border-zinc-500"
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border border-zinc-500"
             >
               {/* Modal Header */}
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Add Product</h3>
@@ -283,7 +283,7 @@ const AddProduct = ({ onAddProduct, products }: {
               </div>
 
               {/* Form for adding event */}
-              <div className="mt-6 w-full border-t-1 border-zinc-500 text-sm sm:text-md rounded-lg p-4">
+              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md rounded-lg p-4">
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {/* Name Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Product Name</label>
@@ -309,7 +309,7 @@ const AddProduct = ({ onAddProduct, products }: {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
-                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto max-h-[200px]"
+                        className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto max-h-50"
                       >
                         {nameSuggestions.map((suggestion, index) => (
                           <motion.li
@@ -528,7 +528,7 @@ const AddProduct = ({ onAddProduct, products }: {
                     onChange={(e) => setImageUrl(e.target.value)}
                     value={imageUrl}
                   />
-                  <div className="text-sm font-medium text-zinc-500 text-left px-4 break-words">
+                  <div className="text-sm font-medium text-zinc-500 text-left px-4 wrap-break-word">
                     Please only use the URL field for reused images from Cloudinary. Preexisting
                     <br />
                     URLs can be found under the image column in the spreadsheet. Duplicate
