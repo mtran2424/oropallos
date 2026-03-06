@@ -8,7 +8,6 @@ const Transaction = () => {
     exit={{ x: "100%", opacity: 0 }}
     transition={{ duration: 1, ease: "easeInOut" }}
   >
-    Transaction
     <NumPad />
   </motion.div>);
 }
