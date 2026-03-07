@@ -40,7 +40,7 @@ const RelatedProducts = (
       <h2 className="text-2xl font-sans text-red-900 mb-6">Related Products</h2>
 
       {/* Products Display */}
-      <div className="relative min-h-[300px] mb-8">
+      <div className="relative min-h-75 mb-8">
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={page}

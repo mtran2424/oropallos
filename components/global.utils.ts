@@ -48,6 +48,35 @@ export interface Announcement {
   createdAt?: Date;
 }
 
+export interface Discount {
+  name: string;
+  multiplier: number;
+}
+
+export interface Item {
+  item: string;
+  qty: number;
+  discount: Discount;
+  price: number;
+}
+
+export const taxRate = 0.07;
+
+export const noDiscount = {
+  name: "",
+  multiplier: 1
+} as Discount;
+
+export const fifteenPercentDiscount = {
+  name: "15%",
+  multiplier: 0.85
+} as Discount
+
+export const taxFreeDiscount = {
+  name: "Tax Free",
+  multiplier: 0.93457943925
+} as Discount
+
 // CONSTANTS
 
 // Constants for types of each subcategory
@@ -366,4 +395,9 @@ export const formatDate = (date: Date | null | undefined, format?: string) => {
   const yyyy = date.getFullYear();
 
   return `${yyyy}-${mm}-${dd}`;
+}
+
+export const getTotal = (item: Item) => {
+  return item.price * item.qty * item.discount.multiplier * taxRate;
+
 }

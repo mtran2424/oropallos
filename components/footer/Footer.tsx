@@ -17,7 +17,7 @@ const Footer = () => {
     >
       {/* Footer Body */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-10">
-        <div className="flex flex-col items-center md:items-center space-y-4 px-2 md:px-4 h-full min-w-[300px] w-full max-w-[300px] font-serif">
+        <div className="flex flex-col items-center md:items-center space-y-4 px-2 md:px-4 h-full min-w-75 w-full max-w-75 font-serif">
           {/* Logo */}
           <Image
             className="rounded-2xl"

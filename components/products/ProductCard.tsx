@@ -7,7 +7,7 @@ import { CiImageOff } from "react-icons/ci";
 const ProductCard = ({ product }: { product: Product }) => {
   return (
     <motion.div
-      className="flex flex-col bg-white shadow-md rounded-lg border-1 border-zinc-300 p-4 w-full min-w-[200px]"
+      className="flex flex-col bg-white shadow-md rounded-lg border border-zinc-300 p-4 w-full min-w-50"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       transition={{ duration: 0.2 }}

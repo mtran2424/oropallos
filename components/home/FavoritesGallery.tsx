@@ -90,7 +90,7 @@ const FavoritesGallery = ({ products }: { products: Product[] }) => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                    className="mt-2 px-4 py-2 text-white bg-red-900 border-1 border-red-900 rounded-full hover:bg-white hover:text-red-900 transition duration-300 ease-in-out"
+                    className="mt-2 px-4 py-2 text-white bg-red-900 border border-red-900 rounded-full hover:bg-white hover:text-red-900 transition duration-300 ease-in-out"
                     onClick={() => {
                       redirect(`/products/${product.id}`);
                     }}

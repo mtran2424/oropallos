@@ -104,7 +104,7 @@ const HomeGallery = () => {
                 className="absolute bottom-0 z-20 flex flex-col items-center w-full font-serif"
               >
                 {/* Gradient Background */}
-                <div className="absolute bottom-0 w-full h-full z-[-1] bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div className="absolute bottom-0 w-full h-full z-[-1] bg-linear-to-t from-black/80 to-transparent"></div>
 
                 <div className="text-zinc-300 p-8 w-full">
                   <h2 className="text-3xl text-white md:text-4xl font-bold mb-4">{slide.title}</h2>

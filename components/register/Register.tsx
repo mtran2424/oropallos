@@ -30,11 +30,11 @@ const Register = ({ }: {}) => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 w-full h-20 text-white bg-zinc-700 z-50"
+        className="fixed top-0 w-full h-15 text-white bg-zinc-700 z-50"
       >
         <div className="grid grid-cols-4">
           <button
-            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
               setPage("Transaction")
             }}
@@ -42,7 +42,7 @@ const Register = ({ }: {}) => {
             Transaction
           </button>
           <button
-            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
               setPage("Manager")
             }}
@@ -50,7 +50,7 @@ const Register = ({ }: {}) => {
             Manager
           </button>
           <button
-            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
               setPage("Journal")
             }}
@@ -58,7 +58,7 @@ const Register = ({ }: {}) => {
             Journal
           </button>
           <button
-            className="h-20 items-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
+            className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
               setPage("Close")
             }}
@@ -67,12 +67,7 @@ const Register = ({ }: {}) => {
           </button>
         </div>
       </motion.div>
-      <div className="flex flex-col w-full h-full min-h-screen items-center justify-start mt-25">
-        {/* Header */}
-        <h1
-          className="text-2xl sm:text-2xl font-serif font-semibold text-center sm:text-start text-red-900 mb-4">
-          {page}
-        </h1>
+      <div className="flex flex-col w-full h-full items-center justify-start mt-20">
 
         {page === "Transaction" && <Transaction />}
 

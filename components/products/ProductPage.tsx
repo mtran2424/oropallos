@@ -81,7 +81,7 @@ const ProductPage = ({ products }: { products: Product[] }) => {
           {/* Image */}
           <div className="flex flex-col w-full h-full items-center font-serif text-zinc-400 gap-2">
             {product && product.imageUrl ?
-              <div className="relative w-full h-full min-h-[100vw] min-w-[100vw] md:min-h-[50vw] md:min-w-[50vw]">
+              <div className="relative w-full h-full min-h-[100vw] min-w-screen md:min-h-[50vw] md:min-w-[50vw]">
                 <Image
                   src={product.imageUrl}
                   alt={product.name + " image"}
@@ -91,7 +91,7 @@ const ProductPage = ({ products }: { products: Product[] }) => {
                 />
               </div>
               :
-              <div className="w-full h-full flex items-center justify-center bg-zinc-100 rounded-lg min-h-[300px]">
+              <div className="w-full h-full flex items-center justify-center bg-zinc-100 rounded-lg min-h-75">
                 <CiImageOff size={200} className="text-zinc-400" />
               </div>
             }

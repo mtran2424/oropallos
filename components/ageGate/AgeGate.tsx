@@ -30,7 +30,7 @@ export default function AgeGate({ onVerified }: { onVerified: () => void }) {
           exit={{ opacity: 0, x: "100%" }}
           transition={{ duration: 0.3 }}
           ref={modalRef}
-          className="relative bg-white p-6 rounded-2xl max-w-lg w-full shadow-lg max-h-[70vh] overflow-y-auto border-1 border-zinc-500"
+          className="relative bg-white p-6 rounded-2xl max-w-lg w-full shadow-lg max-h-[70vh] overflow-y-auto border border-zinc-500"
         >
           <div className="flex flex-col items-center">
 
@@ -46,13 +46,13 @@ export default function AgeGate({ onVerified }: { onVerified: () => void }) {
           <div className="flex gap-4 justify-center">
             <button
               onClick={handleVerify}
-              className="text-lg rounded-full mt-2 px-3 py-2 w-20 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+              className="text-lg rounded-full mt-2 px-3 py-2 w-20 text-white hover:text-red-900 bg-red-900 hover:bg-white border order-red-900 transition-colors font-serif"
             >
               Yes
             </button>
             <button
               onClick={() => (window.location.href = "https://responsibility.org/")}
-              className="text-lg rounded-full mt-2 px-3 py-2 w-20 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+              className="text-lg rounded-full mt-2 px-3 py-2 w-20 text-white hover:text-red-900 bg-red-900 hover:bg-white border order-red-900 transition-colors font-serif"
             >
               No
             </button>
