@@ -12,11 +12,11 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
 
   return (
     <motion.div
-      initial={{ x: "-100%", opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: "100%", opacity: 0 }}
+      initial={{ y: "-100%", opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="bg-zinc-100 border border-zinc-300 w-[30vw] px-5 py-10"
+      className="bg-zinc-100 border border-zinc-300 w-[35vw] px-5 py-10"
     >
       <motion.div
         className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
@@ -184,6 +184,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
           onClick={() => {
             if (discount !== taxFreeDiscount) {
               setDiscount(taxFreeDiscount);
+              if (input)
+                setInput((parseFloat(input) /1.07).toFixed(0))
             }
             else {
               setDiscount(noDiscount);

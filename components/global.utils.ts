@@ -74,7 +74,7 @@ export const fifteenPercentDiscount = {
 
 export const taxFreeDiscount = {
   name: "Tax Free",
-  multiplier: 0.93457943925
+  multiplier: (1)
 } as Discount
 
 // CONSTANTS
@@ -398,6 +398,9 @@ export const formatDate = (date: Date | null | undefined, format?: string) => {
 }
 
 export const getTotal = (item: Item) => {
-  return item.price * item.qty * item.discount.multiplier * taxRate;
+  return item.price * item.qty * item.discount.multiplier * (1 + taxRate);
+}
 
+export const getSubtotal = (item: Item) => {
+  return item.price * item.qty * item.discount.multiplier;
 }

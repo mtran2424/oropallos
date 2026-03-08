@@ -3,8 +3,8 @@ import { getProducts } from "@/app/api/productapi";
 import Register from "@/components/register/Register";
 
 export default async function Page() {
-  const productData = await getProducts()
+  const data = await getProducts();
   return (
-    <Register />
+    <Register products={data.products}/>
   );
 }

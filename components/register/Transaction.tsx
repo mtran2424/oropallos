@@ -1,11 +1,48 @@
 import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { Item } from "../global.utils";
+import { getSubtotal, getTotal, Item, taxRate, Product } from "../global.utils";
 import { useState } from "react";
+import SearchMenu from "./SearchMenu";
 
-const Transaction = () => {
-  const [cart, setCart] = useState<Item[]>([])
+const Transaction = ({ products }: { products: Product[] }) => {
+  const [cart, setCart] = useState<Item[]>([]);
+  const [mode, setMode] = useState<string>("Register");
+
+  const calculateSubtotal = (cart: Item[]) => {
+    var total = 0;
+    cart.map(item => {
+      total += getSubtotal(item);
+    })
+
+    return total;
+  }
+
+  const calculateDiscount = (cart: Item[]) => {
+    var total = 0;
+    cart.map(item => {
+      total += item.price * item.qty * (1 - item.discount.multiplier);
+    })
+
+    return total;
+  }
+
+  const calculateTotal = (cart: Item[]) => {
+    var total = 0;
+    cart.map(item => {
+      total += getTotal(item);
+    })
+
+    return total;
+  }
+
+  const calculateTax = (cart: Item[]) => {
+    var total = 0;
+    cart.map(item => {
+      total += getSubtotal(item) * taxRate;
+    })
+    return total;
+  }
 
   return (
     <motion.div
@@ -64,7 +101,22 @@ const Transaction = () => {
         </div>
 
         <div>
-          <NumPad onConfirm={(item) => setCart([...cart, item])} />
+          <div className="grid grid-cols-2 p-2 text-lg">
+            <button
+              className="text-blue-500 hover:text-zinc-400"
+              onClick={() => setMode("Search")}
+            >
+              Search
+            </button>
+            <button
+              className="text-blue-500 hover:text-zinc-400"
+              onClick={() => setMode("Register")}
+            >
+              Register
+            </button>
+          </div>
+          {mode === "Register" && <NumPad onConfirm={(item) => setCart([...cart, item])} />}
+          {mode === "Search" && <SearchMenu products={products} />}
           <table className="w-full my-5">
             <tbody>
               <tr>
@@ -72,7 +124,7 @@ const Transaction = () => {
                   SUBTOTAL:
                 </td>
                 <td className="text-end">
-                  31.98
+                  {calculateSubtotal(cart).toFixed(2)}
                 </td>
               </tr>
               <tr>
@@ -80,7 +132,7 @@ const Transaction = () => {
                   TAX:
                 </td>
                 <td className="text-end">
-                  0.70
+                  {calculateTax(cart).toFixed(2)}
                 </td>
               </tr>
               <tr>
@@ -88,7 +140,7 @@ const Transaction = () => {
                   DISCOUNT:
                 </td>
                 <td className="text-end">
-                  2.00
+                  {calculateDiscount(cart).toFixed(2)}
                 </td>
               </tr>
             </tbody>
@@ -101,7 +153,7 @@ const Transaction = () => {
                   TOTAL
                 </td>
                 <td className="text-end">
-                  31.98
+                  {calculateTotal(cart).toFixed(2)}
                 </td>
               </tr>
             </tbody>

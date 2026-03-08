@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Announcement, Product } from "@/components/global.utils";
 import Transaction from "./Transaction";
 
-const Register = ({ }: {}) => {
+const Register = ({ products }: { products: Product[] }) => {
   // Admin check
   const { isSignedIn } = useUser();
   const [page, setPage] = useState<string>("Transaction");
@@ -27,8 +27,8 @@ const Register = ({ }: {}) => {
       transition={{ duration: 1, ease: "easeInOut" }}
     >
       <motion.div
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        initial={{ x: -100 }}
+        animate={{ x: 0 }}
         transition={{ duration: 0.5 }}
         className="fixed top-0 w-full h-15 text-white bg-zinc-700 z-50"
       >
@@ -69,7 +69,7 @@ const Register = ({ }: {}) => {
       </motion.div>
       <div className="flex flex-col w-full h-full items-center justify-start mt-20">
 
-        {page === "Transaction" && <Transaction />}
+        {page === "Transaction" && <Transaction products={products}/>}
 
         {/* Spreadsheets */}
         {/* <AnimatePresence mode="wait">
