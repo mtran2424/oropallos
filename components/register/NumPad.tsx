@@ -16,7 +16,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="bg-zinc-100 border border-zinc-300 w-[35vw] px-5 py-10"
+      className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-10"
     >
       <motion.div
         className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
@@ -28,7 +28,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
           </div> : <div />}
           {item ? <div className="text-end">
             {item}
-          </div> : <div />}
+          </div> : <div />}   
         </div>
         <input
           type="number"

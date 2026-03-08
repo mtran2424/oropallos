@@ -20,7 +20,7 @@ const Pagination = ({
         disabled={currentPage === 1}
         onClick={prevClick}
         className={`px-4 py-2 rounded-full
-          border-1 border-red-900 
+          border border-red-900 
           bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
           text-white disabled:text-white hover:text-red-900
           transition-colors ease-in-out
@@ -38,7 +38,7 @@ const Pagination = ({
         disabled={currentPage === totalPages}
         onClick={nextClick}
         className={`px-4 py-2 rounded-full
-          border-1 border-red-900 
+          border border-red-900 
           bg-red-900 disabled:border-0 disabled:bg-zinc-900 hover:bg-white
           text-white disabled:text-white hover:text-red-900
           transition-colors ease-in-out

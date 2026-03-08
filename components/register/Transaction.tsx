@@ -116,7 +116,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
             </button>
           </div>
           {mode === "Register" && <NumPad onConfirm={(item) => setCart([...cart, item])} />}
-          {mode === "Search" && <SearchMenu products={products} />}
+          {mode === "Search" && <SearchMenu products={products} onConfirm={(item) => setCart([...cart, item])}/>}
           <table className="w-full my-5">
             <tbody>
               <tr>
