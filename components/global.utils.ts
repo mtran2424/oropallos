@@ -54,6 +54,7 @@ export interface Discount {
 }
 
 export interface Item {
+  type: string;
   item: string;
   qty: number;
   discount: Discount;

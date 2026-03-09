@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import SearchBar from "../ui/SearchBar";
 import { Discount, fifteenPercentDiscount, Item, noDiscount, Product, sanitize, taxFreeDiscount } from "../global.utils";
 import Image from "next/image";
@@ -15,6 +15,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   const [quantity, setQuantity] = useState<number>(1);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [discount, setDiscount] = useState<string>("");
+  const [type, setType] = useState<string>("")
   // Handlers for search and sort
 
   // Apply filters, seach terms, and sorting
@@ -92,18 +93,40 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     }
   }
 
+  const getPrice = (discount: string, price: number) => {
+    switch(discount) {
+      case "Tax Free": return (price/1.07);
+      default: return price;
+    }
+  }
+
   const handleSubmit = () => {
-    if(quantity && discount && currentProduct) {
+    if(quantity && type && currentProduct) {
       onConfirm({
+        type: type,
         item: currentProduct.name,
         qty: quantity,
         discount: getDiscount(discount),
-        price: currentProduct.price
+        price: parseFloat(getPrice(discount, currentProduct.price).toFixed(2))
       })
 
+      setCurrentProduct(undefined);
+      setQuantity(1);
+      setDiscount("");
+      setType("");
       setAddItem(false);
     }
   };
+
+  // Add event listener for closing the modal when clicking outside of it
+    useEffect(() => {
+      if (addItem) {
+        document.addEventListener('mousedown', closeModalOnOutsideClick);
+      }
+      return () => {
+        document.removeEventListener('mousedown', closeModalOnOutsideClick);
+      };
+    }, [closeModalOnOutsideClick, addItem]);
 
   return (
     <>
@@ -157,11 +180,11 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                 >
                   <strong>Qty</strong>
                 </th> */}
-                  <th
+                  {/* <th
                     className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
                   >
                     <strong>Type</strong>
-                  </th>
+                  </th> */}
                   <th
                     className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
                   >
@@ -227,7 +250,6 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                         value={quantity || ""}
                       />
                     </td> */}
-                      <td className="text-center p-2">Wine</td>
                       <td className="text-center p-2">{product.price}</td>
                     </tr>
                   ))
@@ -305,6 +327,13 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                     <button className={`p-5 rounded-md text-white text-2xl ${discount === "15%" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount("15%")}>15% Discount</button>
                     <button className={`p-5 rounded-md text-white text-2xl ${discount === "Tax Free" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount("Tax Free")}>Tax Free</button>
                   </div>
+
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
+                  <div className="grid grid-cols-2 w-full gap-1">
+                    <button className={`p-5 rounded-md text-white text-2xl ${type === "Wine" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Wine")}>Wine</button>
+                    <button className={`p-5 rounded-md text-white text-2xl ${type === "Liquor" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Liquor")}>Liquor</button>
+                  </div>
+
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     className="text-2xl font-semibold w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"

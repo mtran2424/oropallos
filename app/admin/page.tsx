@@ -9,6 +9,9 @@ const Page = () => {
     // Redirect to home page if user is not signed in
     redirect('/admin/sign-in');
   }
+  else {
+    redirect("/home/")
+  }
   return ( <></> );
 }
  

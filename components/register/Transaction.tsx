@@ -62,6 +62,9 @@ const Transaction = ({ products }: { products: Product[] }) => {
             <thead>
               <tr>
                 <th>
+                  Type
+                </th>
+                <th>
                   Item
                 </th>
                 <th>
@@ -81,6 +84,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
             <tbody className="divide-y divide-zinc-400">
               {cart.map((item, index) => (
                 <tr key={index}>
+                  <td className="text-sm text-center">{item.type}</td>
                   <td className="text-sm text-center">{item.item}</td>
                   <td className="text-sm text-center">{item.qty}</td>
                   <td className="text-sm text-center">{item.discount.name}</td>
@@ -120,7 +124,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
           <table className="w-full my-5">
             <tbody>
               <tr>
-                <td>
+                <td className="font-semibold">
                   SUBTOTAL:
                 </td>
                 <td className="text-end">
@@ -128,7 +132,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
                 </td>
               </tr>
               <tr>
-                <td>
+                <td className="font-semibold">
                   TAX:
                 </td>
                 <td className="text-end">
@@ -136,7 +140,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
                 </td>
               </tr>
               <tr>
-                <td>
+                <td className="font-semibold">
                   DISCOUNT:
                 </td>
                 <td className="text-end">
@@ -149,7 +153,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
           <table className="w-full">
             <tbody>
               <tr>
-                <td>
+                <td className="font-semibold">
                   TOTAL
                 </td>
                 <td className="text-end">

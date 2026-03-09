@@ -6,6 +6,7 @@ import { Discount, fifteenPercentDiscount, Item, noDiscount, taxFreeDiscount } f
 
 const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
   const [input, setInput] = useState<string>("");
+  const [type, setType] = useState<string>("");
   const [item, setItem] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
   const [discount, setDiscount] = useState<Discount>(noDiscount);
@@ -26,23 +27,14 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
           {quantity ? <div className="text-start">
             Qty: {quantity}
           </div> : <div />}
-          {item ? <div className="text-end">
-            {item}
+          {type ? <div className="text-end">
+            {type}
           </div> : <div />}   
         </div>
         <input
           type="number"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          // placeholder="Search by name, category, subcategory, or type..."
-          // initial={{ width: 0, opacity: 0 }}
-          // animate={{
-          //   // width: isOpen ? "100%" : 0,
-          //   // opacity: isOpen ? 1 : 0,
-          //   // paddingLeft: isOpen ? "0.75rem" : "0rem",
-          //   // paddingRight: isOpen ? "0.75rem" : "0rem",
-          // }}
-          // transition={{ duration: 0.4, ease: "easeInOut" }}
           className="p-2 text-2xl overflow-hidden w-full focus:outline-none"
           style={{ whiteSpace: "nowrap" }}
         />
@@ -72,6 +64,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
           onClick={() => {
             setInput("");
             setDiscount(noDiscount);
+            setType("");
             setItem("");
             setQuantity(1);
           }}
@@ -217,7 +210,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
           className="flex h-15 w-full bg-zinc-800 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
           onClick={() => {
-            setItem("Liquor");
+            setType("Liquor");
           }}
         >
           Liquor
@@ -226,7 +219,9 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         <button
           className="flex h-15 w-full bg-zinc-800 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
-          onClick={() => setItem("Wine")}
+          onClick={() => 
+            setType("Wine")
+          }
         >
           Wine
         </button>
@@ -237,13 +232,13 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
-            if (item && quantity && discount && input) {
+            if (type && quantity && discount && input) {
               onConfirm(
-                { item: item, qty: quantity, discount: discount, price: parseFloat(input) / 100 }
+                { type: type, item: item, qty: quantity, discount: discount, price: parseFloat(input) / 100 }
               );
               setInput("");
               setDiscount(noDiscount);
-              setItem("");
+              setType("");
               setQuantity(1);
             }
           }}
