@@ -227,21 +227,6 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
 
                         </div>
                       </td>
-                      {/* <td className="text-center p-2">
-                      <input
-                        type="number"
-                        inputMode="decimal"
-                        step="1"
-                        min="0"
-                        className="border border-zinc-500 rounded-lg w-15 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                        placeholder="Qty"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setQuantity(value === "" ? undefined : parseFloat(value));
-                        }}
-                        value={quantity || ""}
-                      />
-                    </td> */}
                       <td className="text-center p-2">{product.price}</td>
                     </tr>
                   ))
