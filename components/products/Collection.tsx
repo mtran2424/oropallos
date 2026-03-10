@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { Product, sanitize } from "@/components/global.utils";
@@ -10,6 +10,7 @@ const PRODUCTS_PER_PAGE = 24;
 const Collection = ({ products }: { products: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("relevant");
   const productsRef = useRef<HTMLDivElement | null>(null);
 
@@ -20,7 +21,7 @@ const Collection = ({ products }: { products: Product[] }) => {
 
   // Search + Sort
   const sortedAndFilteredProducts = useMemo(() => {
-    const term = searchTerm.toLowerCase();
+    const term = deferredSearch.toLowerCase();
 
     const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type]
@@ -52,7 +53,7 @@ const Collection = ({ products }: { products: Product[] }) => {
     }
 
     return sorted;
-  }, [products, searchTerm, sortOption]);
+  }, [products, deferredSearch, sortOption]);
 
   const totalPages = Math.ceil(sortedAndFilteredProducts.length / PRODUCTS_PER_PAGE);
   const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
@@ -62,13 +63,17 @@ const Collection = ({ products }: { products: Product[] }) => {
   // Handlers
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(e.target.value);
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortOption, sortedAndFilteredProducts])
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full font-serif px-4">

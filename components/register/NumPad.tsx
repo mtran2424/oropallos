@@ -19,17 +19,19 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
       transition={{ duration: 1, ease: "easeInOut" }}
       className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-10"
     >
+      {/* Input bar */}
       <motion.div
         className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
         overflow-hidden w-full h-25 mb-10"
       >
+        {/* Current input dash display */}
         <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
           {quantity ? <div className="text-start">
             Qty: {quantity}
           </div> : <div />}
           {type ? <div className="text-end">
             {type}
-          </div> : <div />}   
+          </div> : <div />}
         </div>
         <input
           type="number"
@@ -44,6 +46,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
       </motion.div>
       <div className="grid grid-cols-4 gap-x-1">
         {/* First Row */}
+
+        {/* Multi item button */}
         <button className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
       hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
@@ -55,9 +59,10 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           @/for
         </button>
-        <button>
 
-        </button>
+        <button></button>
+
+        {/* Clear inputs */}
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -72,6 +77,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
 
           Clear
         </button>
+
+        {/* TODO: Implement no sale order */}
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -87,6 +94,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           7
         </button>
+
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -94,6 +102,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           8
         </button>
+
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -101,6 +110,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           9
         </button>
+
+        {/* Back space button */}
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -120,6 +131,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           4
         </button>
+
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -127,6 +139,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           5
         </button>
+
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -134,6 +147,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           6
         </button>
+
+        {/* 15% Discount Shortcut button */}
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -157,6 +172,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           1
         </button>
+
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -164,6 +180,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           2
         </button>
+
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -171,6 +188,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           3
         </button>
+
+        {/* Tax Free Discount Shortcut button */}
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -178,7 +197,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
             if (discount !== taxFreeDiscount) {
               setDiscount(taxFreeDiscount);
               if (input)
-                setInput((parseFloat(input) /1.07).toFixed(0))
+                setInput((parseFloat(input) / 1.07).toFixed(0))
             }
             else {
               setDiscount(noDiscount);
@@ -196,6 +215,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           0
         </button>
+
         <button
           className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -203,9 +223,11 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         >
           00
         </button>
+
         <button></button>
 
         {/* Sixth Row */}
+        {/* Liquor type selector */}
         <button
           className="flex h-15 w-full bg-zinc-800 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
@@ -216,10 +238,11 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
           Liquor
         </button>
 
+        {/* Wine type selector */}
         <button
           className="flex h-15 w-full bg-zinc-800 text-white font-semibold m-0.5 text-xl justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
-          onClick={() => 
+          onClick={() =>
             setType("Wine")
           }
         >
@@ -227,6 +250,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
         </button>
 
         {/* Seventh Row */}
+        {/* Confirm item button */}
         <button
           className="flex h-15 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4
         

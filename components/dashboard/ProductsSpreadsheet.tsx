@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
 import { Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
 import { deleteProduct, favoriteProduct, getProducts } from "@/app/api/productapi";
@@ -21,6 +21,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
   const productsRef = useRef<HTMLTableElement | null>(null);
@@ -41,7 +42,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredProducts = useMemo(() => {
-    const term = searchTerm.toLowerCase();
+    const term = deferredSearch.toLowerCase();
 
     const filtered = products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type, product.size]
@@ -88,7 +89,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
     }
 
     return sorted;
-  }, [categoryFilters, products, searchTerm, sortOption, subcategoryFilters]);
+  }, [categoryFilters, products, deferredSearch, sortOption, subcategoryFilters]);
 
   // Handlers for search and sort
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

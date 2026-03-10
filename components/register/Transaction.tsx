@@ -9,6 +9,8 @@ const Transaction = ({ products }: { products: Product[] }) => {
   const [cart, setCart] = useState<Item[]>([]);
   const [mode, setMode] = useState<string>("Register");
 
+  // Business math functions
+
   const calculateSubtotal = (cart: Item[]) => {
     var total = 0;
     cart.map(item => {
@@ -52,6 +54,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
       transition={{ duration: 1, ease: "easeInOut" }}
     >
       <div className="flex flex-row w-screen items-start justify-center gap-5">
+        {/* Shopping cart section */}
         <div className="flex flex-col w-1/2">
           <h1
             className="text-xl sm:text-2xl font-serif font-semibold text-center sm:text-start text-zinc-900 mb-4">
@@ -80,7 +83,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
               </tr>
             </thead>
 
-
+            {/* Shopping cart items */}
             <tbody className="divide-y divide-zinc-400">
               {cart.map((item, index) => (
                 <tr key={index}>
@@ -104,7 +107,9 @@ const Transaction = ({ products }: { products: Product[] }) => {
           </table>
         </div>
 
+        {/* Register tools */}
         <div>
+          {/* Tool selector */}
           <div className="grid grid-cols-2 p-2 text-lg">
             <button
               className="text-blue-500 hover:text-zinc-400"
@@ -119,8 +124,11 @@ const Transaction = ({ products }: { products: Product[] }) => {
               Register
             </button>
           </div>
+          {/* Tools */}
           {mode === "Register" && <NumPad onConfirm={(item) => setCart([...cart, item])} />}
-          {mode === "Search" && <SearchMenu products={products} onConfirm={(item) => setCart([...cart, item])}/>}
+          {mode === "Search" && <SearchMenu products={products} onConfirm={(item) => setCart([...cart, item])} />}
+
+          {/* Cart summary */}
           <table className="w-full my-5">
             <tbody>
               <tr>

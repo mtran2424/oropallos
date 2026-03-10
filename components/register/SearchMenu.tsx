@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
 import SearchBar from "../ui/SearchBar";
 import { Discount, fifteenPercentDiscount, Item, noDiscount, Product, sanitize, taxFreeDiscount } from "../global.utils";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
 const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: Item) => void }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
   const modalRef = useRef<HTMLDivElement>(null);
   const [addItem, setAddItem] = useState(false);
@@ -16,18 +17,18 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [discount, setDiscount] = useState<string>("");
   const [type, setType] = useState<string>("")
+
   // Handlers for search and sort
 
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredProducts = useMemo(() => {
-    const term = searchTerm.toLowerCase();
-    console.log(term)
+    const term = deferredSearch.toLowerCase();
 
-    const filtered = products.filter((product) =>
+    const filtered = term !== "" ? products.filter((product) =>
       [product.name, product.category, product.subcategory, product.type, product.size, product.upc]
         .filter(Boolean)
         .some((field) => sanitize(field ? field : "").includes(sanitize(term)))
-    )
+    ) : [];
 
     // Choose sorting method
     const sorted = [...filtered];
@@ -62,7 +63,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     }
 
     return sorted;
-  }, [products, searchTerm, sortOption]);
+  }, [products, deferredSearch, sortOption]);
 
   // Close the modal for adding a product
   const closeEventModal = () => {
@@ -84,6 +85,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     setSortOption(e.target.value);
   };
 
+  // Get discount object
   const getDiscount = (disc: string) => {
     switch(disc) {
       case "": return noDiscount;
@@ -93,6 +95,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     }
   }
 
+  // Calculate price
   const getPrice = (discount: string, price: number) => {
     switch(discount) {
       case "Tax Free": return (price/1.07);
@@ -101,6 +104,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   }
 
   const handleSubmit = () => {
+    // Type of item and product required to be submitted
     if(quantity && type && currentProduct) {
       onConfirm({
         type: type,
@@ -110,6 +114,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
         price: parseFloat(getPrice(discount, currentProduct.price).toFixed(2))
       })
 
+      // Reset states upon confirm
       setCurrentProduct(undefined);
       setQuantity(1);
       setDiscount("");
@@ -168,6 +173,8 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
 
           <div className="flex overflow-auto w-screen">
             <table className="w-full divide-y divide-zinc-400">
+
+              {/* Table headers */}
               <thead className="sticky top-0 bg-white z-20">
                 <tr>
                   <th
@@ -175,26 +182,11 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                   >
                     <strong>Item</strong>
                   </th>
-                  {/* <th
-                  className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                >
-                  <strong>Qty</strong>
-                </th> */}
-                  {/* <th
-                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                  >
-                    <strong>Type</strong>
-                  </th> */}
                   <th
                     className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
                   >
                     <strong>Price</strong>
                   </th>
-                  {/* <th
-                  className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                >
-                  <strong>Action</strong>
-                </th> */}
                 </tr>
               </thead>
 
