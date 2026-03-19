@@ -1,13 +1,35 @@
 import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { getSubtotal, getTotal, Item, taxRate, Product } from "../global.utils";
+import { getSubtotal, getTotal, Item, taxRate, Product, noDiscount } from "../global.utils";
 import { useState } from "react";
 import SearchMenu from "./SearchMenu";
+import QuickAddButton from "./QuickAddButton";
 
 const Transaction = ({ products }: { products: Product[] }) => {
   const [cart, setCart] = useState<Item[]>([]);
   const [mode, setMode] = useState<string>("Register");
+
+  const handleQuickAdd = (name: string, type: string, price: number) => {
+    const itemExists = cart.findIndex(item => item.item === name);
+
+    if (itemExists != -1) {
+      const temp = cart[itemExists];
+      temp.qty++;
+      // const newCart = cart.splice(itemExists);
+      setCart([...cart]);
+    }
+    else {
+      const item = {
+        type: type,
+        item: name,
+        qty: 1,
+        discount: noDiscount,
+        price: price
+      }
+      setCart([...cart, item])
+    }
+  }
 
   // Business math functions
 
@@ -62,63 +84,63 @@ const Transaction = ({ products }: { products: Product[] }) => {
               Shopping Cart
             </h1>
             <div className="flex overflow-auto">
-            <table className="w-full divide-y divide-zinc-400">
-              {/* Headers */}
-              <thead className="sticky top-0 bg-white z-20">
-                <tr>
-                  <th>
-                    Type
-                  </th>
-                  <th>
-                    Item
-                  </th>
-                  <th>
-                    Qty
-                  </th>
-                  <th>
-                    Discount
-                  </th>
-                  <th>
-                    Price
-                  </th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              {/* Shopping cart items */}
-              <tbody className="divide-y divide-zinc-400">
-                {cart.map((item, index) => (
-                  <tr key={index}>
-                    <td className="text-md text-center">{item.type}</td>
-                    <td className="text-md text-center">{item.item}</td>
-                    <td className="text-md text-center">{item.qty}</td>
-                    <td className="text-md text-center">{item.discount.name}</td>
-                    <td className="text-md text-center">{item.price}</td>
-                    <td className="text-md text-center">
-                      <button onClick={() => {
-                        const newCart = [...cart];
-                        newCart.splice(index, 1);
-                        setCart(newCart);
-                      }}>
-                        <MdDelete />
-                      </button>
-                    </td>
+              <table className="w-full divide-y divide-zinc-400">
+                {/* Headers */}
+                <thead className="sticky top-0 bg-white z-20">
+                  <tr>
+                    <th>
+                      Type
+                    </th>
+                    <th>
+                      Item
+                    </th>
+                    <th>
+                      Qty
+                    </th>
+                    <th>
+                      Discount
+                    </th>
+                    <th>
+                      Price
+                    </th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                {/* Shopping cart items */}
+                <tbody className="divide-y divide-zinc-400">
+                  {cart.map((item, index) => (
+                    <tr key={index}>
+                      <td className="text-md text-center">{item.type}</td>
+                      <td className="text-md text-center">{item.item}</td>
+                      <td className="text-md text-center">{item.qty}</td>
+                      <td className="text-md text-center">{item.discount.name}</td>
+                      <td className="text-md text-center">{item.price}</td>
+                      <td className="text-md text-center">
+                        <button onClick={() => {
+                          const newCart = [...cart];
+                          newCart.splice(index, 1);
+                          setCart(newCart);
+                        }}>
+                          <MdDelete />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
           </div>
           <div className="grid grid-cols-4 gap-1">
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">50mL Liquor - 0.99</button>
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">50mL Liquor - 1.49</button>
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">50mL Liquor - 1.99</button>
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">50mL Liquor - 2.99</button>
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">50mL Liquor - 4.99</button>
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">10 X 50mL Liquor - 9.99</button>
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">10 X 50mL Liquor - 12.99</button>
-            <button className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm">10 X 50mL Liquor - 13.99</button>
+            <QuickAddButton label="50mL Liquor - 0.99" type="Liquor" price={0.99} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={1.49} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 1.99" type="Liquor" price={1.99} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 2.99" type="Liquor" price={2.99} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 4.99" type="Liquor" price={4.99} onClick={handleQuickAdd} />
+            <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={9.99} onClick={handleQuickAdd} />
+            <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={12.99} onClick={handleQuickAdd} />
+            <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={13.99} onClick={handleQuickAdd} />
           </div>
         </div>
 

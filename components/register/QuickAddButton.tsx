@@ -1,0 +1,17 @@
+const QuickAddButton = ({ label, type, price, onClick }: {
+  label: string,
+  type: string,
+  price: number
+  onClick: (name: string, type: string, price: number) => void
+}) => {
+  return (
+    <button
+      className="bg-blue-900 text-white text-lg hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear p-4 rounded-sm"
+      onClick={() => onClick(label, type, price)}
+    >
+      {label}
+    </button>
+  );
+}
+
+export default QuickAddButton;

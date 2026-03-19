@@ -12,7 +12,7 @@ const ExpandButton = ({ children, onClick }: {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
       onClick={onClick}
-      className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border-1 order-red-900 transition-colors font-serif"
+      className="text-lg rounded-full mt-2 px-3 py-2 text-white hover:text-red-900 bg-red-900 hover:bg-white border order-red-900 transition-colors font-serif"
     >
       {children}
     </motion.button>
