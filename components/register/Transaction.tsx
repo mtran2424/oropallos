@@ -145,7 +145,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
         </div>
 
         {/* Register tools */}
-        <div>
+        <div> 
           {/* Tool selector */}
           <div className="grid grid-cols-2 p-2 text-lg">
             <button
@@ -169,26 +169,26 @@ const Transaction = ({ products }: { products: Product[] }) => {
           <table className="w-full my-5">
             <tbody>
               <tr>
-                <td className="font-semibold">
+                <td className="font-semibold text-lg">
                   SUBTOTAL:
                 </td>
-                <td className="text-end">
+                <td className="text-end text-lg">
                   {calculateSubtotal(cart).toFixed(2)}
                 </td>
               </tr>
               <tr>
-                <td className="font-semibold">
+                <td className="font-semibold text-lg">
                   TAX:
                 </td>
-                <td className="text-end">
+                <td className="text-end text-lg">
                   {calculateTax(cart).toFixed(2)}
                 </td>
               </tr>
               <tr>
-                <td className="font-semibold">
+                <td className="font-semibold text-lg">
                   DISCOUNT:
                 </td>
-                <td className="text-end">
+                <td className="text-end text-lg">
                   {calculateDiscount(cart).toFixed(2)}
                 </td>
               </tr>
@@ -198,15 +198,24 @@ const Transaction = ({ products }: { products: Product[] }) => {
           <table className="w-full">
             <tbody>
               <tr>
-                <td className="font-semibold">
+                <td className="font-semibold text-lg">
                   TOTAL
                 </td>
-                <td className="text-end">
+                <td className="text-end text-lg">
                   {calculateTotal(cart).toFixed(2)}
                 </td>
               </tr>
             </tbody>
           </table>
+
+          <button
+            className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+            onClick={() => {
+
+            }}
+          >
+            Cash Out
+          </button>
         </div>
       </div>
     </motion.div>);

@@ -1,9 +1,9 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Announcement, Product } from "@/components/global.utils";
+import { Product } from "@/components/global.utils";
 import Transaction from "./Transaction";
 
 const Register = ({ products }: { products: Product[] }) => {
@@ -68,36 +68,7 @@ const Register = ({ products }: { products: Product[] }) => {
         </div>
       </motion.div>
       <div className="flex flex-col w-full h-full items-center justify-start mt-20">
-
         {page === "Transaction" && <Transaction products={products}/>}
-
-        {/* Spreadsheets */}
-        {/* <AnimatePresence mode="wait">
-          {tab === 'products' && (
-            <motion.div
-              key="products"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="mt-10"
-            >
-              <ProductsSpreadsheet initialProducts={products} />
-            </motion.div>
-          )}
-          {tab === 'announcements' && (
-            <motion.div
-              key="announcements"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="mt-10"
-            >
-              <AnnouncementsSpreadsheet initialAnnouncements={announcements} />
-            </motion.div>
-          )}
-        </AnimatePresence> */}
       </div>
     </motion.div>
   );
