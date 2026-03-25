@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { getSubtotal, getTotal, Item, taxRate, Product, noDiscount } from "../global.utils";
+import { Item, Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax } from "../global.utils";
 import { useState } from "react";
 import SearchMenu from "./SearchMenu";
 import QuickAddButton from "./QuickAddButton";
@@ -29,43 +29,6 @@ const Transaction = ({ products }: { products: Product[] }) => {
       }
       setCart([...cart, item])
     }
-  }
-
-  // Business math functions
-
-  const calculateSubtotal = (cart: Item[]) => {
-    var total = 0;
-    cart.map(item => {
-      total += getSubtotal(item);
-    })
-
-    return total;
-  }
-
-  const calculateDiscount = (cart: Item[]) => {
-    var total = 0;
-    cart.map(item => {
-      total += item.price * item.qty * (1 - item.discount.multiplier);
-    })
-
-    return total;
-  }
-
-  const calculateTotal = (cart: Item[]) => {
-    var total = 0;
-    cart.map(item => {
-      total += getTotal(item);
-    })
-
-    return total;
-  }
-
-  const calculateTax = (cart: Item[]) => {
-    var total = 0;
-    cart.map(item => {
-      total += getSubtotal(item) * taxRate;
-    })
-    return total;
   }
 
   return (
@@ -145,7 +108,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
         </div>
 
         {/* Register tools */}
-        <div> 
+        <div>
           {/* Tool selector */}
           <div className="grid grid-cols-2 p-2 text-lg">
             <button

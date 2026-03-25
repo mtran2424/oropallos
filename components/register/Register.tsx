@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Product } from "@/components/global.utils";
 import Transaction from "./Transaction";
+import Manager from "./Manager";
 
 const Register = ({ products }: { products: Product[] }) => {
   // Admin check
@@ -69,6 +70,7 @@ const Register = ({ products }: { products: Product[] }) => {
       </motion.div>
       <div className="flex flex-col w-full h-full items-center justify-start mt-20">
         {page === "Transaction" && <Transaction products={products}/>}
+        {page === "Manager" && <Manager/>}
       </div>
     </motion.div>
   );

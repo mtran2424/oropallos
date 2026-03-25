@@ -65,18 +65,18 @@ export const taxRate = 0.07;
 
 export const noDiscount = {
   name: "",
-  multiplier: 1
+  multiplier: 1,
 } as Discount;
 
 export const fifteenPercentDiscount = {
   name: "15%",
-  multiplier: 0.85
-} as Discount
+  multiplier: 0.85,
+} as Discount;
 
 export const taxFreeDiscount = {
   name: "Tax Free",
-  multiplier: (1)
-} as Discount
+  multiplier: 1,
+} as Discount;
 
 // CONSTANTS
 
@@ -153,12 +153,12 @@ const semiWhiteTypes = [
 
 const drySparklingTypes = [
   { name: "Imported", value: "Imported" },
-  { name: "Domestic", value: "Domestic" }
-]
+  { name: "Domestic", value: "Domestic" },
+];
 
 const sweetSparklingTypes = [
   { name: "Imported", value: "Imported" },
-  { name: "Domestic", value: "Domestic" }
+  { name: "Domestic", value: "Domestic" },
 ];
 
 const vermouthTypes = [
@@ -233,7 +233,7 @@ const rtdTypes = [
 
 const cocktailTypes = [
   { name: "Cocktail Enhancements", value: "Cocktail_Enhancements" },
-  { name: "Cocktail Mixes", value: "Cocktail_Mixes" }
+  { name: "Cocktail Mixes", value: "Cocktail_Mixes" },
 ];
 
 // Constant defining product categories, subcategories and types
@@ -247,7 +247,11 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Gin", types: [], value: "Gin" },
       { name: "Rum", types: rumTypes, value: "Rum" },
       { name: "Brandy", types: brandyTypes, value: "Brandy" },
-      { name: "Cordials/Liqueurs/Schnapps", types: cordialsTypes, value: "Cordials_Liqueurs_Schnapps" },
+      {
+        name: "Cordials/Liqueurs/Schnapps",
+        types: cordialsTypes,
+        value: "Cordials_Liqueurs_Schnapps",
+      },
       { name: "Ready-To-Drink", types: rtdTypes, value: "Ready_To_Drink" },
       { name: "Moonshine", types: [], value: "Moonshine" },
       { name: "Cocktails", types: cocktailTypes, value: "Cocktails" },
@@ -298,14 +302,17 @@ export const ProductCategories: ProductCategory[] = [
       { name: "Box Wine", types: [], value: "Box_Wine" },
       { name: "Organic", types: [], value: "Organic" },
       { name: "Low Calorie", types: [], value: "Low_Calorie" },
-      { name: "Wine Based Beverages", types: [], value: "Wine_Based_Beverages" },
+      {
+        name: "Wine Based Beverages",
+        types: [],
+        value: "Wine_Based_Beverages",
+      },
       { name: "Asian Wines", types: [], value: "Asian_Wines" },
       { name: "Kosher Wines", types: [], value: "Kosher_Wines" },
       { name: "Mead", types: [], value: "Mead" },
     ],
     value: "Other_Wine",
   },
-
 ] as const;
 
 export const navBarElements = [
@@ -327,7 +334,7 @@ export const productHeaders = [
   "Type",
   "Description",
   "Price",
-  "Actions"
+  "Actions",
 ] as const;
 
 // Headers for product tables in admin view
@@ -345,6 +352,16 @@ export const productTableColumns = [
   { field: "upc", label: "UPC", width: "200px" },
 ] as const;
 
+// Headers for manager tables in register view
+export const managerTableColumns = [
+  { field: "id", label: "Transaction ID", width: "200px" },
+  { field: "date", label: "Date/Time", width: "200px" },
+  { field: "type", label: "Transaction Type", width: "300px" },
+  { field: "amount", label: "Amount", width: "150px" },
+  { field: "paid", label: "Paid", width: "150px" },
+  { field: "change", label: "Change", width: "150px" },
+] as const;
+
 // Headers for product tables in admin view
 export const announcementTableColumns = [
   { field: "id", label: "Announcement ID", width: "200px" },
@@ -355,17 +372,16 @@ export const announcementTableColumns = [
 // Utility function to sanitize strings for search
 export const sanitize = (str: string) =>
   str
-    .normalize('NFD') // decompose accented characters into base + accent
-    .replace(/[\u0300-\u036f]/g, '') // remove accents
-    .replace(/[^a-z0-9]/gi, '') // remove non-alphanumerics
+    .normalize("NFD") // decompose accented characters into base + accent
+    .replace(/[\u0300-\u036f]/g, "") // remove accents
+    .replace(/[^a-z0-9]/gi, "") // remove non-alphanumerics
     .toLowerCase();
-
 
 /**
  * Get the date array from a string in the format yyyy-mm-dd to be converted to numerics
  * and placed in array from left to right
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export const getDateObject = (date: string) => {
   const formatted = date.split("T")[0].split("-"); // Remove time part if present
@@ -373,35 +389,70 @@ export const getDateObject = (date: string) => {
     year: Number(formatted[0]),
     month: Number(formatted[1]) - 1,
     day: Number(formatted[2]),
-  }
-}
+  };
+};
 /**
  * Formats given date object to a format specified by string
  * Formats available: yyyy-mm-dd, mm/dd/yyyy
  * yyyy-mm-dd by default
  * @param date
- * @returns 
+ * @returns
  */
 export const formatDate = (date: Date | null | undefined, format?: string) => {
   if (date === null || date === undefined) return null; // Handle null or undefined date
 
   if (format && format === "mm/dd/yyyy") {
-    const mm = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
-    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-based
+    const dd = String(date.getDate()).padStart(2, "0");
     const yyyy = date.getFullYear();
     return `${mm}/${dd}/${yyyy}`;
   }
-  const mm = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
-  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-based
+  const dd = String(date.getDate()).padStart(2, "0");
   const yyyy = date.getFullYear();
 
   return `${yyyy}-${mm}-${dd}`;
-}
+};
 
 export const getTotal = (item: Item) => {
   return item.price * item.qty * item.discount.multiplier * (1 + taxRate);
-}
+};
 
 export const getSubtotal = (item: Item) => {
   return item.price * item.qty * item.discount.multiplier;
-}
+};
+
+export const calculateSubtotal = (cart: Item[]) => {
+  var total = 0;
+  cart.map((item) => {
+    total += getSubtotal(item);
+  });
+
+  return total;
+};
+
+export const calculateDiscount = (cart: Item[]) => {
+  var total = 0;
+  cart.map((item) => {
+    total += item.price * item.qty * (1 - item.discount.multiplier);
+  });
+
+  return total;
+};
+
+export const calculateTotal = (cart: Item[]) => {
+  var total = 0;
+  cart.map((item) => {
+    total += getTotal(item);
+  });
+
+  return total;
+};
+
+export const calculateTax = (cart: Item[]) => {
+  var total = 0;
+  cart.map((item) => {
+    total += getSubtotal(item) * taxRate;
+  });
+  return total;
+};
