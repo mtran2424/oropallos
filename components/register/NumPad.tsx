@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdKeyboardReturn } from "react-icons/md";
-import { Discount, fifteenPercentDiscount, Item, noDiscount, taxFreeDiscount } from "../global.utils";
+import { Discount, fifteenPercentDiscount, Item, noDiscount, taxFreeDiscount, TransactionItem } from "../global.utils";
 
-const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
+const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) => {
   const [input, setInput] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [item, setItem] = useState<string>("");
@@ -258,7 +258,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: Item) => void }) => {
           onClick={() => {
             if (type && quantity && discount && input) {
               onConfirm(
-                { type: type, item: item, qty: quantity, discount: discount, price: parseFloat(input) / 100 }
+                { type: type, name: item, quantity: quantity, discount: discount.name, unitPrice: parseInt(input) }
               );
               setInput("");
               setDiscount(noDiscount);

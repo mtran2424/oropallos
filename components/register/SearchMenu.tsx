@@ -1,12 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
 import SearchBar from "../ui/SearchBar";
-import { Discount, fifteenPercentDiscount, Item, noDiscount, Product, sanitize, taxFreeDiscount } from "../global.utils";
+import { Discount, fifteenPercentDiscount, Item, noDiscount, Product, sanitize, taxFreeDiscount, TransactionItem } from "../global.utils";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
-const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: Item) => void }) => {
+const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: TransactionItem) => void }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
@@ -108,10 +108,10 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     if(quantity && type && currentProduct) {
       onConfirm({
         type: type,
-        item: currentProduct.name,
-        qty: quantity,
-        discount: getDiscount(discount),
-        price: parseFloat(getPrice(discount, currentProduct.price).toFixed(2))
+        name: currentProduct.name,
+        quantity: quantity,
+        discount: getDiscount(discount).name,
+        unitPrice: parseFloat(getPrice(discount, currentProduct.price * 100).toFixed(2))
       })
 
       // Reset states upon confirm

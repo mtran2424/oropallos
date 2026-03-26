@@ -1,33 +1,44 @@
 import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { Item, Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax } from "../global.utils";
+import { Item, Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount } from "../global.utils";
 import { useState } from "react";
 import SearchMenu from "./SearchMenu";
 import QuickAddButton from "./QuickAddButton";
+import { createTransaction } from "@/app/api/transactionapi";
 
 const Transaction = ({ products }: { products: Product[] }) => {
-  const [cart, setCart] = useState<Item[]>([]);
+  const [cart, setCart] = useState<TransactionItem[]>([]);
   const [mode, setMode] = useState<string>("Register");
 
   const handleQuickAdd = (name: string, type: string, price: number) => {
-    const itemExists = cart.findIndex(item => item.item === name);
+    const itemExists = cart.findIndex(item => item.name === name);
 
     if (itemExists != -1) {
       const temp = cart[itemExists];
-      temp.qty++;
+      temp.quantity++;
       // const newCart = cart.splice(itemExists);
       setCart([...cart]);
     }
     else {
       const item = {
         type: type,
-        item: name,
-        qty: 1,
-        discount: noDiscount,
-        price: price
+        name: name,
+        quantity: 1,
+        discount: noDiscount.name,
+        unitPrice: price
       }
       setCart([...cart, item])
+    }
+  }
+
+  const handleSubmitTransaction = async () => {
+    try {
+      const res = await createTransaction(cart);
+
+      if (!res.ok) throw new Error("Order failed");
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -75,10 +86,10 @@ const Transaction = ({ products }: { products: Product[] }) => {
                   {cart.map((item, index) => (
                     <tr key={index}>
                       <td className="text-md text-center">{item.type}</td>
-                      <td className="text-md text-center">{item.item}</td>
-                      <td className="text-md text-center">{item.qty}</td>
-                      <td className="text-md text-center">{item.discount.name}</td>
-                      <td className="text-md text-center">{item.price}</td>
+                      <td className="text-md text-center">{item.name}</td>
+                      <td className="text-md text-center">{item.quantity}</td>
+                      <td className="text-md text-center">{getDiscount(item.discount).name}</td>
+                      <td className="text-md text-center">{(item.unitPrice / 100).toFixed(2)}</td>
                       <td className="text-md text-center">
                         <button onClick={() => {
                           const newCart = [...cart];
@@ -96,14 +107,14 @@ const Transaction = ({ products }: { products: Product[] }) => {
 
           </div>
           <div className="grid grid-cols-4 gap-1">
-            <QuickAddButton label="50mL Liquor - 0.99" type="Liquor" price={0.99} onClick={handleQuickAdd} />
-            <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={1.49} onClick={handleQuickAdd} />
-            <QuickAddButton label="50mL Liquor - 1.99" type="Liquor" price={1.99} onClick={handleQuickAdd} />
-            <QuickAddButton label="50mL Liquor - 2.99" type="Liquor" price={2.99} onClick={handleQuickAdd} />
-            <QuickAddButton label="50mL Liquor - 4.99" type="Liquor" price={4.99} onClick={handleQuickAdd} />
-            <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={9.99} onClick={handleQuickAdd} />
-            <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={12.99} onClick={handleQuickAdd} />
-            <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={13.99} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 0.99" type="Liquor" price={99} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={149} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 1.99" type="Liquor" price={199} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 2.99" type="Liquor" price={299} onClick={handleQuickAdd} />
+            <QuickAddButton label="50mL Liquor - 4.99" type="Liquor" price={499} onClick={handleQuickAdd} />
+            <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={999} onClick={handleQuickAdd} />
+            <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={1299} onClick={handleQuickAdd} />
+            <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={1399} onClick={handleQuickAdd} />
           </div>
         </div>
 
@@ -136,7 +147,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
                   SUBTOTAL:
                 </td>
                 <td className="text-end text-lg">
-                  {calculateSubtotal(cart).toFixed(2)}
+                  {(calculateSubtotal(cart) / 100).toFixed(2)}
                 </td>
               </tr>
               <tr>
@@ -144,7 +155,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
                   TAX:
                 </td>
                 <td className="text-end text-lg">
-                  {calculateTax(cart).toFixed(2)}
+                  {(calculateTax(cart) / 100).toFixed(2)}
                 </td>
               </tr>
               <tr>
@@ -152,7 +163,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
                   DISCOUNT:
                 </td>
                 <td className="text-end text-lg">
-                  {calculateDiscount(cart).toFixed(2)}
+                  {(calculateDiscount(cart) / 100).toFixed(2)}
                 </td>
               </tr>
             </tbody>
@@ -165,7 +176,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
                   TOTAL
                 </td>
                 <td className="text-end text-lg">
-                  {calculateTotal(cart).toFixed(2)}
+                  {(calculateTotal(cart) / 100).toFixed(2)}
                 </td>
               </tr>
             </tbody>
@@ -173,9 +184,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
 
           <button
             className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-            onClick={() => {
-
-            }}
+            onClick={handleSubmitTransaction}
           >
             Cash Out
           </button>
