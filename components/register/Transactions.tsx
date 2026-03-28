@@ -1,15 +1,19 @@
 import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { Item, Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount } from "../global.utils";
+import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount } from "../global.utils";
 import { useState } from "react";
 import SearchMenu from "./SearchMenu";
 import QuickAddButton from "./QuickAddButton";
 import { createTransaction } from "@/app/api/transactionapi";
+import { useUser } from "@clerk/nextjs";
 
-const Transaction = ({ products }: { products: Product[] }) => {
+const Transactions = ({ products }: { products: Product[] }) => {
   const [cart, setCart] = useState<TransactionItem[]>([]);
   const [mode, setMode] = useState<string>("Register");
+
+  //TODO: Create register logins and use username to identify which register is being used for each transaction
+  const user = useUser();
 
   const handleQuickAdd = (name: string, type: string, price: number) => {
     const itemExists = cart.findIndex(item => item.name === name);
@@ -25,16 +29,26 @@ const Transaction = ({ products }: { products: Product[] }) => {
         type: type,
         name: name,
         quantity: 1,
-        discount: noDiscount.name,
+        discount: noDiscount,
         unitPrice: price
       }
       setCart([...cart, item])
     }
   }
 
+  //TODO: Add amount tendered and change system
+  //TODO: Add void transaction option
   const handleSubmitTransaction = async () => {
     try {
-      const res = await createTransaction(cart);
+      const transaction = {
+        status: "Cashed",
+        register: user.user?.username || "Unknown Register",
+        transactionItems: cart
+      }
+      const res = await createTransaction(transaction).then((res) => {
+        setCart([]);
+        return res;
+      });
 
       if (!res.ok) throw new Error("Order failed");
     } catch (err) {
@@ -88,7 +102,7 @@ const Transaction = ({ products }: { products: Product[] }) => {
                       <td className="text-md text-center">{item.type}</td>
                       <td className="text-md text-center">{item.name}</td>
                       <td className="text-md text-center">{item.quantity}</td>
-                      <td className="text-md text-center">{getDiscount(item.discount).name}</td>
+                      <td className="text-md text-center">{item.discount.name}</td>
                       <td className="text-md text-center">{(item.unitPrice / 100).toFixed(2)}</td>
                       <td className="text-md text-center">
                         <button onClick={() => {
@@ -181,7 +195,10 @@ const Transaction = ({ products }: { products: Product[] }) => {
               </tr>
             </tbody>
           </table>
-
+                
+          {/* TODO: Need confirmation modal before submitting transaction to prevent accidental submits. Modal should show transaction summary and have confirm and cancel buttons.
+              Also need to add additional notes in submission. AND amount tended and change calculation.
+          */}
           <button
             className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
             onClick={handleSubmitTransaction}
@@ -193,4 +210,4 @@ const Transaction = ({ products }: { products: Product[] }) => {
     </motion.div>);
 }
 
-export default Transaction;
+export default Transactions;

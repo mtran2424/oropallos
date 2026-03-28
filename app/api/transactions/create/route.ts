@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // Adjust to your prisma client path
 import { auth } from "@clerk/nextjs/server";
-import { getDiscount, taxRate, TransactionItem } from "@/components/global.utils";
+import { noDiscount, taxRate, TransactionItem } from "@/components/global.utils";
 
 export async function POST(req: NextRequest) {
   // Check if user has access to route
@@ -13,18 +13,18 @@ export async function POST(req: NextRequest) {
 
   // Retreive request and store in values
   const body = await req.json();
-  const { items } = body;
+  const { transaction } = body;
 
-  const liquorSubtotal = items.reduce((sum: number, item: TransactionItem) => {
+  const liquorSubtotal = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
     return sum + (item.type === "Liquor" ? item.unitPrice * item.quantity : 0);
   }, 0);
 
-  const wineSubtotal = items.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Wine" ? item.unitPrice * getDiscount(item.discount).multiplier * item.quantity : 0);
+  const wineSubtotal =  transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
+    return sum + (item.type === "Wine" ? item.unitPrice * item.discount.multiplier * item.quantity : 0);
   }, 0);
   
-  const discount = items.reduce((sum: number, item: TransactionItem) => {
-    return sum + item.type === "Liquor" ? (item.unitPrice * item.quantity) - (item.unitPrice * getDiscount(item.discount).multiplier * item.quantity) : 0;
+  const discount =  transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
+    return sum + (item.type === "Wine" && item.discount.value !== "No_Discount" ? (item.unitPrice * (1 - item.discount.multiplier) * item.quantity) : 0);
   }, 0);
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate/100);
@@ -32,10 +32,10 @@ export async function POST(req: NextRequest) {
   const total = liquorSubtotal + wineSubtotal + tax;
 
   try {
-    const transaction = await db.transaction.create({
+    const trans = await db.transaction.create({
       data: {
-        status: "Cashed",
-        register: "Register 1",
+        status: transaction.status,
+        register: transaction.register,
         liquorSubtotal: liquorSubtotal,
         wineSubtotal: wineSubtotal,
         discount: discount,
@@ -43,11 +43,11 @@ export async function POST(req: NextRequest) {
         total: total,
         taxRate: taxRate,
         transactionItems: {
-          create: items.map((item: TransactionItem) => ({
+          create: transaction.transactionItems.map((item: TransactionItem) => ({
             name: item.name,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
-            discount: "No_Discount",
+            discount: item.discount.value,
             type: item.type
           })),
         },
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(transaction, { status: 201 });
+    return NextResponse.json(trans, { status: 201 });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

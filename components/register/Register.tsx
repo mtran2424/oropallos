@@ -3,11 +3,11 @@ import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Product } from "@/components/global.utils";
-import Transaction from "./Transaction";
+import { Product, Transaction } from "@/components/global.utils";
+import Transactions from "./Transactions";
 import Manager from "./Manager";
 
-const Register = ({ products }: { products: Product[] }) => {
+const Register = ({ products, transactions }: { products: Product[]; transactions: Transaction[] }) => {
   // Admin check
   const { isSignedIn } = useUser();
   const [page, setPage] = useState<string>("Transaction");
@@ -69,8 +69,8 @@ const Register = ({ products }: { products: Product[] }) => {
         </div>
       </motion.div>
       <div className="flex flex-col w-full h-full items-center justify-start mt-20">
-        {page === "Transaction" && <Transaction products={products}/>}
-        {page === "Manager" && <Manager/>}
+        {page === "Transaction" && <Transactions products={products}/>}
+        {page === "Manager" && <Manager initialTransactions={transactions} />}
       </div>
     </motion.div>
   );

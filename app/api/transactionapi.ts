@@ -1,26 +1,27 @@
 /**
  * This file contains functions to interact with the transaction API.
  */
-import { TransactionItem } from "@/components/global.utils";
+import { TransactionRequest } from "@/components/global.utils";
 
 export const getTransactions = async () => {
-  const res = await fetch('/api/transactions/get', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/transactions/get`, {
     method: 'GET',
+    cache: 'no-store',
   });
   if (!res.ok) {
-    throw new Error('Failed to fetch orders');
+    throw new Error('Failed to fetch transactions');
   }
   return res.json();
 }
 
 
-export const createTransaction = async (items: TransactionItem[]) => {
-  const res = await fetch('/api/transactions/create', {
+export const createTransaction = async (transaction: TransactionRequest) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/transactions/create`, {
     method: 'POST',
     headers: {
       'Content-Type' : 'applications/json'    
     },
-    body: JSON.stringify({items}),
+    body: JSON.stringify({transaction}),
   });
 
   if (!res.ok) {

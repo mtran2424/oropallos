@@ -1,10 +1,12 @@
 import { getAnnouncements } from "@/app/api/announcementapi";
 import { getProducts } from "@/app/api/productapi";
+import { getTransactions } from "@/app/api/transactionapi";
 import Register from "@/components/register/Register";
 
 export default async function Page() {
-  const data = await getProducts();
+  const productData = await getProducts();
+  const transactionData = await getTransactions();
   return (
-    <Register products={data.products}/>
+    <Register products={productData.products} transactions={transactionData.transactions}/>
   );
 }

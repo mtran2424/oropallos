@@ -53,7 +53,7 @@ export interface TransactionItem {
   name: string;
   quantity: number;
   unitPrice: number;
-  discount: string;
+  discount: Discount;
   type: string;
 }
 
@@ -73,43 +73,49 @@ export interface Transaction {
   transactionItems: TransactionItem[];
 }
 
-export interface Discount {
-  name: string;
-  multiplier: number;
+export interface TransactionRequest {
+  status: string;
+  register: string;
+  notes?: string;
+  transactionItems: TransactionItem[];
 }
 
-export interface Item {
-  type: string;
-  item: string;
-  qty: number;
-  discount: Discount;
-  price: number;
+export interface Discount {
+  name: string;
+  value: string;
+  multiplier: number;
 }
 
 export const taxRate = 7;
 
 export const noDiscount = {
-  name: "",
+  name: "No Discount",
+  value: "No_Discount",
   multiplier: 1,
 } as Discount;
 
 export const fifteenPercentDiscount = {
-  name: "15%",
+  name: "Fifteen Percent",
+  value: "Fifteen_Percent",
   multiplier: 0.85,
 } as Discount;
 
 export const taxFreeDiscount = {
   name: "Tax Free",
+  value: "Tax_Free",
   multiplier: 1,
 } as Discount;
 
 export const getDiscount = (discount: string) => {
-  switch(discount) {
-    case 'Fifteen_Percent': return fifteenPercentDiscount;
-    case 'Tax Free': return taxFreeDiscount;
-    default: return noDiscount;
+  switch (discount) {
+    case "Fifteen_Percent":
+      return fifteenPercentDiscount;
+    case "Tax_Free":
+      return taxFreeDiscount;
+    default:
+      return noDiscount;
   }
-}
+};
 
 // CONSTANTS
 
@@ -387,12 +393,17 @@ export const productTableColumns = [
 
 // Headers for manager tables in register view
 export const managerTableColumns = [
-  { field: "id", label: "Transaction ID", width: "200px" },
-  { field: "date", label: "Date/Time", width: "200px" },
-  { field: "type", label: "Transaction Type", width: "300px" },
-  { field: "amount", label: "Amount", width: "150px" },
-  { field: "paid", label: "Paid", width: "150px" },
-  { field: "change", label: "Change", width: "150px" },
+  { field: "id", label: "Transaction ID", width: "100px" },
+  { field: "createdAt", label: "Date/Time", width: "100px" },
+  { field: "status", label: "Status", width: "100px" },
+  { field: "total", label: "Total", width: "150px" },
+  { field: "register", label: "Register", width: "100px" },
+  { field: "liquorSubtotal", label: "Liquor Subtotal", width: "150px" },
+  { field: "wineSubtotal", label: "Wine Subtotal", width: "150px" },
+  { field: "discount", label: "Discount", width: "150px" },
+  { field: "tax", label: "Tax", width: "150px" },
+  { field: "notes", label: "Notes", width: "200px" },
+  //TODO: Add Amt Tendered and Change
 ] as const;
 
 // Headers for product tables in admin view
@@ -448,11 +459,16 @@ export const formatDate = (date: Date | null | undefined, format?: string) => {
 };
 
 export const getTotal = (item: TransactionItem) => {
-  return item.unitPrice * item.quantity * getDiscount(item.discount).multiplier * (1 + (taxRate/100));
+  return (
+    item.unitPrice *
+    item.quantity *
+    item.discount.multiplier *
+    (1 + taxRate / 100)
+  );
 };
 
 export const getSubtotal = (item: TransactionItem) => {
-  return item.unitPrice * item.quantity * getDiscount(item.discount).multiplier;
+  return item.unitPrice * item.quantity * item.discount.multiplier;
 };
 
 export const calculateSubtotal = (cart: TransactionItem[]) => {
@@ -467,7 +483,7 @@ export const calculateSubtotal = (cart: TransactionItem[]) => {
 export const calculateDiscount = (cart: TransactionItem[]) => {
   var total = 0;
   cart.map((item) => {
-    total += item.unitPrice * item.quantity * (1 - getDiscount(item.discount).multiplier);
+    total += item.unitPrice * item.quantity * (1 - item.discount.multiplier);
   });
 
   return total;
@@ -485,7 +501,7 @@ export const calculateTotal = (cart: TransactionItem[]) => {
 export const calculateTax = (cart: TransactionItem[]) => {
   var total = 0;
   cart.map((item) => {
-    total += getSubtotal(item) * (taxRate/100);
+    total += getSubtotal(item) * (taxRate / 100);
   });
   return total;
 };

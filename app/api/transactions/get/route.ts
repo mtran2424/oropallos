@@ -6,11 +6,11 @@ import { auth } from '@clerk/nextjs/server';
 export async function GET() {
   try {
     // Check if user has access to this route
-    const { userId } = await auth();
+    // const { userId } = await auth();
 
-    if (!userId) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    }
+    // if (!userId) {
+    //   return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    // }
 
     const transactions = await db.transaction.findMany({
       select: {

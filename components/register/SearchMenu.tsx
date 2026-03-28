@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
 import SearchBar from "../ui/SearchBar";
-import { Discount, fifteenPercentDiscount, Item, noDiscount, Product, sanitize, taxFreeDiscount, TransactionItem } from "../global.utils";
+import { Discount, fifteenPercentDiscount, getDiscount, noDiscount, Product, sanitize, taxFreeDiscount, TransactionItem } from "../global.utils";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
@@ -15,7 +15,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
 
   const [quantity, setQuantity] = useState<number>(1);
   const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [discount, setDiscount] = useState<string>("");
+  const [discount, setDiscount] = useState<Discount>(noDiscount);
   const [type, setType] = useState<string>("")
 
   // Handlers for search and sort
@@ -85,20 +85,11 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     setSortOption(e.target.value);
   };
 
-  // Get discount object
-  const getDiscount = (disc: string) => {
-    switch(disc) {
-      case "": return noDiscount;
-      case "15%": return fifteenPercentDiscount;
-      case "Tax Free": return taxFreeDiscount;
-      default: return noDiscount;
-    }
-  }
 
   // Calculate price
   const getPrice = (discount: string, price: number) => {
     switch(discount) {
-      case "Tax Free": return (price/1.07);
+      case "Tax_Free": return (price/1.07);
       default: return price;
     }
   }
@@ -110,14 +101,14 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
         type: type,
         name: currentProduct.name,
         quantity: quantity,
-        discount: getDiscount(discount).name,
-        unitPrice: parseFloat(getPrice(discount, currentProduct.price * 100).toFixed(2))
+        discount: discount,
+        unitPrice: parseFloat(getPrice(discount.value, currentProduct.price * 100).toFixed(2))
       })
 
       // Reset states upon confirm
       setCurrentProduct(undefined);
       setQuantity(1);
-      setDiscount("");
+      setDiscount(noDiscount);
       setType("");
       setAddItem(false);
     }
@@ -300,9 +291,9 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
 
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
                   <div className="grid grid-cols-3 w-full gap-1">
-                    <button className={`p-5 rounded-md text-white text-2xl ${discount === "" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount("")}>No Discount</button>
-                    <button className={`p-5 rounded-md text-white text-2xl ${discount === "15%" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount("15%")}>15% Discount</button>
-                    <button className={`p-5 rounded-md text-white text-2xl ${discount === "Tax Free" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount("Tax Free")}>Tax Free</button>
+                    <button className={`p-5 rounded-md text-white text-2xl ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(noDiscount)}>No Discount</button>
+                    <button className={`p-5 rounded-md text-white text-2xl ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(fifteenPercentDiscount)}>15% Discount</button>
+                    <button className={`p-5 rounded-md text-white text-2xl ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(taxFreeDiscount)}>Tax Free</button>
                   </div>
 
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
