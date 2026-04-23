@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Product, Transaction } from "@/components/global.utils";
 import Transactions from "./Transactions";
 import Manager from "./Manager";
+import Close from "./Close";
 
 const Register = ({ products, transactions }: { products: Product[]; transactions: Transaction[] }) => {
   // Admin check
@@ -71,6 +72,7 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
       <div className="flex flex-col w-full h-full items-center justify-start mt-20">
         {page === "Transaction" && <Transactions products={products}/>}
         {page === "Manager" && <Manager initialTransactions={transactions} />}
+        {page === "Close" && <Close />}
       </div>
     </motion.div>
   );

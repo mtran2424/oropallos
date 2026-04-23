@@ -98,7 +98,7 @@ const Manager = ({ initialTransactions }: { initialTransactions: Transaction[] }
         </h1>
 
         {/* Sales stat Cluster */}
-        <div className="grid grid-cols-7 w-full items-center px-20">
+        <div className="grid lg:grid-cols-7 grid-cols-4 w-full items-center px-20">
           <div>
             <h2 className="text-zinc-500 text-xl">Transactions:</h2>
             <h2 className="font-semibold text-2xl">{transactions.length}</h2>
