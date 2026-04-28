@@ -1,9 +1,52 @@
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Transaction } from "../global.utils";
+import { getCurrentBatchTransactions, getTransactions } from "@/app/api/transactionapi";
 
-const Close = () => {
+const Close = ({ initialTransactions }: { initialTransactions: Transaction[] }) => {
   const date = new Date();
   const { user } = useUser();
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [refresh, setRefresh] = useState(false);
+
+  // Totals
+  const [grossLiquor, setGrossLiquor] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.liquorSubtotal, 0) / 100);
+  const [grossWine, setGrossWine] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.wineSubtotal, 0) / 100);
+  const [grossTotal, setGrossTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.wineSubtotal + transaction.liquorSubtotal, 0) / 100);
+  const [discountTotal, setDiscountTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.discount, 0) / 100);
+  const [taxTotal, setTaxTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
+  const [netTotal, setNetTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.total, 0) / 100);
+
+  // Recalculate totals when transactions change
+  const recalculateTotals = () => {
+    setGrossLiquor(transactions.reduce((sum, transaction) => sum + transaction.liquorSubtotal, 0) / 100);
+    setGrossWine(transactions.reduce((sum, transaction) => sum + transaction.wineSubtotal, 0) / 100);
+    setGrossTotal(transactions.reduce((sum, transaction) => sum + transaction.wineSubtotal + transaction.liquorSubtotal, 0) / 100);
+    setDiscountTotal(transactions.reduce((sum, transaction) => sum + transaction.discount, 0) / 100);
+    setTaxTotal(transactions.reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
+    setNetTotal(transactions.reduce((sum, transaction) => sum + transaction.total, 0) / 100);
+  }
+
+  // Fetch transactions on load and when refresh is toggled
+    useEffect(() => {
+      const fetchTransactions = async () => {
+        try {
+          const data = await getCurrentBatchTransactions(user?.username || '');
+          setTransactions(data.transactions);
+        } catch (error) {
+          console.error("Error fetching transactions:", error);
+        }
+      };
+  
+      fetchTransactions();
+    }, [refresh]);
+
+    // Recalculate totals when transactions change
+  useEffect(() => {
+    recalculateTotals();
+  }, [transactions]);
+
   return (
     <motion.div
       initial={{ x: "-100%", opacity: 0 }}
@@ -36,7 +79,7 @@ const Close = () => {
               </td>
               <td className="text-end text-lg">
                 <div className="flex flex-col">
-                  <div>$0.00</div>
+                  <div>${grossLiquor.toFixed(2)}</div>
                   <div>34.5%</div>
                 </div>
               </td>
@@ -49,7 +92,7 @@ const Close = () => {
               </td>
               <td className="text-end text-lg">
                 <div className="flex flex-col">
-                  <div>$0.00</div>
+                  <div>${grossWine.toFixed(2)}</div>
                   <div>65.5%</div>
                 </div>
               </td>
@@ -61,7 +104,7 @@ const Close = () => {
                 SUBTOTAL
               </td>
               <td className="text-end text-lg">
-                <div>$0.00</div>
+                <div>${grossTotal.toFixed(2)}</div>
               </td>
             </tr>
 
@@ -71,7 +114,7 @@ const Close = () => {
                 TAX
               </td>
               <td className="text-end text-lg">
-                <div>$0.00</div>
+                <div>${taxTotal.toFixed(2)}</div>
               </td>
             </tr>
 
@@ -81,7 +124,7 @@ const Close = () => {
                 TTL + TAX
               </td>
               <td className="text-end text-lg">
-                <div>$0.00</div>
+                <div>${(grossTotal + taxTotal).toFixed(2)}</div>
               </td>
             </tr>
 
@@ -92,7 +135,7 @@ const Close = () => {
               </td>
               <td className="text-end text-lg">
                 <div>0 Q</div>
-                  <div>-$0.00</div>
+                  <div>-${discountTotal.toFixed(2)}</div>
               </td>
             </tr>
 
@@ -110,7 +153,7 @@ const Close = () => {
                 TRANSACTION COUNT
               </td>
               <td className="text-end text-lg">
-                0 Q
+                {transactions.length} Q
               </td>
             </tr>
 
@@ -137,7 +180,7 @@ const Close = () => {
                 NET TOTAL
               </td>
               <td className="text-end text-lg">
-                $0.00
+                ${netTotal.toFixed(2)}
               </td>
             </tr>
 

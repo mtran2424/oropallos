@@ -14,6 +14,16 @@ export const getTransactions = async () => {
   return res.json();
 }
 
+export const getCurrentBatchTransactions = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/transactions/get/currentBatch/${id}`, {
+    method: 'GET',
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch transactions');
+  }
+  return res.json();
+}
 
 export const createTransaction = async (transaction: TransactionRequest) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/transactions/create`, {

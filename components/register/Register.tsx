@@ -70,9 +70,9 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
         </div>
       </motion.div>
       <div className="flex flex-col w-full h-full items-center justify-start mt-20">
-        {page === "Transaction" && <Transactions products={products}/>}
+        {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager initialTransactions={transactions} />}
-        {page === "Close" && <Close />}
+        {page === "Close" && <Close initialTransactions={transactions} />}
       </div>
     </motion.div>
   );
