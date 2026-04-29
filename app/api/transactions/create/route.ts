@@ -42,6 +42,9 @@ export async function POST(req: NextRequest) {
         tax: tax,
         total: total,
         taxRate: taxRate,
+        cash: transaction.cash,
+        credit: transaction.credit,
+        amountTendered: transaction.amountTendered,
         transactionItems: {
           create: transaction.transactionItems.map((item: TransactionItem) => ({
             name: item.name,

@@ -69,6 +69,8 @@ export interface Transaction {
   tax: number;
   taxRate: number;
   total: number;
+  cash: number;
+  credit: number;
   createdAt?: Date;
   transactionItems: TransactionItem[];
 }
