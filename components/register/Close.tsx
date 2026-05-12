@@ -18,6 +18,8 @@ const Close = ({ initialTransactions }: { initialTransactions: Transaction[] }) 
   const [discountQty, setDiscountQty] = useState(initialTransactions.filter(transaction => transaction.discount > 0).length);
   const [taxTotal, setTaxTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
   const [netTotal, setNetTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.total, 0) / 100);
+  const [creditTotal, setCreditTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.credit, 0) / 100);
+  const [cashTotal, setCashTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.cash, 0) / 100);
 
   // Recalculate totals when transactions change
   const recalculateTotals = () => {
@@ -28,6 +30,8 @@ const Close = ({ initialTransactions }: { initialTransactions: Transaction[] }) 
     setDiscountQty(transactions.filter(transaction => transaction.discount > 0).length);
     setTaxTotal(transactions.reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
     setNetTotal(transactions.reduce((sum, transaction) => sum + transaction.total, 0) / 100);
+    setCreditTotal(transactions.reduce((sum, transaction) => sum + transaction.credit, 0) / 100);
+    setCashTotal(transactions.reduce((sum, transaction) => sum + transaction.cash, 0) / 100);
   }
 
   // Fetch transactions on load and when refresh is toggled
@@ -82,7 +86,7 @@ const Close = ({ initialTransactions }: { initialTransactions: Transaction[] }) 
               <td className="text-end text-lg">
                 <div className="flex flex-col">
                   <div>${grossLiquor.toFixed(2)}</div>
-                  <div>{(grossLiquor / grossTotal * 100).toFixed(1)}%</div>
+                  <div>{grossLiquor && grossTotal ? (grossLiquor / grossTotal * 100).toFixed(1) : '0.0'}%</div>
                 </div>
               </td>
             </tr>
@@ -95,7 +99,7 @@ const Close = ({ initialTransactions }: { initialTransactions: Transaction[] }) 
               <td className="text-end text-lg">
                 <div className="flex flex-col">
                   <div>${grossWine.toFixed(2)}</div>
-                  <div>{(grossWine / grossTotal * 100).toFixed(1)}%</div>
+                  <div>{grossWine && grossTotal ? (grossWine / grossTotal * 100).toFixed(1) : '0.0'}%</div>
                 </div>
               </td>
             </tr>
@@ -164,7 +168,7 @@ const Close = ({ initialTransactions }: { initialTransactions: Transaction[] }) 
                 CASH
               </td>
               <td className="text-end text-lg">
-                $0.00
+                ${cashTotal.toFixed(2)}
               </td>
             </tr>
 
@@ -173,7 +177,7 @@ const Close = ({ initialTransactions }: { initialTransactions: Transaction[] }) 
                 CREDIT
               </td>
               <td className="text-end text-lg">
-                $0.00
+                ${creditTotal.toFixed(2)}
               </td>
             </tr>
 

@@ -7,19 +7,27 @@ import SearchMenu from "./SearchMenu";
 import QuickAddButton from "./QuickAddButton";
 import { createTransaction } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
+import { IoBackspaceOutline } from "react-icons/io5";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const [cart, setCart] = useState<TransactionItem[]>([]);
   const [mode, setMode] = useState<string>("Register");
-  const [amountTendered, setAmountTendered] = useState<string>("");
+  const [input, setInput] = useState<string>("");
   const [cashout, setCashout] = useState<boolean>(false);
   const [note, setNote] = useState<string>("");
   const [amountDue, setAmountDue] = useState<number>(0);
+  const [cash, setCash] = useState<number>(0);
+  const [credit, setCredit] = useState<number>(0);
+
   // Cashout modal
   const modalRef = useRef<HTMLDivElement>(null);
   // Close the modal for cashout
   const closeEventModal = () => {
     setCashout(false);
+    setInput("");
+    setCash(0);
+    setCredit(0);
+    setNote("");
   };
 
   //TODO: Create register logins and use username to identify which register is being used for each transaction
@@ -46,23 +54,32 @@ const Transactions = ({ products }: { products: Product[] }) => {
       setCart([...cart, item])
     }
   }
-
-  //TODO: Add amount tendered and change system
-  //TODO: Add void transaction option
+  
   const handleSubmitTransaction = async () => {
     try {
+      if((cash + credit) < amountDue) {
+        setCash(cash + (amountDue - (cash + credit)));
+      }
+
       const transaction = {
         status: "Cashed",
         register: user.user?.username || "Unknown Register",
         transactionItems: cart,
-        amountTendered: 0
+        cash: cash,
+        credit: credit,
+        notes: note
       }
       const res = await createTransaction(transaction).then((res) => {
         setCart([]);
+        setCash(0);
+        setCredit(0);
+        setNote("");
+        setInput("");
+        setCashout(false);
         return res;
       });
 
-      if (!res.ok) throw new Error("Order failed");
+      if (!res.ok) throw new Error("Transaction failed");
     } catch (err) {
       console.error(err);
     }
@@ -214,7 +231,11 @@ const Transactions = ({ products }: { products: Product[] }) => {
           */}
             <button
               className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-              onClick={() => setCashout(true)}
+              onClick={() => {
+                if (cart.length !== 0)
+                  setAmountDue(calculateTotal(cart));
+                  setCashout(true);
+              }}
             >
               Cash Out
             </button>
@@ -231,7 +252,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               exit={{ opacity: 0, x: "100%" }}
               transition={{ duration: 0.3 }}
               ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border border-zinc-500"
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[80vh] overflow-y-auto border border-zinc-500"
             >
               {/* Modal Header */}
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Cashout</h3>
@@ -252,12 +273,12 @@ const Transactions = ({ products }: { products: Product[] }) => {
                   {/* Input bar */}
                   <motion.div
                     className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-        overflow-hidden w-full h-25 mb-10"
+        overflow-hidden w-full h-25 mb-5"
                   >
                     {/* Current input dash display */}
                     <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
                       <div className="text-start">
-                        Amount Due: {(amountDue / 100).toFixed(2)}
+                        Amount Due: ${(amountDue / 100).toFixed(2)}
                       </div>
                       {/* {type ? <div className="text-end">
             {type} */}
@@ -265,22 +286,173 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </div>
                     <input
                       type="number"
-                      value={amountTendered}
-                      onChange={(e) => setAmountTendered(e.target.value)}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
                       className="p-2 text-2xl overflow-hidden w-full focus:outline-none"
                       style={{ whiteSpace: "nowrap" }}
                     />
-                    {/* {discount && <div className="text-start text-sm text-zinc-500">
-          {discount.name}
-        </div>} */}
+                    <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
+                      <div className="text-start">
+                        Cash: ${(cash / 100).toFixed(2)}
+                      </div>
+                      <div className="text-end">
+                        Credit: ${(credit / 100).toFixed(2)}
+                      </div>
+                    </div>
                   </motion.div>
 
-                  <div className="grid grid-cols-2 w-full gap-1">
-                    <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => { }}>Cash</button>
-                    <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => { }}>Credit</button>
-                  </div>
+
 
                   {/* Need to add num pad for amount input. Enter amount and punch credit or cash to reduce amount. When amount greater than total due, transaction is completed */}
+                  <div className="grid grid-cols-3 gap-x-1 w-full">
+
+                    {/* First Row */}
+
+
+                    {/* Clear inputs */}
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => {
+                        // setInput("");
+                        // setDiscount(noDiscount);
+                        // setType("");
+                        // setItem("");
+                        // setQuantity(1);
+                      }}
+                    >
+
+                      Clear
+                    </button>
+
+                    <button></button>
+                    {/* Back space button */}
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                            hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => {
+                        setInput(prev => prev.slice(0, -1));
+                      }}
+                    >
+                      <IoBackspaceOutline size={40} />
+                    </button>
+
+                    {/* Second Row */}
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}7`)}
+                    >
+                      7
+                    </button>
+
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}8`)}
+                    >
+                      8
+                    </button>
+
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}9`)}
+                    >
+                      9
+                    </button>
+
+
+
+                    {/* Third Row */}
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}4`)}
+                    >
+                      4
+                    </button>
+
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}5`)}
+                    >
+                      5
+                    </button>
+
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}6`)}
+                    >
+                      6
+                    </button>
+
+                    {/* Fourth Row */}
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}1`)}
+                    >
+                      1
+                    </button>
+
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}2`)}
+                    >
+                      2
+                    </button>
+
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}3`)}
+                    >
+                      3
+                    </button>
+
+                    {/* Fifth Row */}
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
+                    onClick={() => setInput(`${input}0`)}
+                    >
+                      0
+                    </button>
+
+                    <button
+                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                    onClick={() => setInput(`${input}00`)}
+                    >
+                      00
+                    </button>
+
+                    <button></button>
+
+                  </div>
+
+
+                  <div className="grid grid-cols-2 w-full gap-1">
+                    <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
+                      onClick={() => {
+                        setCash(cash + Number(input));
+                        setInput("");
+                      }}
+                    >Cash
+                    </button>
+                    <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
+                      onClick={() => {
+                        setCredit(credit + Number(input));
+                        setInput("");
+                      }}
+                    >Credit
+                    </button>
+                    {/* <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => { }}>Credit</button> */}
+                  </div>
 
                   {/* Additional Notes Section */}
                   <div className="flex flex-col w-full">
