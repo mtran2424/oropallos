@@ -57,15 +57,11 @@ const Transactions = ({ products }: { products: Product[] }) => {
   
   const handleSubmitTransaction = async () => {
     try {
-      if((cash + credit) < amountDue) {
-        setCash(cash + (amountDue - (cash + credit)));
-      }
-
       const transaction = {
         status: "Cashed",
         register: user.user?.username || "Unknown Register",
         transactionItems: cart,
-        cash: cash,
+        cash: ((cash + credit) > amountDue) ? cash : (cash + (amountDue - (cash + credit))),
         credit: credit,
         notes: note
       }
@@ -124,6 +120,8 @@ const Transactions = ({ products }: { products: Product[] }) => {
                       <th></th>
                     </tr>
                   </thead>
+
+                  {/* TODO: Format font sizes and symbols for ledgibility */}
 
                   {/* Shopping cart items */}
                   <tbody className="divide-y divide-zinc-400">

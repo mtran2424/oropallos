@@ -82,6 +82,19 @@ export interface TransactionRequest {
   transactionItems: TransactionItem[];
 }
 
+export interface BatchRequest {
+  wineGross: number;
+  liquorGross: number;
+  gross: number;
+  tax: number;
+  void: number;
+  cashTotal: number;
+  creditTotal: number;
+  register: string;
+  discount: number;
+  transactions: { id: string | undefined }[];
+}
+
 export interface Discount {
   name: string;
   value: string;
@@ -403,6 +416,8 @@ export const managerTableColumns = [
   { field: "liquorSubtotal", label: "Liquor Subtotal", width: "150px" },
   { field: "wineSubtotal", label: "Wine Subtotal", width: "150px" },
   { field: "discount", label: "Discount", width: "150px" },
+  { field: "cash", label: "Cash", width: "150px" },
+  { field: "credit", label: "Credit", width: "150px" },
   { field: "tax", label: "Tax", width: "150px" },
   { field: "notes", label: "Notes", width: "200px" },
   //TODO: Add Amt Tendered and Change

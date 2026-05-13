@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
         taxRate: taxRate,
         cash: transaction.cash,
         credit: transaction.credit,
+        notes: transaction.notes,
         transactionItems: {
           create: transaction.transactionItems.map((item: TransactionItem) => ({
             name: item.name,

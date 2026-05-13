@@ -24,6 +24,8 @@ export async function GET() {
         liquorSubtotal: true,
         discount: true,
         tax: true,
+        cash: true,
+        credit: true,
         taxRate: true,
         total: true,
         transactionItems: {

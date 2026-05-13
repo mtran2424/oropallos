@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import { managerTableColumns, Transaction } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useEffect, useState } from "react";
-import { getTransactions } from "@/app/api/transactionapi";
+import { getCurrentBatchTransactions, getTransactions } from "@/app/api/transactionapi";
+import { useUser } from "@clerk/nextjs";
 
 const Manager = ({ initialTransactions }: { initialTransactions: Transaction[] }) => {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const { user } = useUser();
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions.filter((transaction) => transaction.batchId === null));
   const [refresh, setRefresh] = useState(false);
 
   // Totals
@@ -45,6 +47,10 @@ const Manager = ({ initialTransactions }: { initialTransactions: Transaction[] }
         return `$${(transaction.tax/100).toFixed(2)}`;
       case "total":
         return `$${(transaction.total/100).toFixed(2)}`;
+      case "cash":
+        return `$${(transaction.cash/100).toFixed(2)}`;
+      case "credit":
+        return `$${(transaction.credit/100).toFixed(2)}`;
       case "notes":
         return (
           <div
@@ -68,7 +74,7 @@ const Manager = ({ initialTransactions }: { initialTransactions: Transaction[] }
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const data = await getTransactions();
+        const data = await getCurrentBatchTransactions(user?.username || "");
         setTransactions(data.transactions);
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -90,7 +96,7 @@ const Manager = ({ initialTransactions }: { initialTransactions: Transaction[] }
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
     >
-      <div className="flex flex-col w-screen h-full min-h-screen items-center justify-start px-10 gap-5">
+      <div className="flex flex-col w-screen h-full items-center justify-start px-10 gap-5">
         {/* Header */}
         <h1
           className="flex w-full text-xl sm:text-2xl font-serif font-semibold text-start text-zinc-900 mb-4 px-15">

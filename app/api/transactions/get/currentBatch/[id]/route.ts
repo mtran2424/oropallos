@@ -33,6 +33,8 @@ export async function GET(req: NextRequest) {
         tax: true,
         taxRate: true,
         total: true,
+        cash: true,
+        credit: true,
         transactionItems: {
           select: {
             id: true,
