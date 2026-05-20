@@ -60,4 +60,9 @@ body {
     top: 0;
     width: 100%;
   }
+
+  .print-container {
+    display: block;
+    padding: 40px;
+  }
 }

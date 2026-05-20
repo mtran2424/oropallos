@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const batches = await db.transaction.findMany({
+    const batches = await db.batch.findMany({
       select: {
         id: true,
         wineGross: true,
@@ -22,7 +22,7 @@ export async function GET() {
         void: true,
         cashTotal: true,
         creditTotal: true,
-        createdAt: true,
+        date: true,
         discount: true,
         register: true,
         transactions: {
@@ -41,7 +41,6 @@ export async function GET() {
             total: true,
             cash: true,
             credit: true,
-            amountTendered: true,
             transactionItems: {
               select: {
                 id: true,
@@ -61,7 +60,7 @@ export async function GET() {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "Something went wrong" },
+      { message: error},
       { status: 500 },
     );
   }

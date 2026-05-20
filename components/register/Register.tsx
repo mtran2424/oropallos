@@ -38,7 +38,7 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
           <button
             className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
-              setPage("Transaction")
+              setPage("Transaction");
             }}
           >
             Transaction
@@ -46,7 +46,7 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
           <button
             className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
-              setPage("Manager")
+              setPage("Manager");
             }}
           >
             Manager
@@ -54,15 +54,15 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
           <button
             className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
-              setPage("Journal")
+              setPage("Stats");
             }}
           >
-            Journal
+            Stats
           </button>
           <button
             className="flex h-15 items-center justify-center border-x border-white hover:bg-zinc-400 transition-colors ease-in-out"
             onClick={() => {
-              setPage("Close")
+              setPage("Close");
             }}
           >
             Close
@@ -71,7 +71,7 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
       </motion.div>
       <div className="flex flex-col w-full h-full items-center justify-start mt-20">
         {page === "Transaction" && <Transactions products={products} />}
-        {page === "Manager" && <Manager initialTransactions={transactions} />}
+        {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
       </div>
     </motion.div>

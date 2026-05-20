@@ -230,9 +230,10 @@ const Transactions = ({ products }: { products: Product[] }) => {
               className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 
                         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
               onClick={() => {
-                if (cart.length !== 0)
+                if (cart.length !== 0) {
                   setAmountDue(calculateTotal(cart));
-                setCashout(true);
+                  setCashout(true);
+                }
               }}
             >
               Cash Out
@@ -462,7 +463,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                       onChange={(e) => setNote(e.target.value)}
                     ></textarea>
                   </div>
-                  
+
                   {/* Transaction submission button */}
                   <motion.button
                     whileHover={{ scale: 1.02 }}

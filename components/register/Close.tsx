@@ -49,57 +49,39 @@ const Close = ({
   })
 
   // Totals
-  const [grossLiquor, setGrossLiquor] = useState(
-    initialTransactions.reduce(
-      (sum, transaction) => sum + transaction.liquorSubtotal,
-      0,
-    ) / 100,
+  const [grossLiquor, setGrossLiquor] = useState(initialTransactions.reduce(
+    (sum, transaction) => sum + transaction.liquorSubtotal,
+    0,
+  ));
+  const [grossWine, setGrossWine] = useState(initialTransactions.reduce(
+    (sum, transaction) => sum + transaction.wineSubtotal,
+    0,
+  ));
+  const [grossTotal, setGrossTotal] = useState(initialTransactions.reduce(
+    (sum, transaction) =>
+      sum + transaction.wineSubtotal + transaction.liquorSubtotal,
+    0,
+  ));
+  const [discountTotal, setDiscountTotal] = useState(initialTransactions.reduce(
+    (sum, transaction) => sum + transaction.discount,
+    0,
+  ));
+  const [discountQty, setDiscountQty] = useState(initialTransactions.filter((transaction) => transaction.discount > 0)
+    .length,);
+  const [taxTotal, setTaxTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.tax, 0)
   );
-  const [grossWine, setGrossWine] = useState(
-    initialTransactions.reduce(
-      (sum, transaction) => sum + transaction.wineSubtotal,
-      0,
-    ) / 100,
-  );
-  const [grossTotal, setGrossTotal] = useState(
-    initialTransactions.reduce(
-      (sum, transaction) =>
-        sum + transaction.wineSubtotal + transaction.liquorSubtotal,
-      0,
-    ) / 100,
-  );
-  const [discountTotal, setDiscountTotal] = useState(
-    initialTransactions.reduce(
-      (sum, transaction) => sum + transaction.discount,
-      0,
-    ) / 100,
-  );
-  const [discountQty, setDiscountQty] = useState(
-    initialTransactions.filter((transaction) => transaction.discount > 0)
-      .length,
-  );
-  const [taxTotal, setTaxTotal] = useState(
-    initialTransactions.reduce((sum, transaction) => sum + transaction.tax, 0) /
-    100,
-  );
-  const [netTotal, setNetTotal] = useState(
-    initialTransactions.reduce(
-      (sum, transaction) => sum + transaction.total,
-      0,
-    ) / 100,
-  );
-  const [creditTotal, setCreditTotal] = useState(
-    initialTransactions.reduce(
-      (sum, transaction) => sum + transaction.credit,
-      0,
-    ) / 100,
-  );
-  const [cashTotal, setCashTotal] = useState(
-    initialTransactions.reduce(
-      (sum, transaction) => sum + transaction.cash,
-      0,
-    ) / 100,
-  );
+  const [netTotal, setNetTotal] = useState(initialTransactions.reduce(
+    (sum, transaction) => sum + transaction.total,
+    0,
+  ));
+  const [creditTotal, setCreditTotal] = useState(initialTransactions.reduce(
+    (sum, transaction) => sum + transaction.credit,
+    0,
+  ));
+  const [cashTotal, setCashTotal] = useState(initialTransactions.reduce(
+    (sum, transaction) => sum + transaction.cash,
+    0,
+  ));
 
   // Recalculate totals when transactions change
   const recalculateTotals = () => {
@@ -107,42 +89,38 @@ const Close = ({
       transactions.reduce(
         (sum, transaction) => sum + transaction.liquorSubtotal,
         0,
-      ) / 100,
+      )
     );
     setGrossWine(
       transactions.reduce(
         (sum, transaction) => sum + transaction.wineSubtotal,
         0,
-      ) / 100,
+      )
     );
     setGrossTotal(
       transactions.reduce(
         (sum, transaction) =>
           sum + transaction.wineSubtotal + transaction.liquorSubtotal,
         0,
-      ) / 100,
+      )
     );
     setDiscountTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.discount, 0) /
-      100,
+      transactions.reduce((sum, transaction) => sum + transaction.discount, 0)
     );
     setDiscountQty(
       transactions.filter((transaction) => transaction.discount > 0).length,
     );
     setTaxTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.tax, 0) / 100,
+      transactions.reduce((sum, transaction) => sum + transaction.tax, 0)
     );
     setNetTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.total, 0) /
-      100,
+      transactions.reduce((sum, transaction) => sum + transaction.total, 0)
     );
     setCreditTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.credit, 0) /
-      100,
+      transactions.reduce((sum, transaction) => sum + transaction.credit, 0)
     );
     setCashTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.cash, 0) /
-      100,
+      transactions.reduce((sum, transaction) => sum + transaction.cash, 0)
     );
     // console.log("Cash total recalculated:", cashTotal);
     // console.log("Credit total recalculated:", creditTotal);
@@ -162,7 +140,7 @@ const Close = ({
           <td className="font-semibold text-lg">LIQUOR</td>
           <td className="text-end text-lg">
             <div className="flex flex-col">
-              <div>${grossLiquor.toFixed(2)}</div>
+              <div>${(grossLiquor / 100).toFixed(2)}</div>
               <div>
                 {grossLiquor && grossTotal
                   ? ((grossLiquor / grossTotal) * 100).toFixed(1)
@@ -178,7 +156,7 @@ const Close = ({
           <td className="font-semibold text-lg">WINE</td>
           <td className="text-end text-lg">
             <div className="flex flex-col">
-              <div>${grossWine.toFixed(2)}</div>
+              <div>${(grossWine / 100).toFixed(2)}</div>
               <div>
                 {grossWine && grossTotal
                   ? ((grossWine / grossTotal) * 100).toFixed(1)
@@ -193,7 +171,7 @@ const Close = ({
         <tr>
           <td className="font-semibold text-lg">SUBTOTAL</td>
           <td className="text-end text-lg">
-            <div>${grossTotal.toFixed(2)}</div>
+            <div>${(grossTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
@@ -201,7 +179,7 @@ const Close = ({
         <tr>
           <td className="font-semibold text-lg">TAX</td>
           <td className="text-end text-lg">
-            <div>${taxTotal.toFixed(2)}</div>
+            <div>${(taxTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
@@ -209,7 +187,7 @@ const Close = ({
         <tr>
           <td className="font-semibold text-lg">TTL + TAX</td>
           <td className="text-end text-lg">
-            <div>${(grossTotal + taxTotal).toFixed(2)}</div>
+            <div>${((grossTotal + taxTotal) / 100).toFixed(2)}</div>
           </td>
         </tr>
 
@@ -218,7 +196,7 @@ const Close = ({
           <td className="font-semibold text-lg">-% ITEM</td>
           <td className="text-end text-lg">
             <div>{discountQty} Q</div>
-            <div>-${discountTotal.toFixed(2)}</div>
+            <div>-${(discountTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
@@ -234,17 +212,17 @@ const Close = ({
 
         <tr>
           <td className="font-semibold text-lg">CASH</td>
-          <td className="text-end text-lg">${cashTotal}</td>
+          <td className="text-end text-lg">${(cashTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
           <td className="font-semibold text-lg">CREDIT</td>
-          <td className="text-end text-lg">${creditTotal}</td>
+          <td className="text-end text-lg">${(creditTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
           <td className="font-semibold text-lg">NET TOTAL</td>
-          <td className="text-end text-lg">${netTotal.toFixed(2)}</td>
+          <td className="text-end text-lg">${(netTotal / 100).toFixed(2)}</td>
         </tr>
       </tbody>
     </table>
@@ -357,9 +335,8 @@ const Close = ({
             className="print-area"
             ref={componentRef}
           >
-
+            {printableBatch}
           </div>
-          {printableBatch}
         </div>
       </div>
     </motion.div>

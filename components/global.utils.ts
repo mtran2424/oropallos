@@ -75,6 +75,21 @@ export interface Transaction {
   transactionItems: TransactionItem[];
 }
 
+export interface Batch {
+  id?: string;
+  wineGross: number;
+  liquorGross: number;
+  gross: number;
+  tax: number;
+  void: number;
+  cashTotal: number;
+  creditTotal: number;
+  register: string;
+  discount: number;
+  transactions: Transaction[];
+  date?: Date;
+}
+
 export interface TransactionRequest {
   status: string;
   register: string;
@@ -408,10 +423,10 @@ export const productTableColumns = [
 
 // Headers for manager tables in register view
 export const managerTableColumns = [
-  { field: "id", label: "Transaction ID", width: "100px" },
+  { field: "id", label: "Transaction ID", width: "75px" },
   { field: "createdAt", label: "Date/Time", width: "100px" },
   { field: "status", label: "Status", width: "100px" },
-  { field: "total", label: "Total", width: "150px" },
+  { field: "total", label: "Total", width: "100px" },
   { field: "register", label: "Register", width: "100px" },
   { field: "liquorSubtotal", label: "Liquor Subtotal", width: "150px" },
   { field: "wineSubtotal", label: "Wine Subtotal", width: "150px" },
@@ -421,6 +436,21 @@ export const managerTableColumns = [
   { field: "tax", label: "Tax", width: "150px" },
   { field: "notes", label: "Notes", width: "200px" },
   //TODO: Add Amt Tendered and Change
+] as const;
+
+// Headers for batch tables in register view
+export const batchTableColumns = [
+  { field: "id", label: "Batch ID", width: "75px" },
+  { field: "register", label: "Register", width: "150px" },
+  { field: "gross", label: "Gross Total", width: "150px" },
+  { field: "wineGross", label: "Wine Gross", width: "150px" },
+  { field: "liquorGross", label: "Liquor Gross", width: "150px" },
+  { field: "discount", label: "Discount", width: "150px" },
+  { field: "tax", label: "Tax", width: "150px" },
+  { field: "cashTotal", label: "Cash Total", width: "150px" },
+  { field: "creditTotal", label: "Credit Total", width: "150px" },
+  { field: "void", label: "Void Total", width: "150px" },
+  { field: "date", label: "Date/Time", width: "200px" },
 ] as const;
 
 // Headers for product tables in admin view
