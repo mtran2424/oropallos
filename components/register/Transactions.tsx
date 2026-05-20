@@ -33,7 +33,6 @@ const Transactions = ({ products }: { products: Product[] }) => {
   //TODO: Create register logins and use username to identify which register is being used for each transaction
   const user = useUser();
 
-
   const handleQuickAdd = (name: string, type: string, price: number) => {
     const itemExists = cart.findIndex(item => item.name === name);
 
@@ -54,7 +53,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
       setCart([...cart, item])
     }
   }
-  
+
   const handleSubmitTransaction = async () => {
     try {
       const transaction = {
@@ -225,14 +224,15 @@ const Transactions = ({ products }: { products: Product[] }) => {
             </table>
 
             {/* TODO: Need confirmation modal before submitting transaction to prevent accidental submits. Modal should show transaction summary and have confirm and cancel buttons.
-              Also need to add additional notes in submission. AND amount tended and change calculation.
+              Also need to add additional notes in submission. AND amount tended and change calculation in success modal.
           */}
             <button
-              className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
               onClick={() => {
                 if (cart.length !== 0)
                   setAmountDue(calculateTotal(cart));
-                  setCashout(true);
+                setCashout(true);
               }}
             >
               Cash Out
@@ -271,17 +271,17 @@ const Transactions = ({ products }: { products: Product[] }) => {
                   {/* Input bar */}
                   <motion.div
                     className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-        overflow-hidden w-full h-25 mb-5"
+                                overflow-hidden w-full h-25 mb-5"
                   >
                     {/* Current input dash display */}
                     <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
                       <div className="text-start">
                         Amount Due: ${(amountDue / 100).toFixed(2)}
                       </div>
-                      {/* {type ? <div className="text-end">
-            {type} */}
-                      {/* </div> : <div />} */}
                     </div>
+
+                    {/* Input box for amount entry. When cash or credit buttons are pressed, amount is added to respective payment type and input 
+                    is cleared. If amount entered is greater than amount due, change is calculated and displayed in success modal after transaction submission. */}
                     <input
                       type="number"
                       value={input}
@@ -289,6 +289,8 @@ const Transactions = ({ products }: { products: Product[] }) => {
                       className="p-2 text-2xl overflow-hidden w-full focus:outline-none"
                       style={{ whiteSpace: "nowrap" }}
                     />
+
+                    {/* Cash and Credit display under input box for reference when entering amounts. */}
                     <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
                       <div className="text-start">
                         Cash: ${(cash / 100).toFixed(2)}
@@ -300,17 +302,15 @@ const Transactions = ({ products }: { products: Product[] }) => {
                   </motion.div>
 
 
-
                   {/* Need to add num pad for amount input. Enter amount and punch credit or cash to reduce amount. When amount greater than total due, transaction is completed */}
                   <div className="grid grid-cols-3 gap-x-1 w-full">
 
                     {/* First Row */}
 
-
                     {/* Clear inputs */}
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => {
                         // setInput("");
                         // setDiscount(noDiscount);
@@ -324,10 +324,11 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button></button>
+
                     {/* Back space button */}
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-                            hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => {
                         setInput(prev => prev.slice(0, -1));
                       }}
@@ -338,51 +339,49 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     {/* Second Row */}
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}7`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}7`)}
                     >
                       7
                     </button>
 
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}8`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}8`)}
                     >
                       8
                     </button>
 
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}9`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}9`)}
                     >
                       9
                     </button>
 
-
-
                     {/* Third Row */}
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}4`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}4`)}
                     >
                       4
                     </button>
 
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}5`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}5`)}
                     >
                       5
                     </button>
 
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}6`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}6`)}
                     >
                       6
                     </button>
@@ -390,24 +389,24 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     {/* Fourth Row */}
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}1`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}1`)}
                     >
                       1
                     </button>
 
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}2`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}2`)}
                     >
                       2
                     </button>
 
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}3`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}3`)}
                     >
                       3
                     </button>
@@ -415,16 +414,16 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     {/* Fifth Row */}
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
-                    onClick={() => setInput(`${input}0`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
+                      onClick={() => setInput(`${input}0`)}
                     >
                       0
                     </button>
 
                     <button
                       className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                    onClick={() => setInput(`${input}00`)}
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                      onClick={() => setInput(`${input}00`)}
                     >
                       00
                     </button>
@@ -433,21 +432,23 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
                   </div>
 
-
+                  {/* Cash and credit buttons */}
                   <div className="grid grid-cols-2 w-full gap-1">
                     <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
                       onClick={() => {
                         setCash(cash + Number(input));
                         setInput("");
                       }}
-                    >Cash
+                    >
+                      Cash
                     </button>
                     <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
                       onClick={() => {
                         setCredit(credit + Number(input));
                         setInput("");
                       }}
-                    >Credit
+                    >
+                      Credit
                     </button>
                     {/* <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => { }}>Credit</button> */}
                   </div>
@@ -461,7 +462,8 @@ const Transactions = ({ products }: { products: Product[] }) => {
                       onChange={(e) => setNote(e.target.value)}
                     ></textarea>
                   </div>
-
+                  
+                  {/* Transaction submission button */}
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"

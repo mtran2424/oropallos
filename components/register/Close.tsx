@@ -1,13 +1,14 @@
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Transaction } from "../global.utils";
 import {
   getCurrentBatchTransactions,
-  getTransactions,
+  // getTransactions,
 } from "@/app/api/transactionapi";
 import TextButton from "../ui/TextButton";
 import { createBatch } from "@/app/api/batchapi";
+import { useReactToPrint } from "react-to-print";
 
 const Close = ({
   initialTransactions,
@@ -19,7 +20,33 @@ const Close = ({
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions.filter((transaction) => transaction.batchId === null));
   const [refresh, setRefresh] = useState(false);
 
-  // TODO: Figure out state issue for cash and credit total updating to NaN
+  // Printing
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: "Batch Report",
+    pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 4mm;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      .receipt {
+        width: 72mm;
+        font-family: monospace;
+        font-size: 12px;
+      }
+    }
+  `,
+  })
 
   // Totals
   const [grossLiquor, setGrossLiquor] = useState(
@@ -121,6 +148,123 @@ const Close = ({
     // console.log("Credit total recalculated:", creditTotal);
   };
 
+
+  const batchTable = (
+    <table className="w-full max-w-3/4 border-separate border-spacing-y-4">
+      <tbody>
+        <tr>
+          {/* Liquor Sales */}
+          <td className="text-lg">{date.toString()}</td>
+          <td className="text-end text-lg">Register: {user?.username}</td>
+        </tr>
+        <tr>
+          {/* Liquor Sales */}
+          <td className="font-semibold text-lg">LIQUOR</td>
+          <td className="text-end text-lg">
+            <div className="flex flex-col">
+              <div>${grossLiquor.toFixed(2)}</div>
+              <div>
+                {grossLiquor && grossTotal
+                  ? ((grossLiquor / grossTotal) * 100).toFixed(1)
+                  : "0.0"}
+                %
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        {/* Wine Sales */}
+        <tr>
+          <td className="font-semibold text-lg">WINE</td>
+          <td className="text-end text-lg">
+            <div className="flex flex-col">
+              <div>${grossWine.toFixed(2)}</div>
+              <div>
+                {grossWine && grossTotal
+                  ? ((grossWine / grossTotal) * 100).toFixed(1)
+                  : "0.0"}
+                %
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        {/* Total Sales */}
+        <tr>
+          <td className="font-semibold text-lg">SUBTOTAL</td>
+          <td className="text-end text-lg">
+            <div>${grossTotal.toFixed(2)}</div>
+          </td>
+        </tr>
+
+        {/* Total Tax */}
+        <tr>
+          <td className="font-semibold text-lg">TAX</td>
+          <td className="text-end text-lg">
+            <div>${taxTotal.toFixed(2)}</div>
+          </td>
+        </tr>
+
+        {/* Total w/ Tax */}
+        <tr>
+          <td className="font-semibold text-lg">TTL + TAX</td>
+          <td className="text-end text-lg">
+            <div>${(grossTotal + taxTotal).toFixed(2)}</div>
+          </td>
+        </tr>
+
+        {/* Discounts */}
+        <tr>
+          <td className="font-semibold text-lg">-% ITEM</td>
+          <td className="text-end text-lg">
+            <div>{discountQty} Q</div>
+            <div>-${discountTotal.toFixed(2)}</div>
+          </td>
+        </tr>
+
+        <tr>
+          <td className="font-semibold text-lg">VOID COUNT</td>
+          <td className="text-end text-lg">0 Q</td>
+        </tr>
+
+        <tr>
+          <td className="font-semibold text-lg">TRANSACTION COUNT</td>
+          <td className="text-end text-lg">{transactions.length} Q</td>
+        </tr>
+
+        <tr>
+          <td className="font-semibold text-lg">CASH</td>
+          <td className="text-end text-lg">${cashTotal}</td>
+        </tr>
+
+        <tr>
+          <td className="font-semibold text-lg">CREDIT</td>
+          <td className="text-end text-lg">${creditTotal}</td>
+        </tr>
+
+        <tr>
+          <td className="font-semibold text-lg">NET TOTAL</td>
+          <td className="text-end text-lg">${netTotal.toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+
+  const printableBatch = (
+    <div ref={componentRef} className="flex flex-col w-full items-center p-5">
+      <h1 className="text-2xl font-bold mb-4">OROPALLO'S</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">WINE & LIQUOR</h1>
+      <h1 className="text-xl mb-4">376 DIX AVENUE</h1>
+      <h1 className="text-xl mb-4">QUEENSBURY, NY 12804</h1>
+      <h1 className="text-2xl font-bold mb-4">518-798-3988</h1>
+      <h1 className="text-2xl font-bold mb-4">Batch Report</h1>
+      {batchTable}
+    </div>
+  );
+
+  //TODO: Make confirmation popup for closing register with totals and option to print report
+
+  // Create batch and submit transactions in batch
   const handleSubmitBatch = async () => {
     try {
       const batch = {
@@ -139,12 +283,6 @@ const Close = ({
       }
       const res = await createBatch(batch).then((res) => {
         setRefresh((prev) => !prev);
-        // setCart([]);
-        // setCash(0);
-        // setCredit(0);
-        // setNote("");
-        // setInput("");
-        // setCashout(false);
         return res;
       });
 
@@ -199,114 +337,30 @@ const Close = ({
           <div />
           <div />
 
-          <TextButton onClick={() => { }}>Print Report</TextButton>
+          <TextButton onClick={handlePrint}>Print Report</TextButton>
 
+          {/* Confirm batch button */}
           <button
             className="text-lg rounded-md mt-2 px-3 py-2 text-white hover:text-blue-600 bg-blue-600 hover:bg-white border order-blue-600 transition-colors font-serif"
             onClick={handleSubmitBatch}
-            >
+          >
             Close Register
           </button>
         </div>
 
-        <table className="w-full max-w-3/4 border-separate border-spacing-y-4">
-          <tbody>
-            <tr>
-              {/* Liquor Sales */}
-              <td className="text-lg">{date.toString()}</td>
-              <td className="text-end text-lg">Register: {user?.username}</td>
-            </tr>
-            <tr>
-              {/* Liquor Sales */}
-              <td className="font-semibold text-lg">LIQUOR</td>
-              <td className="text-end text-lg">
-                <div className="flex flex-col">
-                  <div>${grossLiquor.toFixed(2)}</div>
-                  <div>
-                    {grossLiquor && grossTotal
-                      ? ((grossLiquor / grossTotal) * 100).toFixed(1)
-                      : "0.0"}
-                    %
-                  </div>
-                </div>
-              </td>
-            </tr>
+        {batchTable}
 
-            {/* Wine Sales */}
-            <tr>
-              <td className="font-semibold text-lg">WINE</td>
-              <td className="text-end text-lg">
-                <div className="flex flex-col">
-                  <div>${grossWine.toFixed(2)}</div>
-                  <div>
-                    {grossWine && grossTotal
-                      ? ((grossWine / grossTotal) * 100).toFixed(1)
-                      : "0.0"}
-                    %
-                  </div>
-                </div>
-              </td>
-            </tr>
+        <div
+          className="hidden"
+        >
+          <div
+            className="print-area"
+            ref={componentRef}
+          >
 
-            {/* Total Sales */}
-            <tr>
-              <td className="font-semibold text-lg">SUBTOTAL</td>
-              <td className="text-end text-lg">
-                <div>${grossTotal.toFixed(2)}</div>
-              </td>
-            </tr>
-
-            {/* Total Tax */}
-            <tr>
-              <td className="font-semibold text-lg">TAX</td>
-              <td className="text-end text-lg">
-                <div>${taxTotal.toFixed(2)}</div>
-              </td>
-            </tr>
-
-            {/* Total w/ Tax */}
-            <tr>
-              <td className="font-semibold text-lg">TTL + TAX</td>
-              <td className="text-end text-lg">
-                <div>${(grossTotal + taxTotal).toFixed(2)}</div>
-              </td>
-            </tr>
-
-            {/* Discounts */}
-            <tr>
-              <td className="font-semibold text-lg">-% ITEM</td>
-              <td className="text-end text-lg">
-                <div>{discountQty} Q</div>
-                <div>-${discountTotal.toFixed(2)}</div>
-              </td>
-            </tr>
-
-            <tr>
-              <td className="font-semibold text-lg">VOID COUNT</td>
-              <td className="text-end text-lg">0 Q</td>
-            </tr>
-
-            <tr>
-              <td className="font-semibold text-lg">TRANSACTION COUNT</td>
-              <td className="text-end text-lg">{transactions.length} Q</td>
-            </tr>
-
-            <tr>
-              <td className="font-semibold text-lg">CASH</td>
-              <td className="text-end text-lg">${cashTotal}</td>
-            </tr>
-
-            <tr>
-              <td className="font-semibold text-lg">CREDIT</td>
-              <td className="text-end text-lg">${creditTotal}</td>
-            </tr>
-
-            <tr>
-              <td className="font-semibold text-lg">NET TOTAL</td>
-              <td className="text-end text-lg">${netTotal.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
+          </div>
+          {printableBatch}
+        </div>
       </div>
     </motion.div>
   );
