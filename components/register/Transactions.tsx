@@ -8,6 +8,7 @@ import QuickAddButton from "./QuickAddButton";
 import { createTransaction } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import { IoBackspaceOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const [cart, setCart] = useState<TransactionItem[]>([]);
@@ -18,6 +19,8 @@ const Transactions = ({ products }: { products: Product[] }) => {
   const [amountDue, setAmountDue] = useState<number>(0);
   const [cash, setCash] = useState<number>(0);
   const [credit, setCredit] = useState<number>(0);
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Cashout modal
   const modalRef = useRef<HTMLDivElement>(null);
@@ -56,6 +59,8 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
   const handleSubmitTransaction = async () => {
     try {
+      setLoading(true);
+
       const transaction = {
         status: "Cashed",
         register: user.user?.username || "Unknown Register",
@@ -74,7 +79,15 @@ const Transactions = ({ products }: { products: Product[] }) => {
         return res;
       });
 
-      if (!res.ok) throw new Error("Transaction failed");
+      if (!res.ok) {
+        setLoading(false);
+        toast.error("Transaction failed");
+        throw new Error("Transaction failed");
+      }
+      else {
+        setLoading(false);
+        toast.success("Transaction successful")
+      }
     } catch (err) {
       console.error(err);
     }
@@ -464,14 +477,21 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     ></textarea>
                   </div>
 
-                  {/* Transaction submission button */}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                    onClick={handleSubmitTransaction}
-                  >
-                    Submit
-                  </motion.button>
+                  {/* Loading Spinner */}
+                  {loading ? (
+                    <div className="flex justify-center items-center py-2">
+                      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    // Transaction submit button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                      onClick={handleSubmitTransaction}
+                    >
+                      Submit
+                    </motion.button>
+                  )}
                 </div>
               </div>
 

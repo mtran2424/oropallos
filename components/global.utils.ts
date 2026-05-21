@@ -505,6 +505,13 @@ export const formatDate = (date: Date | null | undefined, format?: string) => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
+export const formatTime = (date: Date | null | undefined) => {
+  if (date === null || date === undefined) return null; // Handle null or undefined date
+  const hours = String(date.getHours() % 12 || 12).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`;
+}
+
 export const getTotal = (item: TransactionItem) => {
   return (
     item.unitPrice *

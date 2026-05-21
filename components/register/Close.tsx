@@ -1,7 +1,7 @@
 import { useUser } from "@clerk/nextjs";
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { Transaction } from "../global.utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { formatDate, formatTime, Transaction } from "../global.utils";
 import {
   getCurrentBatchTransactions,
   // getTransactions,
@@ -9,6 +9,7 @@ import {
 import TextButton from "../ui/TextButton";
 import { createBatch } from "@/app/api/batchapi";
 import { useReactToPrint } from "react-to-print";
+import toast from "react-hot-toast/headless";
 
 const Close = ({
   initialTransactions,
@@ -17,8 +18,12 @@ const Close = ({
 }) => {
   const date = new Date();
   const { user } = useUser();
+
+  const modalRef = useRef<HTMLDivElement>(null);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions.filter((transaction) => transaction.batchId === null));
   const [refresh, setRefresh] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Printing
   const componentRef = useRef<HTMLDivElement>(null);
@@ -47,6 +52,24 @@ const Close = ({
     }
   `,
   })
+
+  // Confirmation modal handlers
+  // Open the modal
+  const openEventModal = () => {
+    setConfirm(true);
+  };
+
+  // Close the modal
+  const closeEventModal = () => {
+    setConfirm(false);
+  };
+
+  // Close the modal when clicking outside of it
+  const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      closeEventModal();
+    }
+  }, []);
 
   // Totals
   const [grossLiquor, setGrossLiquor] = useState(initialTransactions.reduce(
@@ -126,13 +149,12 @@ const Close = ({
     // console.log("Credit total recalculated:", creditTotal);
   };
 
-
   const batchTable = (
     <table className="w-full max-w-3/4 border-separate border-spacing-y-4">
       <tbody>
         <tr>
           {/* Liquor Sales */}
-          <td className="text-lg">{date.toString()}</td>
+          <td className="text-lg">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
           <td className="text-end text-lg">Register: {user?.username}</td>
         </tr>
         <tr>
@@ -240,11 +262,11 @@ const Close = ({
     </div>
   );
 
-  //TODO: Make confirmation popup for closing register with totals and option to print report
-
   // Create batch and submit transactions in batch
   const handleSubmitBatch = async () => {
     try {
+      setLoading(true);
+
       const batch = {
         register: user?.username || "Unknown Register",
         wineGross: grossWine,
@@ -261,10 +283,19 @@ const Close = ({
       }
       const res = await createBatch(batch).then((res) => {
         setRefresh((prev) => !prev);
+        setConfirm(false);
         return res;
       });
 
-      if (!res.ok) throw new Error("Transaction failed");
+      if (!res.ok) {
+        setLoading(false);
+        toast.error("Batch failed");
+        throw new Error("Batch failed");
+      }
+      else {
+        setLoading(false);
+        toast.success("Batch successful")
+      }
     } catch (err) {
       console.error(err);
     }
@@ -288,58 +319,127 @@ const Close = ({
     recalculateTotals();
   }, [transactions]);
 
+  // Add event listener for closing the modal when clicking outside of it
+  useEffect(() => {
+    if (confirm) {
+      document.addEventListener('mousedown', closeModalOnOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', closeModalOnOutsideClick);
+    };
+  }, [closeModalOnOutsideClick, confirm]);
+
   return (
-    <motion.div
-      initial={{ x: "-100%", opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: "100%", opacity: 0 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
-    >
-      <div className="flex flex-col w-screen h-full items-center justify-start px-10 gap-5">
-        {/* Header */}
-        <h1 className="flex w-full text-xl sm:text-2xl font-serif font-semibold text-start text-zinc-900 mb-4 px-15">
-          Close Register
-        </h1>
-
-        {/* Theoretical feature */}
-        <div className="grid grid-cols-5 w-3/4">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="start-date">Select Date:</label>
-            <input
-              type="date"
-              className="border p-2 rounded-md"
-            // Native input value is always yyyy-mm-dd
-            />
-          </div>
-
-          <div />
-          <div />
-
-          <TextButton onClick={handlePrint}>Print Report</TextButton>
-
-          {/* Confirm batch button */}
-          <button
-            className="text-lg rounded-md mt-2 px-3 py-2 text-white hover:text-blue-600 bg-blue-600 hover:bg-white border order-blue-600 transition-colors font-serif"
-            onClick={handleSubmitBatch}
-          >
+    <>
+      <motion.div
+        initial={{ x: "-100%", opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: "100%", opacity: 0 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
+        <div className="flex flex-col w-screen h-full items-center justify-start px-10 gap-5">
+          {/* Header */}
+          <h1 className="flex w-full text-xl sm:text-2xl font-serif font-semibold text-start text-zinc-900 mb-4 px-15">
             Close Register
-          </button>
-        </div>
+          </h1>
 
-        {batchTable}
+          {/* Theoretical feature */}
+          <div className="grid grid-cols-5 w-3/4">
+            <div className="flex flex-col gap-2">
+              <label htmlFor="start-date">Select Date:</label>
+              <input
+                type="date"
+                className="border p-2 rounded-md"
+              // Native input value is always yyyy-mm-dd
+              />
+            </div>
 
-        <div
-          className="hidden"
-        >
+            <div />
+            <div />
+
+            <TextButton onClick={handlePrint}>Print Report</TextButton>
+
+            {/* Confirm batch button */}
+            <button
+              className="text-lg rounded-md mt-2 px-3 py-2 text-white hover:text-blue-600 bg-blue-600 hover:bg-white border order-blue-600 transition-colors font-serif"
+              onClick={openEventModal}
+            >
+              Close Register
+            </button>
+          </div>
+
+          {batchTable}
+
           <div
-            className="print-area"
-            ref={componentRef}
+            className="hidden"
           >
-            {printableBatch}
+            <div
+              className="print-area"
+              ref={componentRef}
+            >
+              {printableBatch}
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      {/* Confirmation modal */}
+      <AnimatePresence mode="wait">
+        {confirm && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, x: "-100%" }}
+              animate={{ opacity: 1, x: "0" }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              ref={modalRef}
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border border-zinc-500"
+            >
+              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Are you sure?</h3>
+              {/* Close Modal Button */}
+              <div className="absolute top-4 right-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  className="text-lg text-blue-500 hover:text-zinc-200"
+                  onClick={closeEventModal}
+                >
+                  Close
+                </motion.button>
+              </div>
+              <div className="flex flex-col gap-4 pb-4">
+                <label className="text-lg text-zinc-700 w-full text-left px-2">
+                  Date: {formatDate(date, "mm/dd/yyyy")} {formatTime(date)}
+                </label>
+
+                <label className="text-lg text-zinc-700 w-full text-left px-2">
+                  Closing Register: {user?.username}
+                </label>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                {/* Loading Spinner */}
+                {loading ? (
+                  <div className="flex justify-center items-center py-2">
+                    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                    onClick={handleSubmitBatch}
+                  >
+                    Submit
+                  </motion.button>
+                )}
+
+                <TextButton onClick={handlePrint}>Print Report</TextButton>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

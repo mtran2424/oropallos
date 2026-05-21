@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
         transactions: {
           connect: batch.transactions.map((transaction: { id: string | undefined }) => ({
             id: transaction.id,
+            register: batch.register,
           })),
         }
       },

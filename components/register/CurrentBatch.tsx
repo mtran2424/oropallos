@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { managerTableColumns, Transaction } from "../global.utils";
+import { formatDate, formatTime, managerTableColumns, Transaction } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useEffect, useState } from "react";
 import { getCurrentBatchTransactions } from "@/app/api/transactionapi";
@@ -29,11 +29,13 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
   }
 
   // TODO: Make popup to show items in transaction when transaction is clicked on
+  // Action section to view transaction items
   const renderCell = (transaction: Transaction, column: keyof Transaction) => {
     switch (column) {
       case "id":
         return transaction.id;
       case "status":
+        // TODO: Make this a void toggle for current batch transactions
         return transaction.status;
       case "register":
         return transaction.register;
@@ -64,7 +66,8 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
             {transaction.notes && <CopyButton text={transaction.notes} />}
           </div>)
       case "createdAt":
-        return transaction.createdAt instanceof Date ? transaction.createdAt.toString() : transaction.createdAt;
+        return transaction.createdAt instanceof Date ? formatDate(transaction.createdAt, "mm/dd/yyyy") + " " + formatTime(transaction.createdAt) :
+          transaction.createdAt ? formatDate(new Date(transaction.createdAt), "mm/dd/yyyy") + " " + formatTime(new Date(transaction.createdAt)) : "";
       default:
         return "";
     }

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Batch, batchTableColumns, managerTableColumns, Transaction } from "../global.utils";
+import { Batch, batchTableColumns, formatDate, formatTime, managerTableColumns, Transaction } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useEffect, useState } from "react";
 import { getCurrentBatchTransactions } from "@/app/api/transactionapi";
@@ -28,7 +28,10 @@ const Batches = () => {
     setTaxTotal(batches.reduce((sum, batch) => sum + batch.tax, 0) / 100);
   }
 
+  // TODO: Create filters for batches by date, register, etc...
+
   // TODO: Make popup to show items in transaction when transaction is clicked on
+  // Action section to view transactions for each batch and to view items in each transaction.
   const renderCell = (batch: Batch, column: keyof Batch) => {
     switch (column) {
       case "id":
@@ -49,9 +52,9 @@ const Batches = () => {
         return `$${(batch.cashTotal / 100).toFixed(2)}`;
       case "creditTotal":
         return `$${(batch.creditTotal / 100).toFixed(2)}`;
-     
       case "date":
-        return batch.date instanceof Date ? batch.date.toString() : batch.date;
+        return batch.date instanceof Date ? formatDate(batch.date, "mm/dd/yyyy") + " " + formatTime(batch.date) :
+          batch.date ? formatDate(new Date(batch.date), "mm/dd/yyyy") + " " + formatTime(new Date(batch.date)) : "";
       default:
         return "";
     }
