@@ -9,6 +9,7 @@ import { createTransaction } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import { IoBackspaceOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
+import TextButton from "../ui/TextButton";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const [cart, setCart] = useState<TransactionItem[]>([]);
@@ -101,7 +102,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
         exit={{ x: "100%", opacity: 0 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
-        <div className="flex flex-row w-screen items-start justify-center gap-5">
+        <div className="flex flex-row w-full items-start justify-center gap-5 pt-5">
           <div className="flex flex-col w-1/2">
             {/* Shopping cart section */}
             <div className="flex flex-col w-full h-[50vh]">
@@ -112,7 +113,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               <div className="flex overflow-auto">
                 <table className="w-full divide-y divide-zinc-400">
                   {/* Headers */}
-                  <thead className="sticky top-0 bg-white z-20">
+                  <thead className="sticky top-0 bg-white z-20 text-lg">
                     <tr>
                       <th>
                         Type
@@ -133,24 +134,22 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </tr>
                   </thead>
 
-                  {/* TODO: Format font sizes and symbols for ledgibility */}
-
                   {/* Shopping cart items */}
                   <tbody className="divide-y divide-zinc-400">
                     {cart.map((item, index) => (
                       <tr key={index}>
-                        <td className="text-md text-center">{item.type}</td>
-                        <td className="text-md text-center">{item.name}</td>
-                        <td className="text-md text-center">{item.quantity}</td>
-                        <td className="text-md text-center">{item.discount.name}</td>
-                        <td className="text-md text-center">{(item.unitPrice / 100).toFixed(2)}</td>
-                        <td className="text-md text-center">
+                        <td className="text-2xl text-center">{item.type}</td>
+                        <td className="text-2xl text-center">{item.name}</td>
+                        <td className="text-2xl text-center">{item.quantity}</td>
+                        <td className="text-2xl text-center">{item.discount.name}</td>
+                        <td className="text-2xl text-center">{(item.unitPrice / 100).toFixed(2)}</td>
+                        <td className="text-2xl text-center">
                           <button onClick={() => {
                             const newCart = [...cart];
                             newCart.splice(index, 1);
                             setCart(newCart);
                           }}>
-                            <MdDelete />
+                            <MdDelete size={30} className="text-red-500 hover:text-red-700" />
                           </button>
                         </td>
                       </tr>
@@ -175,19 +174,13 @@ const Transactions = ({ products }: { products: Product[] }) => {
           {/* Register tools */}
           <div>
             {/* Tool selector */}
-            <div className="grid grid-cols-2 p-2 text-lg">
-              <button
-                className="text-blue-500 hover:text-zinc-400"
-                onClick={() => setMode("Search")}
-              >
+            <div className="grid grid-cols-2 p-2">
+              <TextButton onClick={() => setMode("Search")}>
                 Search
-              </button>
-              <button
-                className="text-blue-500 hover:text-zinc-400"
-                onClick={() => setMode("Register")}
-              >
+              </TextButton>
+              <TextButton onClick={() => setMode("Register")}>
                 Register
-              </button>
+              </TextButton>
             </div>
             {/* Tools */}
             {mode === "Register" && <NumPad onConfirm={(item) => setCart([...cart, item])} />}
@@ -197,26 +190,26 @@ const Transactions = ({ products }: { products: Product[] }) => {
             <table className="w-full my-5">
               <tbody>
                 <tr>
-                  <td className="font-semibold text-lg">
+                  <td className="font-semibold text-2xl">
                     SUBTOTAL:
                   </td>
-                  <td className="text-end text-lg">
+                  <td className="text-end text-2xl">
                     {(calculateSubtotal(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="font-semibold text-lg">
+                  <td className="font-semibold text-2xl">
                     TAX:
                   </td>
-                  <td className="text-end text-lg">
+                  <td className="text-end text-2xl">
                     {(calculateTax(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="font-semibold text-lg">
+                  <td className="font-semibold text-2xl">
                     DISCOUNT:
                   </td>
-                  <td className="text-end text-lg">
+                  <td className="text-end text-2xl">
                     {(calculateDiscount(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
@@ -226,22 +219,21 @@ const Transactions = ({ products }: { products: Product[] }) => {
             <table className="w-full">
               <tbody>
                 <tr>
-                  <td className="font-semibold text-lg">
+                  <td className="font-semibold text-2xl">
                     TOTAL
                   </td>
-                  <td className="text-end text-lg">
+                  <td className="text-end text-2xl">
                     {(calculateTotal(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
               </tbody>
             </table>
 
-            {/* TODO: Need confirmation modal before submitting transaction to prevent accidental submits. Modal should show transaction summary and have confirm and cancel buttons.
-              Also need to add additional notes in submission. AND amount tended and change calculation in success modal.
+            {/* TODO: Create success modal and option to print receipt
           */}
             <button
-              className="flex h-15 my-10 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4 
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              className="flex h-20 my-5 w-full bg-blue-600 text-white font-semibold m-0.5 text-2xl justify-center items-center px-10 col-span-4 
+                        hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
               onClick={() => {
                 if (cart.length !== 0) {
                   setAmountDue(calculateTotal(cart));
@@ -257,40 +249,39 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
       <AnimatePresence mode="wait">
         {cashout && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
             <motion.div
               initial={{ opacity: 0, x: "-100%" }}
               animate={{ opacity: 1, x: "0" }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ duration: 0.3 }}
               ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[80vh] overflow-y-auto border border-zinc-500"
+              className="relative bg-white p-6 rounded-2xl max-w-3xl w-full shadow-lg max-h-[95vh] overflow-y-auto border border-zinc-500"
             >
               {/* Modal Header */}
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Cashout</h3>
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="text-lg text-blue-500 hover:text-zinc-200"
-                  onClick={closeEventModal}
-                >
+                <TextButton onClick={closeEventModal}> 
                   Close
-                </motion.button>
+                </TextButton>
               </div>
 
               <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
-                <div className="flex flex-col items-center justify-center w-full gap-4">
+                <div className="flex flex-col items-center justify-center w-full gap-2">
 
                   {/* Input bar */}
                   <motion.div
                     className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                                overflow-hidden w-full h-25 mb-5"
+                                overflow-hidden w-full h-30 mb-2"
                   >
                     {/* Current input dash display */}
-                    <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
+                    <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
                       <div className="text-start">
-                        Amount Due: ${(amountDue / 100).toFixed(2)}
+                        Total: ${(amountDue / 100).toFixed(2)}
+                      </div>
+                      <div className="text-end">
+                        Amount Due: ${((amountDue + cash + credit) / 100).toFixed(2)}
                       </div>
                     </div>
 
@@ -299,13 +290,14 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     <input
                       type="number"
                       value={input}
+                      min={0}
                       onChange={(e) => setInput(e.target.value)}
-                      className="p-2 text-2xl overflow-hidden w-full focus:outline-none"
+                      className="p-2 text-3xl overflow-hidden w-full focus:outline-none"
                       style={{ whiteSpace: "nowrap" }}
                     />
 
                     {/* Cash and Credit display under input box for reference when entering amounts. */}
-                    <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
+                    <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
                       <div className="text-start">
                         Cash: ${(cash / 100).toFixed(2)}
                       </div>
@@ -317,20 +309,18 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
 
                   {/* Need to add num pad for amount input. Enter amount and punch credit or cash to reduce amount. When amount greater than total due, transaction is completed */}
-                  <div className="grid grid-cols-3 gap-x-1 w-full">
+                  <div className="grid grid-cols-3 gap-x-1 gap-y-1 h-full w-full">
 
                     {/* First Row */}
 
                     {/* Clear inputs */}
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => {
-                        // setInput("");
-                        // setDiscount(noDiscount);
-                        // setType("");
-                        // setItem("");
-                        // setQuantity(1);
+                        setInput("");
+                        setCash(0);
+                        setCredit(0);
                       }}
                     >
 
@@ -341,7 +331,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
                     {/* Back space button */}
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => {
                         setInput(prev => prev.slice(0, -1));
@@ -352,7 +342,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
                     {/* Second Row */}
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}7`)}
                     >
@@ -360,7 +350,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}8`)}
                     >
@@ -368,7 +358,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}9`)}
                     >
@@ -377,7 +367,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
                     {/* Third Row */}
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}4`)}
                     >
@@ -385,7 +375,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}5`)}
                     >
@@ -393,7 +383,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}6`)}
                     >
@@ -402,7 +392,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
                     {/* Fourth Row */}
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}1`)}
                     >
@@ -410,7 +400,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}2`)}
                     >
@@ -418,7 +408,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}3`)}
                     >
@@ -427,7 +417,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
                     {/* Fifth Row */}
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
                       onClick={() => setInput(`${input}0`)}
                     >
@@ -435,7 +425,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     </button>
 
                     <button
-                      className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                       onClick={() => setInput(`${input}00`)}
                     >
@@ -486,7 +476,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     // Transaction submit button
                     <motion.button
                       whileHover={{ scale: 1.02 }}
-                      className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                      className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
                       onClick={handleSubmitTransaction}
                     >
                       Submit

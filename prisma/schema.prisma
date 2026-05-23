@@ -54,31 +54,90 @@ enum ProductSubcategory {
   Spirits
 }
 
-model Product {
-  id   String @id @default(uuid())
-  name String
+enum Status {
+  Cashed
+  Void
+}
 
+enum Discount {
+  No_Discount
+  Tax_Free
+  Fifteen_Percent
+}
+
+enum ItemType {
+  Wine
+  Liquor
+}
+
+model Product {
+  id          String             @id @default(uuid())
+  name        String
   description String?
   category    ProductCategory
   subcategory ProductSubcategory
   type        String?
-  abv        Float?
-  size       String @default("750mL")
-
-  price    Float
-  imageUrl String?
-  upc      String?
-
-  favorite  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  abv         Float?
+  size        String             @default("750mL")
+  price       Float
+  imageUrl    String?
+  upc         String?
+  favorite    Boolean            @default(false)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 }
 
 model Announcement {
   id        String   @id @default(uuid())
   content   String
   endDate   DateTime
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Batch {
+  id           String        @id @default(uuid())
+  wineGross    Int
+  liquorGross  Int
+  gross        Int
+  tax          Int
+  discount     Int
+  void         Int
+  cashTotal    Int
+  creditTotal  Int
+  register     String
+  transactions Transaction[]
+  date         DateTime      @default(now())
+}
+
+model Transaction {
+  id               String            @id @default(uuid())
+  status           Status
+  transactionItems TransactionItem[]
+  batchId          String?
+  register         String?
+  notes            String?
+  wineSubtotal     Int
+  liquorSubtotal   Int
+  discount         Int
+  tax              Int
+  taxRate          Int
+  total            Int
+  cash             Int
+  credit           Int
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  batch Batch? @relation(fields: [batchId], references: [id])
+}
+
+model TransactionItem {
+  id            String      @id @default(uuid())
+  transactionId String
+  name          String
+  quantity      Int
+  unitPrice     Int
+  discount      Discount
+  type          ItemType
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
 }

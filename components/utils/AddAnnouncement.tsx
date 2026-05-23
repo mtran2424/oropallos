@@ -3,6 +3,7 @@ import { IoIosAdd } from "react-icons/io";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { createAnnouncement } from "@/app/api/announcementapi";
+import TextButton from "../ui/TextButton";
 
 // This component is a button that opens a modal for adding a product
 const AddAnnouncement = ({ onAddAnnouncement }: {
@@ -108,13 +109,9 @@ const AddAnnouncement = ({ onAddAnnouncement }: {
 
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="text-lg text-blue-500 hover:text-zinc-200"
-                  onClick={closeEventModal}
-                >
+                <TextButton onClick={closeEventModal}>
                   Close
-                </motion.button>
+                </TextButton>
               </div>
 
               {/* Form for adding event */}

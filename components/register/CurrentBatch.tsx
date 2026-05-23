@@ -145,7 +145,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
         </div>
 
         {/* Current Batch Data Table */}
-        <div className="flex w-[80vw] max-h-[65vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
+        <div className="flex w-[80vw] max-h-[80vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
           {/* Spreadsheet */}
           <div className="flex overflow-auto w-screen px-5">
             {/* Product Table Start */}
@@ -156,7 +156,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                   {managerTableColumns.map((column) => (
                     <th
                       key={column.field}
-                      className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                      className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
                       style={{ width: column.width }}
                     >
                       <strong>{column.label}</strong>
@@ -174,7 +174,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                         // Render each cell based on the column field
                         <td
                           key={column.field}
-                          className="px-4 py-3 text-sm align-center"
+                          className="px-4 py-3 text-xl align-center"
                           style={{
                             width: column.width,
                             maxWidth: column.width,
@@ -188,7 +188,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={managerTableColumns.length} className="text-center py-4 text-zinc-900">
+                    <td colSpan={managerTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
                       No transactions.
                     </td>
                   </tr>

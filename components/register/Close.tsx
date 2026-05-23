@@ -154,13 +154,13 @@ const Close = ({
       <tbody>
         <tr>
           {/* Liquor Sales */}
-          <td className="text-lg">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
-          <td className="text-end text-lg">Register: {user?.username}</td>
+          <td className="text-2xl">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
+          <td className="text-end text-2xl">Register: {user?.username}</td>
         </tr>
         <tr>
           {/* Liquor Sales */}
-          <td className="font-semibold text-lg">LIQUOR</td>
-          <td className="text-end text-lg">
+          <td className="font-semibold text-2xl">LIQUOR</td>
+          <td className="text-end text-2xl">
             <div className="flex flex-col">
               <div>${(grossLiquor / 100).toFixed(2)}</div>
               <div>
@@ -175,8 +175,8 @@ const Close = ({
 
         {/* Wine Sales */}
         <tr>
-          <td className="font-semibold text-lg">WINE</td>
-          <td className="text-end text-lg">
+          <td className="font-semibold text-2xl">WINE</td>
+          <td className="text-end text-2xl">
             <div className="flex flex-col">
               <div>${(grossWine / 100).toFixed(2)}</div>
               <div>
@@ -191,60 +191,60 @@ const Close = ({
 
         {/* Total Sales */}
         <tr>
-          <td className="font-semibold text-lg">SUBTOTAL</td>
-          <td className="text-end text-lg">
+          <td className="font-semibold text-2xl">SUBTOTAL</td>
+          <td className="text-end text-2xl">
             <div>${(grossTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Total Tax */}
         <tr>
-          <td className="font-semibold text-lg">TAX</td>
-          <td className="text-end text-lg">
+          <td className="font-semibold text-2xl">TAX</td>
+          <td className="text-end text-2xl">
             <div>${(taxTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Total w/ Tax */}
         <tr>
-          <td className="font-semibold text-lg">TTL + TAX</td>
-          <td className="text-end text-lg">
+          <td className="font-semibold text-2xl">TTL + TAX</td>
+          <td className="text-end text-2xl">
             <div>${((grossTotal + taxTotal) / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Discounts */}
         <tr>
-          <td className="font-semibold text-lg">-% ITEM</td>
-          <td className="text-end text-lg">
+          <td className="font-semibold text-2xl">-% ITEM</td>
+          <td className="text-end text-2xl">
             <div>{discountQty} Q</div>
             <div>-${(discountTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-lg">VOID COUNT</td>
-          <td className="text-end text-lg">0 Q</td>
+          <td className="font-semibold text-2xl">VOID COUNT</td>
+          <td className="text-end text-2xl">0 Q</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-lg">TRANSACTION COUNT</td>
-          <td className="text-end text-lg">{transactions.length} Q</td>
+          <td className="font-semibold text-2xl">TRANSACTION COUNT</td>
+          <td className="text-end text-2xl">{transactions.length} Q</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-lg">CASH</td>
-          <td className="text-end text-lg">${(cashTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold text-2xl">CASH</td>
+          <td className="text-end text-2xl">${(cashTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-lg">CREDIT</td>
-          <td className="text-end text-lg">${(creditTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold text-2xl">CREDIT</td>
+          <td className="text-end text-2xl">${(creditTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-lg">NET TOTAL</td>
-          <td className="text-end text-lg">${(netTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold text-2xl">NET TOTAL</td>
+          <td className="text-end text-2xl">${(netTotal / 100).toFixed(2)}</td>
         </tr>
       </tbody>
     </table>
@@ -337,7 +337,7 @@ const Close = ({
         exit={{ x: "100%", opacity: 0 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
-        <div className="flex flex-col w-screen h-full items-center justify-start px-10 gap-5">
+        <div className="flex flex-col w-full min-w-[80vw] h-full items-center justify-start px-10 gap-5 pt-5">
           {/* Header */}
           <h1 className="flex w-full text-xl sm:text-2xl font-serif font-semibold text-start text-zinc-900 mb-4 px-15">
             Close Register
@@ -345,15 +345,16 @@ const Close = ({
 
           {/* Theoretical feature */}
           <div className="grid grid-cols-5 w-3/4">
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
               <label htmlFor="start-date">Select Date:</label>
               <input
                 type="date"
                 className="border p-2 rounded-md"
               // Native input value is always yyyy-mm-dd
               />
-            </div>
+            </div> */}
 
+            <div />
             <div />
             <div />
 
@@ -361,7 +362,7 @@ const Close = ({
 
             {/* Confirm batch button */}
             <button
-              className="text-lg rounded-md mt-2 px-3 py-2 text-white hover:text-blue-600 bg-blue-600 hover:bg-white border order-blue-600 transition-colors font-serif"
+              className="h-20 text-xl rounded-md mt-2 px-3 py-2 text-white hover:text-blue-600 bg-blue-600 hover:bg-white border order-blue-600 transition-colors font-serif"
               onClick={openEventModal}
             >
               Close Register
@@ -386,7 +387,7 @@ const Close = ({
       {/* Confirmation modal */}
       <AnimatePresence mode="wait">
         {confirm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
             <motion.div
               initial={{ opacity: 0, x: "-100%" }}
               animate={{ opacity: 1, x: "0" }}
@@ -398,20 +399,16 @@ const Close = ({
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Are you sure?</h3>
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="text-lg text-blue-500 hover:text-zinc-200"
-                  onClick={closeEventModal}
-                >
+                <TextButton onClick={closeEventModal}>
                   Close
-                </motion.button>
+                </TextButton>
               </div>
               <div className="flex flex-col gap-4 pb-4">
-                <label className="text-lg text-zinc-700 w-full text-left px-2">
+                <label className="text-xl text-zinc-700 w-full text-left px-2">
                   Date: {formatDate(date, "mm/dd/yyyy")} {formatTime(date)}
                 </label>
 
-                <label className="text-lg text-zinc-700 w-full text-left px-2">
+                <label className="text-xl text-zinc-700 w-full text-left px-2">
                   Closing Register: {user?.username}
                 </label>
               </div>

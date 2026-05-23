@@ -22,10 +22,10 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
       {/* Input bar */}
       <motion.div
         className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-        overflow-hidden w-full h-25 mb-10"
+        overflow-hidden w-full h-30 mb-5"
       >
         {/* Current input dash display */}
-        <div className="grid grid-cols-2 text-sm w-full text-zinc-500">
+        <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
           {quantity ? <div className="text-start">
             Qty: {quantity}
           </div> : <div />}
@@ -37,18 +37,18 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
           type="number"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="p-2 text-2xl overflow-hidden w-full focus:outline-none"
+          className="p-2 text-3xl overflow-hidden w-full focus:outline-none"
           style={{ whiteSpace: "nowrap" }}
         />
-        {discount && <div className="text-start text-sm text-zinc-500">
+        {discount && <div className="text-start text-lg text-zinc-500">
           {discount.name}
         </div>}
       </motion.div>
-      <div className="grid grid-cols-4 gap-x-1">
+      <div className="grid grid-cols-4 gap-x-1 gap-y-1">
         {/* First Row */}
 
         {/* Multi item button */}
-        <button className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+        <button className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
       hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
             if (input !== "") {
@@ -64,7 +64,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Clear inputs */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
             setInput("");
@@ -80,7 +80,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* TODO: Implement no sale order */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
         >
           No Sale
@@ -88,7 +88,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Second Row */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}7`)}
         >
@@ -96,7 +96,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         </button>
 
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}8`)}
         >
@@ -104,7 +104,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         </button>
 
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}9`)}
         >
@@ -113,7 +113,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Back space button */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
             setInput(prev => prev.slice(0, -1));
@@ -125,7 +125,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Third Row */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}4`)}
         >
@@ -133,7 +133,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         </button>
 
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}5`)}
         >
@@ -141,7 +141,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         </button>
 
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}6`)}
         >
@@ -150,7 +150,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* 15% Discount Shortcut button */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
             if (discount !== fifteenPercentDiscount) {
@@ -166,7 +166,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Fourth Row */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}1`)}
         >
@@ -174,7 +174,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         </button>
 
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}2`)}
         >
@@ -182,7 +182,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         </button>
 
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}3`)}
         >
@@ -191,7 +191,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Tax Free Discount Shortcut button */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
             if (discount !== taxFreeDiscount) {
@@ -209,7 +209,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Fifth Row */}
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
           onClick={() => setInput(`${input}0`)}
         >
@@ -217,7 +217,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         </button>
 
         <button
-          className="flex h-15 w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => setInput(`${input}00`)}
         >
@@ -229,7 +229,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         {/* Sixth Row */}
         {/* Liquor type selector */}
         <button
-          className="flex h-15 w-full bg-zinc-800 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-800 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
           onClick={() => {
             setType("Liquor");
@@ -240,7 +240,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
 
         {/* Wine type selector */}
         <button
-          className="flex h-15 w-full bg-zinc-800 text-white font-semibold m-0.5 text-xl justify-center items-center
+          className="flex h-full w-full bg-zinc-800 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
           onClick={() =>
             setType("Wine")
@@ -252,9 +252,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         {/* Seventh Row */}
         {/* Confirm item button */}
         <button
-          className="flex h-15 w-full bg-blue-500 text-white font-semibold m-0.5 text-xl justify-center items-center px-10 col-span-4
-        
-        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+          className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center px-10 col-span-4
+        hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
             if (type && quantity && discount && input) {
               onConfirm(

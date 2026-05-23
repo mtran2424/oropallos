@@ -5,6 +5,7 @@ import { Discount, fifteenPercentDiscount, getDiscount, noDiscount, Product, san
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import TextButton from "../ui/TextButton";
 
 const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: TransactionItem) => void }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -147,7 +148,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
             <select
               value={sortOption}
               onChange={handleSortChange}
-              className="border border-gray-300 rounded px-3 py-2 text-sm"
+              className="border border-gray-300 rounded px-3 py-2 text-md"
             >
               <option value="name-asc">Name (A-Z)</option>
               <option value="name-desc">Name (Z-A)</option>
@@ -169,12 +170,12 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
               <thead className="sticky top-0 bg-white z-20">
                 <tr>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                    className="px-4 py-3 text-left text-lg font-medium uppercase tracking-widest whitespace-nowrap"
                   >
                     <strong>Item</strong>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                    className="px-4 py-3 text-left text-lg font-medium uppercase tracking-widest whitespace-nowrap"
                   >
                     <strong>Price</strong>
                   </th>
@@ -190,7 +191,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                         setAddItem(true);
                       }}>
                       <td className="text-start p-2">
-                        <div className="grid grid-cols-2">
+                        <div className="grid grid-cols-2 text-xl">
 
                           <div className="relative w-20 h-20 mx-auto mb-2 overflow-hidden rounded-lg">
                             {product.imageUrl ? (
@@ -218,11 +219,11 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
 
                         </div>
                       </td>
-                      <td className="text-center p-2">{product.price}</td>
+                      <td className="text-center p-2 text-xl">{product.price}</td>
                     </tr>
                   ))
                 ) : (<tr>
-                  <td colSpan={4} className="text-center py-4 text-zinc-900">
+                  <td colSpan={4} className="text-center text-lg py-4 text-zinc-900">
                     No products match selected filters.
                   </td>
                 </tr>)}
@@ -247,13 +248,9 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Add Item</h3>
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="text-lg text-blue-500 hover:text-zinc-200"
-                  onClick={closeEventModal}
-                >
+                <TextButton onClick={closeEventModal}>
                   Close
-                </motion.button>
+                </TextButton>
               </div>
 
               <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
@@ -303,12 +300,12 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                   </div>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    className="text-2xl font-semibold w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                    onClick={handleSubmit}
-                  >
-                    Submit
-                  </motion.button>
+                      whileHover={{ scale: 1.02 }}
+                      className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </motion.button>
                 </div>
               </div>
 
