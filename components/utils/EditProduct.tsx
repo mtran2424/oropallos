@@ -30,7 +30,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
   const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
   const [size, setSize] = useState(product.size);
   const [upc, setUpc] = useState(product.upc);
-  const [unitPrice, setUnitPrice] = useState<number | undefined>(product.unitPrice || undefined);
+  const [unitPrice, setUnitPrice] = useState<number | undefined>(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
   const [unitCount, setUnitCount] = useState<number | undefined>(product.unitCount || undefined);
 
   // States for suggestions
@@ -151,7 +151,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
       size: size,
       upc: upc,
       hidden: product.hidden,
-      unitPrice: unitPrice ? parseInt((unitPrice * 100).toFixed(0)) : undefined,
+      unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
       unitCount: unitCount,
     };
 
@@ -255,7 +255,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
     setAbv(product.abv || undefined);
     setSize(product.size);
     setUpc(product.upc);
-    setUnitPrice(product.unitPrice || undefined);
+    setUnitPrice(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
     setUnitCount(product.unitCount || undefined);
   }, [product]);
 
@@ -506,7 +506,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
                   <input
                     type="number"
                     inputMode="decimal"
-                    step="0.01"
+                    step=".01"
                     min="0"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Unit Price"
@@ -514,7 +514,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
                       const value = e.target.value;
                       setUnitPrice(value === "" ? undefined : parseFloat(value));
                     }}
-                    value={unitPrice || ""}
+                    value={unitPrice ?? ""}
                   />
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
                     i.e. {'\"'}19.99{'\"'} - No $ sign needed

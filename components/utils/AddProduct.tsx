@@ -150,7 +150,7 @@ const AddProduct = ({ onAddProduct, products }: {
       size: size,
       upc: upc,
       hidden: false,
-      unitPrice: unitPrice ? parseInt((unitPrice * 100).toFixed(0)) : undefined,
+      unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
       unitCount: unitCount,
     };
 
