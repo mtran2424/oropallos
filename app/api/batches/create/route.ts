@@ -1,14 +1,16 @@
 // app/api/transactions/create/route.ts
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   // Check if user has access to route
-  const { userId } = await auth();
+  const user = await currentUser();
 
-  if (!userId)
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
   const body = await req.json();
   const { batch } = body;
 

@@ -30,6 +30,8 @@ const EditProduct = ({ onEditProduct, product, products }: {
   const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
   const [size, setSize] = useState(product.size);
   const [upc, setUpc] = useState(product.upc);
+  const [unitPrice, setUnitPrice] = useState<number | undefined>(product.unitPrice || undefined);
+  const [unitCount, setUnitCount] = useState<number | undefined>(product.unitCount || undefined);
 
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
@@ -148,6 +150,9 @@ const EditProduct = ({ onEditProduct, product, products }: {
       abv: abv,
       size: size,
       upc: upc,
+      hidden: product.hidden,
+      unitPrice: unitPrice ? parseInt((unitPrice * 100).toFixed(0)) : undefined,
+      unitCount: unitCount,
     };
 
     if (product.id) {
@@ -250,6 +255,8 @@ const EditProduct = ({ onEditProduct, product, products }: {
     setAbv(product.abv || undefined);
     setSize(product.size);
     setUpc(product.upc);
+    setUnitPrice(product.unitPrice || undefined);
+    setUnitCount(product.unitCount || undefined);
   }, [product]);
 
   return (
@@ -493,6 +500,40 @@ const EditProduct = ({ onEditProduct, product, products }: {
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
                     i.e. {'\"'}40{'\"'} - No % sign needed
                   </div>
+
+                  {/* Unit Price Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    min="0"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="Unit Price"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setUnitPrice(value === "" ? undefined : parseFloat(value));
+                    }}
+                    value={unitPrice || ""}
+                  />
+                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                    i.e. {'\"'}19.99{'\"'} - No $ sign needed
+                  </div>
+
+                  {/* Unit Count Field */}
+                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Count</label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    placeholder="Unit Count"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setUnitCount(value === "" ? undefined : parseInt(value));
+                    }}
+                    value={unitCount || ""}
+                  />
 
                   {/* Description Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>

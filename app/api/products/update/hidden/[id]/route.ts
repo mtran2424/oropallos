@@ -1,10 +1,18 @@
-// app/api/products/update/[id]/route.ts
+// app/api/admin/products/update/hidden/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { currentUser } from '@clerk/nextjs/server';
 
 // This function handles the PUT request to update a product by its ID
-export async function GET(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   try {
+    // Check if user has access to this route
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Get the id from the URL
     const id = req.nextUrl.pathname.split('/').pop();
 
@@ -13,16 +21,23 @@ export async function GET(req: NextRequest) {
     }
 
     // Check for existence of product in db
-    const product = await db.product.findUnique({
-      where: {
-        id,
-        hidden: false
-      },
+    const checkProduct = await db.product.findUnique({
+      where: { id },
     });
 
-    if (!product) {
+    if (!checkProduct) {
       return NextResponse.json({ message: 'Product not found' }, { status: 404 });
     }
+
+    const { hidden } = await req.json();
+
+    // API call to update the product in the database
+    const product = await db.product.update({
+      where: { id: id },
+      data: {
+        hidden: hidden
+      },
+    });
 
     return NextResponse.json({ product });
   } catch (error) {

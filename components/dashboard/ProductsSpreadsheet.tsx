@@ -1,17 +1,18 @@
 import { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
 import { Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
-import { deleteProduct, favoriteProduct, getProducts } from "@/app/api/productapi";
+import { deleteProduct, favoriteProduct, hideProduct } from "@/app/api/productapi";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { MdDelete, MdFavorite } from "react-icons/md";
 import EditProduct from "@/components/utils/EditProduct";
 import Image from "next/image";
 import CopyButton from "@/components/ui/CopyButton";
-import { FaImage } from "react-icons/fa6";
+import { FaEye, FaEyeSlash, FaImage } from "react-icons/fa6";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
 import AddSize from "../utils/AddSize";
+import { getProducts } from "@/app/api/adminapi";
 
 const PRODUCTS_PER_PAGE = 25;
 
@@ -157,6 +158,22 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
     }
   }
 
+  // Function to toggle hidden status of a product
+  const handleHiddenToggle = async (id: string, product: Product) => {
+    try {
+      await hideProduct(id, !product.hidden)
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success('Hidden status changed successfully');
+            setRefresh(!refresh);
+          }
+        });
+    } catch (error) {
+      console.error('Error toggling hidden status:', error);
+      toast.error('Failed to toggle hidden status');
+    }
+  }
+
   // Function to render each cell based on the column type
   const renderCell = (product: Product, column: keyof Product) => {
     switch (column) {
@@ -246,6 +263,13 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         return product.size;
       case "upc":
         return product.upc;
+      case "unitPrice":
+        return product.unitPrice ? (product.unitPrice/100).toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }) : "N/A";
+      case "unitCount":
+        return product.unitCount || "N/A";
       default:
         return null;
     }
@@ -414,6 +438,13 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
                   <th
                     className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                    style={{ width: "200px" }}
+                  >
+                    <strong>Hidden</strong>
+                  </th>
+
+                  <th
+                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
                     style={{ width: "300px" }}
                   >
                     <strong>Actions</strong>
@@ -459,6 +490,27 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
                           {product.favorite ?
                             <MdFavorite size={40} className="text-red-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
                             <MdFavorite size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
+                        </motion.button>
+                      </td>
+
+                      <td
+                        className="px-4 py-3 text-sm align-center"
+                        style={{
+                          width: "200px",
+                          maxWidth: "200px",
+                          whiteSpace: "pre-line",
+                        }}
+                      >
+                        {/* Favorite Product Button */}
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="text-center"
+                          onClick={() => handleHiddenToggle(product.id || "", product)}
+                        >
+                          {product.hidden ?
+                            <FaEye  size={40} className="text-blue-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
+                            <FaEyeSlash  size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
                         </motion.button>
                       </td>
 

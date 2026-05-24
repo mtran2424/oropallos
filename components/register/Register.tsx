@@ -10,10 +10,16 @@ import Close from "./Close";
 import { PiCashRegister } from "react-icons/pi";
 import { CiViewTable } from "react-icons/ci";
 import { GoGraph } from "react-icons/go";
+import { RxExit } from "react-icons/rx";
+import { getProducts } from "@/app/api/adminapi";
+import { getTransactions } from "@/app/api/transactionapi";
 
-const Register = ({ products, transactions }: { products: Product[]; transactions: Transaction[] }) => {
+const Register = () => {
   // Admin check
   const { isSignedIn } = useUser();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+
   const [page, setPage] = useState<string>("Transaction");
 
   useEffect(() => {
@@ -23,6 +29,29 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
       redirect('/');
     }
   }, [isSignedIn]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data.products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    const fetchTransactions = async () => {
+      try {
+        const data = await getTransactions();
+        setTransactions(data.transactions);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
+    fetchProducts();
+    fetchTransactions();
+  }, []);
 
   return (
     <motion.div
@@ -73,6 +102,14 @@ const Register = ({ products, transactions }: { products: Product[]; transaction
             }}
           >
             X1/Z1
+          </button>
+          <button
+            className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out`}
+            onClick={() => {
+              redirect("/admin/dashboard");
+            }}
+          >
+            <RxExit size={30} />
           </button>
         </div>
       </motion.div>

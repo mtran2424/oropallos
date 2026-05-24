@@ -14,10 +14,7 @@ export async function GET(req: NextRequest) {
 
     // Check for existence of product in db
     const product = await db.product.findUnique({
-      where: {
-        id,
-        hidden: false
-      },
+      where: { id },
     });
 
     if (!product) {

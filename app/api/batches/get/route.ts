@@ -1,15 +1,15 @@
 // app/api/batches/get/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function GET() {
   try {
     // Check if user has access to this route
-    const { userId } = await auth();
+    const user = await currentUser();
 
-    if (!userId) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const batches = await db.batch.findMany({
@@ -60,7 +60,7 @@ export async function GET() {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: error},
+      { message: error },
       { status: 500 },
     );
   }

@@ -38,6 +38,9 @@ export interface Product {
   abv?: number;
   size: string;
   upc?: string;
+  hidden?: boolean;
+  unitPrice?: number;
+  unitCount?: number;
   createdAt?: Date;
 }
 
@@ -419,6 +422,8 @@ export const productTableColumns = [
   { field: "description", label: "Description", width: "1000px" },
   { field: "imageUrl", label: "Image URL", width: "400px" },
   { field: "upc", label: "UPC", width: "200px" },
+  { field: "unitPrice", label: "Unit Price", width: "150px" },
+  { field: "unitCount", label: "Unit Count", width: "150px" },
 ] as const;
 
 // Headers for manager tables in register view

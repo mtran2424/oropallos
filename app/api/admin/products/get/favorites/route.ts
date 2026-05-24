@@ -1,4 +1,4 @@
-// app/api/products/get/route.ts
+// app/api/admin/products/get/favorites/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
@@ -21,9 +21,12 @@ export async function GET() {
         size: true,
         upc: true,
         createdAt: true,
+        hidden: true,
+        unitPrice: true,
+        unitCount: true,
       },
       where: {
-        hidden: false,
+        favorite: true,
       },
     });
 

@@ -24,6 +24,7 @@ export async function GET() {
       },
       where: {
         favorite: true,
+        hidden: false,
       },
     });
 

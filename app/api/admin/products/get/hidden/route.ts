@@ -1,10 +1,11 @@
-// app/api/products/get/route.ts
+// app/api/admin/products/get/hidden/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 // This function handles the GET request to fetch all products
 export async function GET() {
   try {
+    
     // Fetch all products from the database
     const products = await db.product.findMany({
       select: {
@@ -21,9 +22,12 @@ export async function GET() {
         size: true,
         upc: true,
         createdAt: true,
+        hidden: true,
+        unitPrice: true,
+        unitCount: true,
       },
       where: {
-        hidden: false,
+        hidden: true,
       },
     });
 

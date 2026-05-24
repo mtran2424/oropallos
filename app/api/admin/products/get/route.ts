@@ -1,10 +1,18 @@
 // app/api/products/get/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { auth, currentUser } from '@clerk/nextjs/server';
 
 // This function handles the GET request to fetch all products
 export async function GET() {
   try {
+    // Check if user has access to this route
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Fetch all products from the database
     const products = await db.product.findMany({
       select: {
@@ -21,9 +29,9 @@ export async function GET() {
         size: true,
         upc: true,
         createdAt: true,
-      },
-      where: {
-        hidden: false,
+        hidden: true,
+        unitPrice: true,
+        unitCount: true,
       },
     });
 

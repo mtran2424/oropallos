@@ -127,3 +127,25 @@ export const favoriteProduct = async (id: string, favorite: boolean) => {
 
   return res;
 }
+
+/**
+ * Sets favorite status of a product.
+ * 
+ * @param id String
+ * @param favorite Boolean
+ * @returns {product: Product} - The updated product object.
+ */
+export const hideProduct = async (id: string, hidden: boolean) => {
+  const res = await fetch(`/api/products/update/hidden/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ hidden: hidden }),
+  });
+  if (!res.ok) {
+    throw new Error('Failed to update product');
+  }
+
+  return res;
+}

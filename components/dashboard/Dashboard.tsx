@@ -6,9 +6,13 @@ import { useEffect, useState } from "react";
 import ProductsSpreadsheet from "./ProductsSpreadsheet";
 import { Announcement, Product } from "@/components/global.utils";
 import AnnouncementsSpreadsheet from "./AnnouncementsSpreadsheet";
+import { getProducts } from "@/app/api/adminapi";
+import { getAnnouncements } from "@/app/api/announcementapi";
 
-const Dashboard = ({ products, announcements }: { products: Product[], announcements: Announcement[] }) => {
+const Dashboard = () => {
   const [tab, setTab] = useState<'products' | 'announcements'>('products');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
   // Admin check
   const { isSignedIn } = useUser();
@@ -19,6 +23,29 @@ const Dashboard = ({ products, announcements }: { products: Product[], announcem
       redirect('/');
     }
   }, [isSignedIn]);
+
+  useEffect(() => {
+      const fetchProducts = async () => {
+        try {
+          const data = await getProducts();
+          setProducts(data.products);
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        }
+      };
+
+      const fetchAnnouncements = async () => {
+        try {
+          const data = await getAnnouncements();
+          setAnnouncements(data.announcements);
+        } catch (error) {
+          console.error("Error fetching announcements:", error);
+        }
+      };
+  
+      fetchProducts();
+      fetchAnnouncements();
+    }, []);
 
   return (
     <motion.div

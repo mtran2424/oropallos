@@ -1,15 +1,16 @@
 // app/api/transactions/create/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // Adjust to your prisma client path
-import { auth } from "@clerk/nextjs/server";
-import { noDiscount, taxRate, TransactionItem } from "@/components/global.utils";
+import { currentUser } from "@clerk/nextjs/server";
+import { taxRate, TransactionItem } from "@/components/global.utils";
 
 export async function POST(req: NextRequest) {
   // Check if user has access to route
-  const { userId } = await auth();
+  const user = await currentUser();
 
-  if (!userId)
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   // Retreive request and store in values
   const body = await req.json();
@@ -19,15 +20,15 @@ export async function POST(req: NextRequest) {
     return sum + (item.type === "Liquor" ? item.unitPrice * item.quantity : 0);
   }, 0);
 
-  const wineSubtotal =  transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
+  const wineSubtotal = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
     return sum + (item.type === "Wine" ? item.unitPrice * item.discount.multiplier * item.quantity : 0);
   }, 0);
-  
-  const discount =  transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
+
+  const discount = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
     return sum + (item.type === "Wine" && item.discount.value !== "No_Discount" ? (item.unitPrice * (1 - item.discount.multiplier) * item.quantity) : 0);
   }, 0);
 
-  const tax = (liquorSubtotal + wineSubtotal) * (taxRate/100);
+  const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
 
   const total = liquorSubtotal + wineSubtotal + tax;
 
