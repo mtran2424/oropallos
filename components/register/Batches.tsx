@@ -1,10 +1,11 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Batch, batchTableColumns, formatDate, formatTime, managerTableColumns, Transaction } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getCurrentBatchTransactions } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import { getBatches } from "@/app/api/batchapi";
+import TextButton from "../ui/TextButton";
 
 const Batches = () => {
   const { user } = useUser();
@@ -18,6 +19,24 @@ const Batches = () => {
   const [discountTotal, setDiscountTotal] = useState(0);
   const [taxTotal, setTaxTotal] = useState(0);
   const [netTotal, setNetTotal] = useState(0);
+
+  // Transactions Popup
+  const [showBatch, setShowBatch] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  // Close the modal when clicking outside of it
+  const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      closeEventModal();
+    }
+  }, []);
+
+  const handleShowBatch = (batch: Batch) => {
+    setShowBatch(true);
+    setTransactions(batch.transactions);
+  }
+
+  // TODO: Figure out cluster items for batches (gross, net, tax, discount, etc...)
 
   // Recalculate totals when transactions change
   const recalculateTotals = () => {
@@ -60,6 +79,54 @@ const Batches = () => {
     }
   }
 
+  const renderTransactionCell = (transaction: Transaction, column: keyof Transaction) => {
+    switch (column) {
+      case "id":
+        return transaction.id;
+      case "status":
+        // TODO: Make this a void toggle for current batch transactions
+        return transaction.status;
+      case "register":
+        return transaction.register;
+      case "liquorSubtotal":
+        return `$${(transaction.liquorSubtotal / 100).toFixed(2)}`;
+      case "wineSubtotal":
+        return `$${(transaction.wineSubtotal / 100).toFixed(2)}`;
+      case "discount":
+        return `$${(transaction.discount / 100).toFixed(2)}`;
+      case "tax":
+        return `$${(transaction.tax / 100).toFixed(2)}`;
+      case "total":
+        return `$${(transaction.total / 100).toFixed(2)}`;
+      case "cash":
+        return `$${(transaction.cash / 100).toFixed(2)}`;
+      case "credit":
+        return `$${(transaction.credit / 100).toFixed(2)}`;
+      case "notes":
+        return (
+          <div
+            className="flex flex-col items-center justify-center space-y-2"
+          >
+            <textarea
+              readOnly
+              className="w-full h-22.5 border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={transaction.notes || ""}
+            ></textarea>
+            {transaction.notes && <CopyButton text={transaction.notes} />}
+          </div>)
+      case "createdAt":
+        return transaction.createdAt instanceof Date ? formatDate(transaction.createdAt, "mm/dd/yyyy") + " " + formatTime(transaction.createdAt) :
+          transaction.createdAt ? formatDate(new Date(transaction.createdAt), "mm/dd/yyyy") + " " + formatTime(new Date(transaction.createdAt)) : "";
+      default:
+        return "";
+    }
+  }
+
+  // Close the modal for adding a product
+  const closeEventModal = () => {
+    setShowBatch(false);
+  };
+
   // Fetch batches on load and when refresh is toggled
   useEffect(() => {
     const fetchBatches = async () => {
@@ -79,113 +146,207 @@ const Batches = () => {
     recalculateTotals();
   }, [batches]);
 
+  // Add event listener for closing the modal when clicking outside of it
+  useEffect(() => {
+    if (showBatch) {
+      document.addEventListener('mousedown', closeModalOnOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', closeModalOnOutsideClick);
+    };
+  }, [closeModalOnOutsideClick, showBatch]);
+
   return (
-    <motion.div
-      initial={{ x: "-100%", opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: "100%", opacity: 0 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
-    >
-      <div className="flex flex-col w-full h-full items-center justify-start gap-5 divide-y divide-zinc-400">
-        {/* Header */}
-        <div className="flex w-full flex-col">
-          <h1
-            className="flex w-full text-xl sm:text-2xl font-serif font-semibold text-start text-zinc-900 px-15">
-            Previous Batches
-          </h1>
-          <h1
-            className="flex w-full text-lg sm:text-xl font-serif text-start text-zinc-900 pb-4 px-15">
-            Register: {user?.username}
-          </h1>
-        </div>
+    <>
+      <motion.div
+        initial={{ x: "-100%", opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: "100%", opacity: 0 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
+        <div className="flex flex-col w-full h-full items-center justify-start gap-5 divide-y divide-zinc-400">
+          {/* Header */}
+          <div className="flex w-full flex-col">
+            <h1
+              className="flex w-full text-xl sm:text-2xl font-serif font-semibold text-start text-zinc-900 px-15">
+              Previous Batches
+            </h1>
+            <h1
+              className="flex w-full text-lg sm:text-xl font-serif text-start text-zinc-900 pb-4 px-15">
+              Register: {user?.username}
+            </h1>
+          </div>
 
-        {/* Sales stat Cluster */}
-        <div className="grid lg:grid-cols-7 grid-cols-4 w-full items-center px-20 pb-5">
-          <div>
-            <h2 className="text-zinc-500 text-xl">Batches:</h2>
-            <h2 className="font-semibold text-2xl">{batches.length}</h2>
+          {/* Sales stat Cluster */}
+          <div className="grid lg:grid-cols-7 grid-cols-4 w-full items-center px-20 pb-5 divide-x divide-zinc-400">
+            <div>
+              <h2 className="text-center text-zinc-500 text-xl">Batches:</h2>
+              <h2 className="text-center font-semibold text-2xl">{batches.length}</h2>
+            </div>
+            <div>
+              <h2 className="text-center text-zinc-500 text-xl">Gross:</h2>
+              <h2 className="text-center font-semibold text-2xl">${grossTotal.toFixed(2)}</h2>
+            </div>
+            <div>
+              <h2 className="text-center text-zinc-500 text-xl">Wine Gross:</h2>
+              <h2 className="text-center font-semibold text-2xl">${grossWine.toFixed(2)}</h2>
+            </div>
+            <div>
+              <h2 className="text-center text-zinc-500 text-xl">Liquor Gross:</h2>
+              <h2 className="text-center font-semibold text-2xl">${grossLiquor.toFixed(2)}</h2>
+            </div>
+            <div>
+              <h2 className="text-center text-zinc-500 text-xl">Sales Tax:</h2>
+              <h2 className="text-center font-semibold text-2xl">${taxTotal.toFixed(2)}</h2>
+            </div>
+            <div>
+              <h2 className="text-center text-zinc-500 text-xl">Discount:</h2>
+              <h2 className="text-center text-red-500 font-semibold text-2xl">-${discountTotal.toFixed(2)}</h2>
+            </div>
+            <div>
+              <h2 className="text-center text-zinc-500 text-xl">Net:</h2>
+              <h2 className="text-center text-green-600 font-semibold text-2xl">${netTotal.toFixed(2)}</h2>
+            </div>
           </div>
-          <div>
-            <h2 className="text-zinc-500 text-xl">Gross:</h2>
-            <h2 className="font-semibold text-2xl">${grossTotal.toFixed(2)}</h2>
-          </div>
-          <div>
-            <h2 className="text-zinc-500 text-xl">Wine Gross:</h2>
-            <h2 className="font-semibold text-2xl">${grossWine.toFixed(2)}</h2>
-          </div>
-          <div>
-            <h2 className="text-zinc-500 text-xl">Liquor Gross:</h2>
-            <h2 className="font-semibold text-2xl">${grossLiquor.toFixed(2)}</h2>
-          </div>
-          <div>
-            <h2 className="text-zinc-500 text-xl">Sales Tax:</h2>
-            <h2 className="font-semibold text-2xl">${taxTotal.toFixed(2)}</h2>
-          </div>
-          <div>
-            <h2 className="text-zinc-500 text-xl">Discount:</h2>
-            <h2 className="text-red-500 font-semibold text-2xl">-${discountTotal.toFixed(2)}</h2>
-          </div>
-          <div>
-            <h2 className="text-zinc-500 text-xl">Net:</h2>
-            <h2 className="text-green-600 font-semibold text-2xl">${netTotal.toFixed(2)}</h2>
-          </div>
-        </div>
 
-        {/* Current Batch Data Table */}
-        <div className="flex w-[80vw] max-h-[80vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
-          {/* Spreadsheet */}
-          <div className="flex overflow-auto w-screen px-5">
-            {/* Product Table Start */}
-            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
-              {/* Table Headers */}
-              <thead className="sticky top-0 bg-white z-20">
-                <tr>
-                  {batchTableColumns.map((column) => (
-                    <th
-                      key={column.field}
-                      className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
-                      style={{ width: column.width }}
-                    >
-                      <strong>{column.label}</strong>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-
-              {/* Table Body */}
-              <tbody className="divide-y divide-zinc-400">
-                {batches.length > 0 ? (
-                  batches.map((batch) => (
-                    <tr key={batch.id} className="hover:bg-zinc-200 transition duration-200">
-                      {batchTableColumns.map((column) => (
-                        // Render each cell based on the column field
-                        <td
-                          key={column.field}
-                          className="px-4 py-3 text-xl align-center"
-                          style={{
-                            width: column.width,
-                            maxWidth: column.width,
-                            whiteSpace: "pre-line",
-                          }}
-                        >
-                          {renderCell(batch, column.field as keyof Batch)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                ) : (
+          {/* Current Batch Data Table */}
+          <div className="flex w-[80vw] max-h-[80vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
+            {/* Spreadsheet */}
+            <div className="flex overflow-auto w-screen px-5">
+              {/* Product Table Start */}
+              <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
+                {/* Table Headers */}
+                <thead className="sticky top-0 bg-white z-20">
                   <tr>
-                    <td colSpan={batchTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
-                      No batches.
-                    </td>
+                    {batchTableColumns.map((column) => (
+                      <th
+                        key={column.field}
+                        className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
+                        style={{ width: column.width }}
+                      >
+                        <strong>{column.label}</strong>
+                      </th>
+                    ))}
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+
+                {/* Table Body */}
+                <tbody className="divide-y divide-zinc-400">
+                  {batches.length > 0 ? (
+                    batches.map((batch) => (
+                      <tr
+                        key={batch.id} className="hover:bg-zinc-200 transition duration-200"
+                        onClick={() => handleShowBatch(batch)}
+                      >
+                        {batchTableColumns.map((column) => (
+                          // Render each cell based on the column field
+                          <td
+                            key={column.field}
+                            className="px-4 py-3 text-xl align-center"
+                            style={{
+                              width: column.width,
+                              maxWidth: column.width,
+                              whiteSpace: "pre-line",
+                            }}
+                          >
+                            {renderCell(batch, column.field as keyof Batch)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={batchTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
+                        No batches.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
+
+      </motion.div>
+      <AnimatePresence mode="wait">
+        {showBatch && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
+            <motion.div
+              initial={{ opacity: 0, x: "-100%" }}
+              animate={{ opacity: 1, x: "0" }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              ref={modalRef}
+              className="relative bg-white p-6 rounded-2xl max-w-[90vw] w-full shadow-lg max-h-[90vh] overflow-auto border border-zinc-500"
+            >
+              {/* Modal Header */}
+              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Transactions</h3>
+
+              {/* Close Modal Button */}
+              <div className="absolute top-4 right-4">
+                <TextButton onClick={closeEventModal}>
+                  Close
+                </TextButton>
+              </div>
+
+              <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+                {/* Spreadsheet */}
+                <div className="flex overflow-auto w-screen px-5">
+                  {/* Product Table Start */}
+                  <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
+                    {/* Table Headers */}
+                    <thead className="sticky top-0 bg-white z-20">
+                      <tr>
+                        {managerTableColumns.map((column) => (
+                          <th
+                            key={column.field}
+                            className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
+                            style={{ width: column.width }}
+                          >
+                            <strong>{column.label}</strong>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+
+                    {/* Table Body */}
+                    <tbody className="divide-y divide-zinc-400">
+                      {transactions.length > 0 ? (
+                        transactions.map((transaction) => (
+                          <tr key={transaction.id} className="hover:bg-zinc-200 transition duration-200">
+                            {managerTableColumns.map((column) => (
+                              // Render each cell based on the column field
+                              <td
+                                key={column.field}
+                                className="px-4 py-3 text-xl align-center"
+                                style={{
+                                  width: column.width,
+                                  maxWidth: column.width,
+                                  whiteSpace: "pre-line",
+                                }}
+                              >
+                                {renderTransactionCell(transaction, column.field as keyof Transaction)}
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={managerTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
+                            No transactions.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

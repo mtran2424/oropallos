@@ -113,34 +113,34 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
         </div>
 
         {/* Sales stat Cluster */}
-        <div className="grid lg:grid-cols-7 grid-cols-4 w-full items-center px-20 pb-5">
+        <div className="grid lg:grid-cols-7 grid-cols-4 w-full items-center px-20 pb-5 divide-x divide-zinc-400">
           <div>
-            <h2 className="text-zinc-500 text-xl">Transactions:</h2>
-            <h2 className="font-semibold text-2xl">{transactions.length}</h2>
+            <h2 className="text-center text-zinc-500 text-xl">Transactions:</h2>
+            <h2 className="text-center font-semibold text-2xl">{transactions.length}</h2>
           </div>
           <div>
-            <h2 className="text-zinc-500 text-xl">Gross:</h2>
-            <h2 className="font-semibold text-2xl">${grossTotal.toFixed(2)}</h2>
+            <h2 className="text-center text-zinc-500 text-xl">Gross:</h2>
+            <h2 className="text-center font-semibold text-2xl">${grossTotal.toFixed(2)}</h2>
           </div>
           <div>
-            <h2 className="text-zinc-500 text-xl">Wine Gross:</h2>
-            <h2 className="font-semibold text-2xl">${grossWine.toFixed(2)}</h2>
+            <h2 className="text-center text-zinc-500 text-xl">Wine Gross:</h2>
+            <h2 className="text-center font-semibold text-2xl">${grossWine.toFixed(2)}</h2>
           </div>
           <div>
-            <h2 className="text-zinc-500 text-xl">Liquor Gross:</h2>
-            <h2 className="font-semibold text-2xl">${grossLiquor.toFixed(2)}</h2>
+            <h2 className="text-center text-zinc-500 text-xl">Liquor Gross:</h2>
+            <h2 className="text-center font-semibold text-2xl">${grossLiquor.toFixed(2)}</h2>
           </div>
           <div>
-            <h2 className="text-zinc-500 text-xl">Sales Tax:</h2>
-            <h2 className="font-semibold text-2xl">${taxTotal.toFixed(2)}</h2>
+            <h2 className="text-center text-zinc-500 text-xl">Sales Tax:</h2>
+            <h2 className="text-center font-semibold text-2xl">${taxTotal.toFixed(2)}</h2>
           </div>
           <div>
-            <h2 className="text-zinc-500 text-xl">Discount:</h2>
-            <h2 className="text-red-500 font-semibold text-2xl">-${discountTotal.toFixed(2)}</h2>
+            <h2 className="text-center text-zinc-500 text-xl">Discount:</h2>
+            <h2 className="text-center text-red-500 font-semibold text-2xl">-${discountTotal.toFixed(2)}</h2>
           </div>
           <div>
-            <h2 className="text-zinc-500 text-xl">Net:</h2>
-            <h2 className="text-green-600 font-semibold text-2xl">${netTotal.toFixed(2)}</h2>
+            <h2 className="text-center text-zinc-500 text-xl">Net:</h2>
+            <h2 className="text-center text-green-600 font-semibold text-2xl">${netTotal.toFixed(2)}</h2>
           </div>
         </div>
 
