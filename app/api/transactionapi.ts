@@ -39,3 +39,25 @@ export const createTransaction = async (transaction: TransactionRequest) => {
   }
   return res;
 }
+
+/**
+ * Sets favorite status of a product.
+ * 
+ * @param id String
+ * @param favorite Boolean
+ * @returns {product: Product} - The updated product object.
+ */
+export const updateTransactionStatus = async (id: string, status: string) => {
+  const res = await fetch(`/api/transactions/update/status/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status: status }),
+  });
+  if (!res.ok) {
+    throw new Error('Failed to update transaction status');
+  }
+
+  return res;
+}

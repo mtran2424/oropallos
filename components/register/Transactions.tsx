@@ -51,7 +51,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
         type: type,
         name: name,
         quantity: 1,
-        discount: noDiscount,
+        discount: noDiscount.value,
         unitPrice: price
       }
       setCart([...cart, item])
@@ -141,7 +141,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                         <td className="text-2xl text-center">{item.type}</td>
                         <td className="text-2xl text-center">{item.name}</td>
                         <td className="text-2xl text-center">{item.quantity}</td>
-                        <td className="text-2xl text-center">{item.discount.name}</td>
+                        <td className="text-2xl text-center">{getDiscount(item.discount).name}</td>
                         <td className="text-2xl text-center">{(item.unitPrice / 100).toFixed(2)}</td>
                         <td className="text-2xl text-center">
                           <button onClick={() => {

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Batch, batchTableColumns, formatDate, formatTime, managerTableColumns, Transaction } from "../global.utils";
+import { Batch, batchTableColumns, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getCurrentBatchTransactions } from "@/app/api/transactionapi";
@@ -24,16 +24,25 @@ const Batches = () => {
   const [showBatch, setShowBatch] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  const [showTransaction, setShowTransaction] = useState(false);
+  const [transactionItems, setTransactionItems] = useState<TransactionItem[]>([]); // TODO: Type this properly when we have transaction items
   // Close the modal when clicking outside of it
-  const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      closeEventModal();
-    }
-  }, []);
+
+  // const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
+  //   if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+  //     closeEventModal();
+  //   }
+  // }, []);
 
   const handleShowBatch = (batch: Batch) => {
     setShowBatch(true);
     setTransactions(batch.transactions);
+  }
+
+  const handleShowTransaction = (transaction: Transaction) => {
+    setShowTransaction(true);
+    setTransactionItems(transaction.transactionItems);
   }
 
   // TODO: Figure out cluster items for batches (gross, net, tax, discount, etc...)
@@ -122,9 +131,35 @@ const Batches = () => {
     }
   }
 
+  const renderTransactionItemCell = (item: TransactionItem, column: keyof TransactionItem) => {
+    switch (column) {
+      case "id":
+        return item.id;
+      case "name":
+        return item.name;
+      case "quantity":
+        return item.quantity;
+      case "unitPrice":
+        return `$${(item.unitPrice / 100).toFixed(2)}`;
+      case "discount":
+        return item.discount ? getDiscount(item.discount).name : "";
+      case "type":
+        return item.type;
+      default:
+        return "";
+    }
+  }
+
   // Close the modal for adding a product
-  const closeEventModal = () => {
+  const closeBatchModal = () => {
     setShowBatch(false);
+    setTransactions([]);
+  };
+
+  const closeTransactionModal = () => {
+    setShowTransaction(false);
+    setShowBatch(true);
+    setTransactionItems([]);
   };
 
   // Fetch batches on load and when refresh is toggled
@@ -145,16 +180,6 @@ const Batches = () => {
   useEffect(() => {
     recalculateTotals();
   }, [batches]);
-
-  // Add event listener for closing the modal when clicking outside of it
-  useEffect(() => {
-    if (showBatch) {
-      document.addEventListener('mousedown', closeModalOnOutsideClick);
-    }
-    return () => {
-      document.removeEventListener('mousedown', closeModalOnOutsideClick);
-    };
-  }, [closeModalOnOutsideClick, showBatch]);
 
   return (
     <>
@@ -284,7 +309,7 @@ const Batches = () => {
 
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
-                <TextButton onClick={closeEventModal}>
+                <TextButton onClick={closeBatchModal}>
                   Close
                 </TextButton>
               </div>
@@ -313,7 +338,10 @@ const Batches = () => {
                     <tbody className="divide-y divide-zinc-400">
                       {transactions.length > 0 ? (
                         transactions.map((transaction) => (
-                          <tr key={transaction.id} className="hover:bg-zinc-200 transition duration-200">
+                          <tr key={transaction.id}
+                            onClick={() => handleShowTransaction(transaction)}
+                            className="hover:bg-zinc-200 transition duration-200"
+                          >
                             {managerTableColumns.map((column) => (
                               // Render each cell based on the column field
                               <td
@@ -326,6 +354,84 @@ const Batches = () => {
                                 }}
                               >
                                 {renderTransactionCell(transaction, column.field as keyof Transaction)}
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={managerTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
+                            No transactions.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence mode="wait">
+        {showTransaction && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
+            <motion.div
+              initial={{ opacity: 0, x: "-100%" }}
+              animate={{ opacity: 1, x: "0" }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              ref={modalRef}
+              className="relative bg-white p-6 rounded-2xl max-w-[90vw] w-full shadow-lg max-h-[90vh] overflow-auto border border-zinc-500"
+            >
+              {/* Modal Header */}
+              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Transaction Items</h3>
+
+              {/* Close Modal Button */}
+              <div className="absolute top-4 right-4">
+                <TextButton onClick={closeTransactionModal}>
+                  Close
+                </TextButton>
+              </div>
+
+              <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+                {/* Spreadsheet */}
+                <div className="flex overflow-auto w-screen px-5">
+                  {/* Product Table Start */}
+                  <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
+                    {/* Table Headers */}
+                    <thead className="sticky top-0 bg-white z-20">
+                      <tr>
+                        {transactionItemTableColumns.map((column) => (
+                          <th
+                            key={column.field}
+                            className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
+                            style={{ width: column.width }}
+                          >
+                            <strong>{column.label}</strong>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+
+                    {/* Table Body */}
+                    <tbody className="divide-y divide-zinc-400">
+                      {transactionItems.length > 0 ? (
+                        transactionItems.map((transactionItem) => (
+                          <tr key={transactionItem.id} className="hover:bg-zinc-200 transition duration-200">
+                            {transactionItemTableColumns.map((column) => (
+                              // Render each cell based on the column field
+                              <td
+                                key={column.field}
+                                className="px-4 py-3 text-xl align-center"
+                                style={{
+                                  width: column.width,
+                                  maxWidth: column.width,
+                                  whiteSpace: "pre-line",
+                                }}
+                              >
+                                {renderTransactionItemCell(transactionItem, column.field as keyof TransactionItem)}
                               </td>
                             ))}
                           </tr>

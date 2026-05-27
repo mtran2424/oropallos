@@ -56,7 +56,7 @@ export interface TransactionItem {
   name: string;
   quantity: number;
   unitPrice: number;
-  discount: Discount;
+  discount: string;
   type: string;
 }
 
@@ -446,6 +446,7 @@ export const managerTableColumns = [
 // Headers for batch tables in register view
 export const batchTableColumns = [
   { field: "id", label: "Batch ID", width: "75px" },
+  { field: "date", label: "Date/Time", width: "200px" },
   { field: "register", label: "Register", width: "150px" },
   { field: "gross", label: "Gross Total", width: "150px" },
   { field: "wineGross", label: "Wine Gross", width: "150px" },
@@ -455,7 +456,6 @@ export const batchTableColumns = [
   { field: "cashTotal", label: "Cash Total", width: "150px" },
   { field: "creditTotal", label: "Credit Total", width: "150px" },
   { field: "void", label: "Void Total", width: "150px" },
-  { field: "date", label: "Date/Time", width: "200px" },
 ] as const;
 
 // Headers for product tables in admin view
@@ -463,6 +463,16 @@ export const announcementTableColumns = [
   { field: "id", label: "Announcement ID", width: "200px" },
   { field: "content", label: "Content", width: "1000px" },
   { field: "endDate", label: "End Date", width: "150px" },
+] as const;
+
+// Headers for product tables in admin view
+export const transactionItemTableColumns = [
+  { field: "id", label: "Transaction Item ID", width: "100px" },
+  { field: "name", label: "Name", width: "200px" },
+  { field: "quantity", label: "Quantity", width: "100px" },
+  { field: "unitPrice", label: "Unit Price", width: "100px" },
+  { field: "discount", label: "Discount", width: "200px" },
+  { field: "type", label: "Type", width: "100px" },
 ] as const;
 
 // Utility function to sanitize strings for search
@@ -521,13 +531,13 @@ export const getTotal = (item: TransactionItem) => {
   return (
     item.unitPrice *
     item.quantity *
-    item.discount.multiplier *
+    getDiscount(item.discount).multiplier *
     (1 + taxRate / 100)
   );
 };
 
 export const getSubtotal = (item: TransactionItem) => {
-  return item.unitPrice * item.quantity * item.discount.multiplier;
+  return item.unitPrice * item.quantity * getDiscount(item.discount).multiplier;
 };
 
 export const calculateSubtotal = (cart: TransactionItem[]) => {
@@ -542,7 +552,7 @@ export const calculateSubtotal = (cart: TransactionItem[]) => {
 export const calculateDiscount = (cart: TransactionItem[]) => {
   var total = 0;
   cart.map((item) => {
-    total += item.unitPrice * item.quantity * (1 - item.discount.multiplier);
+    total += item.unitPrice * item.quantity * (1 - getDiscount(item.discount).multiplier);
   });
 
   return total;
