@@ -72,36 +72,36 @@ const Close = ({
   }, []);
 
   // Totals
-  const [grossLiquor, setGrossLiquor] = useState(initialTransactions.reduce(
+  const [grossLiquor, setGrossLiquor] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce(
     (sum, transaction) => sum + transaction.liquorSubtotal,
     0,
   ));
-  const [grossWine, setGrossWine] = useState(initialTransactions.reduce(
+  const [grossWine, setGrossWine] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce(
     (sum, transaction) => sum + transaction.wineSubtotal,
     0,
   ));
-  const [grossTotal, setGrossTotal] = useState(initialTransactions.reduce(
+  const [grossTotal, setGrossTotal] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce(
     (sum, transaction) =>
       sum + transaction.wineSubtotal + transaction.liquorSubtotal,
     0,
   ));
-  const [discountTotal, setDiscountTotal] = useState(initialTransactions.reduce(
+  const [discountTotal, setDiscountTotal] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce(
     (sum, transaction) => sum + transaction.discount,
     0,
   ));
   const [discountQty, setDiscountQty] = useState(initialTransactions.filter((transaction) => transaction.discount > 0)
     .length,);
-  const [taxTotal, setTaxTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.tax, 0)
+  const [taxTotal, setTaxTotal] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce((sum, transaction) => sum + transaction.tax, 0)
   );
-  const [netTotal, setNetTotal] = useState(initialTransactions.reduce(
+  const [netTotal, setNetTotal] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce(
     (sum, transaction) => sum + transaction.total,
     0,
   ));
-  const [creditTotal, setCreditTotal] = useState(initialTransactions.reduce(
+  const [creditTotal, setCreditTotal] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce(
     (sum, transaction) => sum + transaction.credit,
     0,
   ));
-  const [cashTotal, setCashTotal] = useState(initialTransactions.reduce(
+  const [cashTotal, setCashTotal] = useState(initialTransactions.filter((t) => t.status !== "Void").reduce(
     (sum, transaction) => sum + transaction.cash,
     0,
   ));
@@ -109,44 +109,42 @@ const Close = ({
   // Recalculate totals when transactions change
   const recalculateTotals = () => {
     setGrossLiquor(
-      transactions.reduce(
+      transactions.filter((t) => t.status !== "Void").reduce(
         (sum, transaction) => sum + transaction.liquorSubtotal,
         0,
       )
     );
     setGrossWine(
-      transactions.reduce(
+      transactions.filter((t) => t.status !== "Void").reduce(
         (sum, transaction) => sum + transaction.wineSubtotal,
         0,
       )
     );
     setGrossTotal(
-      transactions.reduce(
+      transactions.filter((t) => t.status !== "Void").reduce(
         (sum, transaction) =>
           sum + transaction.wineSubtotal + transaction.liquorSubtotal,
         0,
       )
     );
     setDiscountTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.discount, 0)
+      transactions.filter((t) => t.status !== "Void").reduce((sum, transaction) => sum + transaction.discount, 0)
     );
     setDiscountQty(
       transactions.filter((transaction) => transaction.discount > 0).length,
     );
     setTaxTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.tax, 0)
+      transactions.filter((t) => t.status !== "Void").reduce((sum, transaction) => sum + transaction.tax, 0)
     );
     setNetTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.total, 0)
+      transactions.filter((t) => t.status !== "Void").reduce((sum, transaction) => sum + transaction.total, 0)
     );
     setCreditTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.credit, 0)
+      transactions.filter((t) => t.status !== "Void").reduce((sum, transaction) => sum + transaction.credit, 0)
     );
     setCashTotal(
-      transactions.reduce((sum, transaction) => sum + transaction.cash, 0)
+      transactions.filter((t) => t.status !== "Void").reduce((sum, transaction) => sum + transaction.cash, 0)
     );
-    // console.log("Cash total recalculated:", cashTotal);
-    // console.log("Credit total recalculated:", creditTotal);
   };
 
   const batchTable = (
@@ -224,7 +222,7 @@ const Close = ({
 
         <tr>
           <td className="font-semibold text-2xl">VOID COUNT</td>
-          <td className="text-end text-2xl">0 Q</td>
+          <td className="text-end text-2xl">{transactions.filter((t) => t.status === "Void").length} Q</td>
         </tr>
 
         <tr>
@@ -273,7 +271,7 @@ const Close = ({
         liquorGross: grossLiquor,
         gross: grossTotal,
         tax: taxTotal,
-        void: 0,
+        void: transactions.filter((t) => t.status === "Void").reduce((sum, transaction) => sum + transaction.total, 0),
         cashTotal: cashTotal,
         creditTotal: creditTotal,
         discount: discountTotal,

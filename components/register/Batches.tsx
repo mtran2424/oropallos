@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Batch, batchTableColumns, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getCurrentBatchTransactions } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import { getBatches } from "@/app/api/batchapi";
@@ -26,14 +26,15 @@ const Batches = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [showTransaction, setShowTransaction] = useState(false);
-  const [transactionItems, setTransactionItems] = useState<TransactionItem[]>([]); // TODO: Type this properly when we have transaction items
-  // Close the modal when clicking outside of it
+  const [transactionItems, setTransactionItems] = useState<TransactionItem[]>([]);
 
-  // const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
-  //   if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-  //     closeEventModal();
-  //   }
-  // }, []);
+  const sortedBatches = useMemo(() => {
+    return batches.sort((a, b) => {
+      const dateA = new Date(a.date || 0);
+      const dateB = new Date(b.date || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [batches]);
 
   const handleShowBatch = (batch: Batch) => {
     setShowBatch(true);
@@ -54,11 +55,11 @@ const Batches = () => {
     setGrossTotal(batches.reduce((sum, batch) => sum + batch.gross, 0) / 100);
     setDiscountTotal(batches.reduce((sum, batch) => sum + batch.discount, 0) / 100);
     setTaxTotal(batches.reduce((sum, batch) => sum + batch.tax, 0) / 100);
+    setNetTotal(batches.reduce((sum, batch) => sum + batch.gross, 0) / 100);
   }
 
   // TODO: Create filters for batches by date, register, etc...
 
-  // TODO: Make popup to show items in transaction when transaction is clicked on
   // Action section to view transactions for each batch and to view items in each transaction.
   const renderCell = (batch: Batch, column: keyof Batch) => {
     switch (column) {
@@ -93,7 +94,6 @@ const Batches = () => {
       case "id":
         return transaction.id;
       case "status":
-        // TODO: Make this a void toggle for current batch transactions
         return transaction.status;
       case "register":
         return transaction.register;
@@ -257,8 +257,8 @@ const Batches = () => {
 
                 {/* Table Body */}
                 <tbody className="divide-y divide-zinc-400">
-                  {batches.length > 0 ? (
-                    batches.map((batch) => (
+                  {sortedBatches.length > 0 ? (
+                    sortedBatches.map((batch) => (
                       <tr
                         key={batch.id} className="hover:bg-zinc-200 transition duration-200"
                         onClick={() => handleShowBatch(batch)}

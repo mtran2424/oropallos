@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // Adjust to your prisma client path
 import { currentUser } from "@clerk/nextjs/server";
-import { taxRate, TransactionItem } from "@/components/global.utils";
+import { getDiscount, taxRate, TransactionItem } from "@/components/global.utils";
 
 export async function POST(req: NextRequest) {
   // Check if user has access to route
@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
   }, 0);
 
   const wineSubtotal = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Wine" ? item.unitPrice * item.discount.multiplier * item.quantity : 0);
+    return sum + (item.type === "Wine" ? item.unitPrice * getDiscount(item.discount).multiplier * item.quantity : 0);
   }, 0);
 
   const discount = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Wine" && item.discount.value !== "No_Discount" ? (item.unitPrice * (1 - item.discount.multiplier) * item.quantity) : 0);
+    return sum + (item.type === "Wine" && getDiscount(item.discount).value !== "No_Discount" ? (item.unitPrice * (1 - getDiscount(item.discount).multiplier) * item.quantity) : 0);
   }, 0);
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
             name: item.name,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
-            discount: item.discount.value,
+            discount: item.discount,
             type: item.type
           })),
         },

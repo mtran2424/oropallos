@@ -257,7 +257,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
           onClick={() => {
             if (type && quantity && discount && input) {
               onConfirm(
-                { type: type, name: item, quantity: quantity, discount: discount, unitPrice: parseInt(input) }
+                { type: type, name: item, quantity: quantity, discount: discount.value, unitPrice: parseInt(input) }
               );
               setInput("");
               setDiscount(noDiscount);

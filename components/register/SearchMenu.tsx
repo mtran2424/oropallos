@@ -102,7 +102,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
         type: type,
         name: currentProduct.name,
         quantity: quantity,
-        discount: discount,
+        discount: discount.value,
         unitPrice: parseFloat(getPrice(discount.value, currentProduct.price * 100).toFixed(2))
       })
 

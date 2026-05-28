@@ -430,7 +430,6 @@ export const productTableColumns = [
 export const managerTableColumns = [
   { field: "id", label: "Transaction ID", width: "75px" },
   { field: "createdAt", label: "Date/Time", width: "100px" },
-  { field: "status", label: "Status", width: "100px" },
   { field: "total", label: "Total", width: "100px" },
   { field: "register", label: "Register", width: "100px" },
   { field: "liquorSubtotal", label: "Liquor Subtotal", width: "150px" },
@@ -440,7 +439,6 @@ export const managerTableColumns = [
   { field: "credit", label: "Credit", width: "150px" },
   { field: "tax", label: "Tax", width: "150px" },
   { field: "notes", label: "Notes", width: "200px" },
-  //TODO: Add Amt Tendered and Change
 ] as const;
 
 // Headers for batch tables in register view

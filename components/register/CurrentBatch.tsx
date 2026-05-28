@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { formatDate, formatTime, getDiscount, managerTableColumns, noDiscount, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getCurrentBatchTransactions, updateTransactionStatus } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import TextButton from "../ui/TextButton";
@@ -20,10 +20,19 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
   const [taxTotal, setTaxTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
   const [netTotal, setNetTotal] = useState(initialTransactions.reduce((sum, transaction) => sum + transaction.total, 0) / 100);
 
+  const sortedTransactions = useMemo(() => {
+    return transactions.sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0);
+      const dateB = new Date(b.createdAt || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [transactions]);
+
   // Transaction Modal
   const modalRef = useRef<HTMLDivElement>(null);
   const [showTransaction, setShowTransaction] = useState(false);
   const [transactionItems, setTransactionItems] = useState<TransactionItem[]>([]);
+  const [loadingStatus, setLoadingStatus] = useState<{id: string, state: boolean}>({id: "", state: false});
 
   const handleShowTransaction = (transaction: Transaction) => {
     setShowTransaction(true);
@@ -43,30 +52,19 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
 
   // Recalculate totals when transactions change
   const recalculateTotals = () => {
-    setGrossLiquor(transactions.reduce((sum, transaction) => sum + transaction.liquorSubtotal, 0) / 100);
-    setGrossWine(transactions.reduce((sum, transaction) => sum + transaction.wineSubtotal, 0) / 100);
-    setGrossTotal(transactions.reduce((sum, transaction) => sum + transaction.wineSubtotal + transaction.liquorSubtotal, 0) / 100);
-    setDiscountTotal(transactions.reduce((sum, transaction) => sum + transaction.discount, 0) / 100);
-    setTaxTotal(transactions.reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
-    setNetTotal(transactions.reduce((sum, transaction) => sum + transaction.total, 0) / 100);
+    setGrossLiquor(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.liquorSubtotal, 0) / 100);
+    setGrossWine(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.wineSubtotal, 0) / 100);
+    setGrossTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.wineSubtotal + transaction.liquorSubtotal, 0) / 100);
+    setDiscountTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.discount, 0) / 100);
+    setTaxTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
+    setNetTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.total, 0) / 100);
   }
 
-  // TODO: Make popup to show items in transaction when transaction is clicked on
   // Action section to view transaction items
   const renderCell = (transaction: Transaction, column: keyof Transaction) => {
     switch (column) {
       case "id":
         return transaction.id;
-      case "status":
-        // TODO: Loading spinner for when status is being updated
-        if (transaction.status === "Cashed")
-          return (<TextButton onClick={() => handleStatusToggle(transaction.id || "", "Voided")}>
-            Cashed
-          </TextButton>)
-        else if (transaction.status === "Voided")
-          return (<TextButton onClick={() => handleStatusToggle(transaction.id || "", "Cashed")}>
-            Voided
-          </TextButton>)
       case "register":
         return transaction.register;
       case "liquorSubtotal":
@@ -124,16 +122,20 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
 
   const handleStatusToggle = async (id: string, status: string) => {
     try {
+      setLoadingStatus({id, state: true});
+
       await updateTransactionStatus(id, status)
         .then((res) => {
           if (res.status === 200) {
             toast.success('Status changed successfully');
             setRefresh(!refresh);
+            setLoadingStatus({id: "", state: false});
           }
         });
     } catch (error) {
       console.error('Error updating transaction status:', error);
       toast.error('Failed to update transaction status');
+      setLoadingStatus({id: "", state: false});
     }
   }
 
@@ -236,15 +238,29 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                         <strong>{column.label}</strong>
                       </th>
                     ))}
+                    <th
+                      key={'status'}
+                      className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
+                      style={{ width: "150px" }}
+                    >
+                      <strong>Status</strong>
+                    </th>
+                    <th
+                      key={'actions'}
+                      className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
+                      style={{ width: "150px" }}
+                    >
+                      <strong>Actions</strong>
+                    </th>
                   </tr>
                 </thead>
 
                 {/* Table Body */}
                 <tbody className="divide-y divide-zinc-400">
-                  {transactions.length > 0 ? (
-                    transactions.map((transaction) => (
+                  {sortedTransactions.length > 0 ? (
+                    sortedTransactions.map((transaction) => (
                       <tr key={transaction.id}
-                        onClick={() => handleShowTransaction(transaction)}
+                        // onClick={() => handleShowTransaction(transaction)}
                         className="hover:bg-zinc-200 transition duration-200"
                       >
                         {managerTableColumns.map((column) => (
@@ -261,6 +277,39 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                             {renderCell(transaction, column.field as keyof Transaction)}
                           </td>
                         ))}
+                        <td
+                          key={'status'}
+                          className="px-4 py-3 text-xl align-center"
+                          style={{
+                            width: "150px",
+                            maxWidth: "150px",
+                          }}
+                        >
+                          {loadingStatus.state && loadingStatus.id === transaction.id ? (
+                            // Loading spinner
+                            <div className="flex justify-center items-center py-2">
+                              <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                            </div>
+                          ) : (
+                            <TextButton onClick={() => handleStatusToggle(transaction.id || "", transaction.status === "Cashed" ? "Void" : "Cashed")}>
+                              {transaction.status}
+                            </TextButton>
+                          )}
+                        </td>
+                        <td
+                          key={'actions'}
+                          className="px-4 py-3 text-xl align-center"
+                          style={{
+                            width: "100px",
+                            maxWidth: "100px",
+                          }}
+                        >
+                          <TextButton
+                            onClick={() => handleShowTransaction(transaction)}
+                          >
+                            View
+                          </TextButton>
+                        </td>
                       </tr>
                     ))
                   ) : (
