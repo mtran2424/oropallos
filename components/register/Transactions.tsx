@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount } from "../global.utils";
+import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate } from "../global.utils";
 import { useRef, useState } from "react";
 import SearchMenu from "./SearchMenu";
 import QuickAddButton from "./QuickAddButton";
@@ -10,8 +10,10 @@ import { useUser } from "@clerk/nextjs";
 import { IoBackspaceOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import TextButton from "../ui/TextButton";
+import { useReactToPrint } from "react-to-print";
 
 const Transactions = ({ products }: { products: Product[] }) => {
+  const date = new Date();
   const [cart, setCart] = useState<TransactionItem[]>([]);
   const [mode, setMode] = useState<string>("Register");
   const [input, setInput] = useState<string>("");
@@ -93,6 +95,102 @@ const Transactions = ({ products }: { products: Product[] }) => {
       console.error(err);
     }
   }
+
+
+  // Printing
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: "Transaction Receipt",
+    pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 4mm;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      .receipt {
+        width: 72mm;
+        font-family: monospace;
+        font-size: 12px;
+      }
+    }
+  `,
+  })
+
+  const receipt = (
+    <div ref={componentRef} className="flex flex-col w-full items-center p-5">
+      <h1 className="text-2xl font-bold mb-4">OROPALLO'S</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">WINE & LIQUOR</h1>
+      <h1 className="text-xl mb-4">376 DIX AVENUE</h1>
+      <h1 className="text-xl mb-4">QUEENSBURY, NY 12804</h1>
+      <h1 className="text-2xl font-bold mb-4">518-798-3988</h1>
+      <table className="w-full max-w-3/4 border-separate border-spacing-y-4 text-2xl">
+        <tbody>
+          <tr>
+            <td className="text-2xl text-start">
+              {formatDate(date, "mm/dd/yyyy")}
+            </td>
+            <td className="text-2xl text-end">
+              {formatTime(date)}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table className="w-full max-w-3/4 border-separate border-spacing-y-4">
+        <tbody>
+          {cart.map((item, index) => (
+            <tr key={index} className="w-full">
+              <td className="text-2xl text-start">
+                <div
+                  className="flex flex-col items-start justify-center">
+                  <div className="font-semibold">
+                    {item.type.toUpperCase()}
+                  </div>
+                  <div>
+                    {item.name.toUpperCase()}
+                  </div>
+                </div>
+              </td>
+              <td className="text-2xl text-start">
+                <div className="flex flex-col items-end justify-center">
+                  <div>
+                    {item.quantity > 1 ? `${item.quantity} @ ` : ''}${(item.unitPrice / 100).toFixed(2)}
+                  </div>
+                  {item.discount !== "No_Discount" && (
+                    <div>
+                      {getDiscount(item.discount).name.toUpperCase()}
+                    </div>
+                  )}
+                  {item.discount !== "No_Discount" && (
+                    <div>
+                      -{(((item.unitPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.unitPrice * item.quantity)) / 100).toFixed(2)}
+                    </div>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+          <tr>
+            <td className="text-2xl text-start font-semibold">
+              TOTAL
+            </td>
+            <td className="text-2xl text-end">
+              ${(calculateSubtotal(cart) / 100).toFixed(2)}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
 
   return (
     <>
@@ -244,6 +342,19 @@ const Transactions = ({ products }: { products: Product[] }) => {
               Cash Out
             </button>
           </div>
+
+          {/* <TextButton onClick={handlePrint}>Print Receipt</TextButton> */}
+
+          <div
+            className="hidden"
+          >
+            <div
+              className="print-area"
+              ref={componentRef}
+            >
+              {receipt}
+            </div>
+          </div>
         </div>
       </motion.div>
 
@@ -262,7 +373,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Cashout</h3>
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
-                <TextButton onClick={closeEventModal}> 
+                <TextButton onClick={closeEventModal}>
                   Close
                 </TextButton>
               </div>
