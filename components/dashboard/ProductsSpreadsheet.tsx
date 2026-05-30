@@ -13,6 +13,8 @@ import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
 import AddSize from "../utils/AddSize";
 import { getProducts } from "@/app/api/adminapi";
+import TextButton from "../ui/TextButton";
+import EditUnitPrice from "../utils/EditUnitPrice";
 
 const PRODUCTS_PER_PAGE = 25;
 
@@ -27,7 +29,25 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
   const productsRef = useRef<HTMLTableElement | null>(null);
   const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [targetProductId, setTargetProductId] = useState<string | null>(null);
+
+  //Delete confirmation modal
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Close the modal
+  const closeEventModal = () => {
+    setDeleteConfirm(false);
+  };
+
+  const openEventModal = (product: Product) => {
+    setTargetProductId(product.id || null);
+    setDeleteConfirm(true);
+  }
+
+
 
   // Scroll to products grid on pagination/search/sort change
   useEffect(() => {
@@ -66,6 +86,12 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         break;
       case "name-desc":
         sorted.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "size-asc":
+        sorted.sort((a, b) => (a.size || "").localeCompare(b.size || ""));
+        break;
+      case "size-desc":
+        sorted.sort((a, b) => (b.size || "").localeCompare(a.size || ""));
         break;
       case "price-asc":
         sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
@@ -124,21 +150,31 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   // Send a delete request to the server to remove the product and refresh the list
   const handleDeleteProduct = async (id: string) => {
     try {
+
+      setLoading(true);
       // Call the delete function from productapi
       await deleteProduct(id)
         .then((res) => {
           if (res.status === 200) {
             toast.success('Product deleted successfully');
             setRefresh(!refresh);
+            setTargetProductId(null);
+            setDeleteConfirm(false);
           }
           else {
             console.error('Failed to delete product');
+            setTargetProductId(null);
+            setDeleteConfirm(false);
           }
+          setLoading(false);
         });
 
     } catch (error) {
       console.error('Error deleting product:', error);
       toast.error('Failed to delete product');
+      setLoading(false);
+      setTargetProductId(null);
+      setDeleteConfirm(false);
     }
   };
 
@@ -264,7 +300,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
       case "upc":
         return product.upc;
       case "unitPrice":
-        return product.unitPrice ? (product.unitPrice/100).toLocaleString("en-US", {
+        return product.unitPrice ? (product.unitPrice / 100).toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
         }) : "N/A";
@@ -318,269 +354,324 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col justify-between items-start mb-3 space-y-4 px-2">
+    <>
+      <div>
+        <div className="flex flex-col justify-between items-start mb-3 space-y-4 px-2">
 
-        {/* Header */}
-        <h1 className="text-2xl font-semibold text-zinc-900">Products</h1>
+          {/* Header */}
+          <h1 className="text-2xl font-semibold text-zinc-900">Products</h1>
 
-        {/* Filters for categories */}
-        <div>
-          <h2 className="text-lg font-bold text-zinc-900 mb-1">Filters</h2>
-          <div className="flex gap-2 flex-wrap">
-            {ProductCategories.map((category) => (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                key={category.name}
-                onClick={() => toggleCategoryFilter(category.value)}
-                className={`text-xs px-2 py-1 rounded border font-semibold ${categoryFilters.includes(category.value)
-                  ? "text-zinc-200 bg-red-900"
-                  : "text-red-900 border-red-900"
-                  }`}
+          {/* Filters for categories */}
+          <div>
+            <h2 className="text-lg font-bold text-zinc-900 mb-1">Filters</h2>
+            <div className="flex gap-2 flex-wrap">
+              {ProductCategories.map((category) => (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  key={category.name}
+                  onClick={() => toggleCategoryFilter(category.value)}
+                  className={`text-xs px-2 py-1 rounded border font-semibold ${categoryFilters.includes(category.value)
+                    ? "text-zinc-200 bg-red-900"
+                    : "text-red-900 border-red-900"
+                    }`}
+                >
+                  {category.name}
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Subcategory Filters */}
+            <div className="flex gap-2 flex-wrap mt-2">
+              {(() => {
+                const rendered = new Set();
+
+                return categoryFilters.flatMap((category) => {
+                  const selectedCategory = ProductCategories.find((cat) => cat.value === category);
+                  if (!selectedCategory) return [];
+
+                  return selectedCategory.subcategories
+                    .filter((subcategory) => {
+                      if (rendered.has(subcategory.value)) return false;
+                      rendered.add(subcategory.value);
+                      return true;
+                    })
+                    .map((subcategory) => (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        key={subcategory.value}
+                        onClick={() => toggleSubcategoryFilter(subcategory.value)}
+                        className={`text-xs px-2 py-1 rounded border font-semibold ${subcategoryFilters.includes(subcategory.value)
+                          ? "text-zinc-200 bg-red-900"
+                          : "text-red-900 border-red-900"
+                          }`}
+                      >
+                        {subcategory.name}
+                      </motion.button>
+                    ));
+                });
+              })()}
+            </div>
+
+          </div>
+
+          {/* Search Bar Component */}
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            handleSearchChange={handleSearchChange}
+          />
+
+          <div className="flex flex-row w-full whitespace-nowrap">
+            <AddProduct onAddProduct={handleAddProduct} products={products} />
+
+            {/* Sort Dropdown */}
+            <div className="flex justify-end w-full">
+              <select
+                value={sortOption}
+                onChange={handleSortChange}
+                className="border border-gray-300 rounded px-3 py-2 text-sm"
               >
-                {category.name}
-              </motion.button>
-            ))}
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="size-asc">Size (Small → Large)</option>
+                <option value="size-desc">Size (Large → Small)</option>
+                <option value="price-asc">Price (Low → High)</option>
+                <option value="price-desc">Price (High → Low)</option>
+                <option value="newest-oldest">Date (Newest → Oldest)</option>
+                <option value="oldest-newest">Date (Oldest → Newest)</option>
+              </select>
+            </div>
           </div>
 
-          {/* Subcategory Filters */}
-          <div className="flex gap-2 flex-wrap mt-2">
-            {(() => {
-              const rendered = new Set();
+          {/* Data Table */}
+          <div className="flex max-w-[90vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
 
-              return categoryFilters.flatMap((category) => {
-                const selectedCategory = ProductCategories.find((cat) => cat.value === category);
-                if (!selectedCategory) return [];
+            {/* Spreadsheet */}
+            <div className="flex overflow-auto w-screen">
 
-                return selectedCategory.subcategories
-                  .filter((subcategory) => {
-                    if (rendered.has(subcategory.value)) return false;
-                    rendered.add(subcategory.value);
-                    return true;
-                  })
-                  .map((subcategory) => (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      key={subcategory.value}
-                      onClick={() => toggleSubcategoryFilter(subcategory.value)}
-                      className={`text-xs px-2 py-1 rounded border font-semibold ${subcategoryFilters.includes(subcategory.value)
-                        ? "text-zinc-200 bg-red-900"
-                        : "text-red-900 border-red-900"
-                        }`}
-                    >
-                      {subcategory.name}
-                    </motion.button>
-                  ));
-              });
-            })()}
-          </div>
+              {/* Product Table Start */}
+              <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }} ref={productsRef}>
+                {/* Table Headers */}
+                <thead className="sticky top-0 bg-white z-20">
+                  <tr>
+                    {productTableColumns.map((column) => (
+                      <th
+                        key={column.field}
+                        className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                        style={{ width: column.width }}
+                      >
+                        <strong>{column.label}</strong>
+                      </th>
+                    ))}
 
-        </div>
-
-        {/* Search Bar Component */}
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          handleSearchChange={handleSearchChange}
-        />
-
-        <div className="flex flex-row w-full whitespace-nowrap">
-          <AddProduct onAddProduct={handleAddProduct} products={products} />
-
-          {/* Sort Dropdown */}
-          <div className="flex justify-end w-full">
-            <select
-              value={sortOption}
-              onChange={handleSortChange}
-              className="border border-gray-300 rounded px-3 py-2 text-sm"
-            >
-              <option value="name-asc">Name (A-Z)</option>
-              <option value="name-desc">Name (Z-A)</option>
-              <option value="price-asc">Price (Low → High)</option>
-              <option value="price-desc">Price (High → Low)</option>
-              <option value="newest-oldest">Date (Newest → Oldest)</option>
-              <option value="oldest-newest">Date (Oldest → Newest)</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Data Table */}
-        <div className="flex max-w-[90vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
-
-          {/* Spreadsheet */}
-          <div className="flex overflow-auto w-screen">
-
-            {/* Product Table Start */}
-            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }} ref={productsRef}>
-              {/* Table Headers */}
-              <thead className="sticky top-0 bg-white z-20">
-                <tr>
-                  {productTableColumns.map((column) => (
                     <th
-                      key={column.field}
                       className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                      style={{ width: column.width }}
+                      style={{ width: "200px" }}
                     >
-                      <strong>{column.label}</strong>
+                      <strong>Favorite</strong>
                     </th>
-                  ))}
 
-                  <th
-                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                    style={{ width: "200px" }}
-                  >
-                    <strong>Favorite</strong>
-                  </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                      style={{ width: "200px" }}
+                    >
+                      <strong>Hidden</strong>
+                    </th>
 
-                  <th
-                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                    style={{ width: "200px" }}
-                  >
-                    <strong>Hidden</strong>
-                  </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
+                      style={{ width: "300px" }}
+                    >
+                      <strong>Actions</strong>
+                    </th>
+                  </tr>
+                </thead>
 
-                  <th
-                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                    style={{ width: "300px" }}
-                  >
-                    <strong>Actions</strong>
-                  </th>
-                </tr>
-              </thead>
+                {/* Table Body */}
+                <tbody className="divide-y divide-zinc-400">
+                  {currentProducts.length > 0 ? (
+                    currentProducts.map((product) => (
+                      <tr key={product.id} className="hover:bg-zinc-200 transition duration-200">
+                        {productTableColumns.map((column) => (
+                          // Render each cell based on the column field
+                          <td
+                            key={column.field}
+                            className="px-4 py-3 text-sm align-center"
+                            style={{
+                              width: column.width,
+                              maxWidth: column.width,
+                              whiteSpace: "pre-line",
+                            }}
+                          >
+                            {renderCell(product, column.field as keyof Product)}
+                          </td>
+                        ))}
 
-              {/* Table Body */}
-              <tbody className="divide-y divide-zinc-400">
-                {currentProducts.length > 0 ? (
-                  currentProducts.map((product) => (
-                    <tr key={product.id} className="hover:bg-zinc-200 transition duration-200">
-                      {productTableColumns.map((column) => (
-                        // Render each cell based on the column field
                         <td
-                          key={column.field}
                           className="px-4 py-3 text-sm align-center"
                           style={{
-                            width: column.width,
-                            maxWidth: column.width,
+                            width: "200px",
+                            maxWidth: "200px",
                             whiteSpace: "pre-line",
                           }}
                         >
-                          {renderCell(product, column.field as keyof Product)}
-                        </td>
-                      ))}
-
-                      <td
-                        className="px-4 py-3 text-sm align-center"
-                        style={{
-                          width: "200px",
-                          maxWidth: "200px",
-                          whiteSpace: "pre-line",
-                        }}
-                      >
-                        {/* Favorite Product Button */}
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="text-center"
-                          onClick={() => handleFavoriteToggle(product.id || "", product)}
-                        >
-                          {product.favorite ?
-                            <MdFavorite size={40} className="text-red-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
-                            <MdFavorite size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
-                        </motion.button>
-                      </td>
-
-                      <td
-                        className="px-4 py-3 text-sm align-center"
-                        style={{
-                          width: "200px",
-                          maxWidth: "200px",
-                          whiteSpace: "pre-line",
-                        }}
-                      >
-                        {/* Favorite Product Button */}
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="text-center"
-                          onClick={() => handleHiddenToggle(product.id || "", product)}
-                        >
-                          {product.hidden ?
-                            <FaEye  size={40} className="text-blue-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
-                            <FaEyeSlash  size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
-                        </motion.button>
-                      </td>
-
-                      {/* Actions Column */}
-                      <td
-                        className="px-4 py-3 text-sm align-center"
-                        style={{
-                          width: "300px",
-                          maxWidth: "300px",
-                          whiteSpace: "pre-line",
-                        }}
-                      >
-                        <div className="flex flex-row">
-                          {/* Remove Product Button */}
+                          {/* Favorite Product Button */}
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            className="text-center text-red-500 hover:text-red-400"
-                            onClick={() => handleDeleteProduct(product.id || "")}
+                            className="text-center"
+                            onClick={() => handleFavoriteToggle(product.id || "", product)}
                           >
-                            <MdDelete size={30} />
+                            {product.favorite ?
+                              <MdFavorite size={40} className="text-red-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
+                              <MdFavorite size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
                           </motion.button>
+                        </td>
 
-                          {/* Edit Product Button */}
-                          <EditProduct onEditProduct={handleEditProduct} product={product} products={products} />
+                        <td
+                          className="px-4 py-3 text-sm align-center"
+                          style={{
+                            width: "200px",
+                            maxWidth: "200px",
+                            whiteSpace: "pre-line",
+                          }}
+                        >
+                          {/* Favorite Product Button */}
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="text-center"
+                            onClick={() => handleHiddenToggle(product.id || "", product)}
+                          >
+                            {product.hidden ?
+                              <FaEye size={40} className="text-blue-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
+                              <FaEyeSlash size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
+                          </motion.button>
+                        </td>
 
-                          {/* Add Another Product Size */}
-                          <AddSize onAddSize={handleAddProduct} product={product} products={products} />
-                        </div>
+                        {/* Actions Column */}
+                        <td
+                          className="px-4 py-3 text-sm align-center"
+                          style={{
+                            width: "300px",
+                            maxWidth: "300px",
+                            whiteSpace: "pre-line",
+                          }}
+                        >
+                          <div className="flex flex-row">
+                            {/* Remove Product Button */}
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="text-center text-red-500 hover:text-red-400"
+                              onClick={() => { openEventModal(product) }}
+                            >
+                              <MdDelete size={30} />
+                            </motion.button>
+
+                            {/* Edit Product Button */}
+                            <EditProduct onEditProduct={handleEditProduct} product={product} products={products} />
+
+                            {/* Add Another Product Size */}
+                            <AddSize onAddSize={handleAddProduct} product={product} products={products} />
+                            
+                            <EditUnitPrice onEditUnitPrice={handleEditProduct} product={product}/>
+                          </div>
+                        </td>
+
+                      </tr>
+                    ))
+                  ) : (
+                    // No products available message
+                    <tr>
+                      <td colSpan={productTableColumns.length} className="text-center py-4 text-zinc-900">
+                        No products match selected filters.
                       </td>
-
                     </tr>
-                  ))
-                ) : (
-                  // No products available message
-                  <tr>
-                    <td colSpan={productTableColumns.length} className="text-center py-4 text-zinc-900">
-                      No products match selected filters.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          {/* Instructions for scrolling and edit mode */}
+          <div className="mt-2 text-xs text-zinc-900 italic">
+            <span>Scroll horizontally to view all columns →</span>
+          </div>
+
         </div>
 
-        {/* Instructions for scrolling and edit mode */}
-        <div className="mt-2 text-xs text-zinc-900 italic">
-          <span>Scroll horizontally to view all columns →</span>
+        {/* Pagination Section */}
+        <div className="flex flex-col items-center justify-center w-full font-serif">
+          {/* Showing Count */}
+          <p className="text-md font-semibold mb-2 text-zinc-500">
+            Showing {endIdx} of {sortedAndFilteredProducts.length} products
+          </p>
+
+          {/* Pagination */}
+          <Pagination
+            prevClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            nextClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
+
         </div>
-
       </div>
 
-      {/* Pagination Section */}
-      <div className="flex flex-col items-center justify-center w-full font-serif">
-        {/* Showing Count */}
-        <p className="text-md font-semibold mb-2 text-zinc-500">
-          Showing {endIdx} of {sortedAndFilteredProducts.length} products
-        </p>
+      {/* Confirmation modal */}
+      <AnimatePresence mode="wait">
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
+            <motion.div
+              initial={{ opacity: 0, x: "-100%" }}
+              animate={{ opacity: 1, x: "0" }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              ref={modalRef}
+              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border border-zinc-500"
+            >
+              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Are you sure?</h3>
+              {/* Close Modal Button */}
+              <div className="absolute top-4 right-4">
+                <TextButton onClick={closeEventModal}>
+                  Close
+                </TextButton>
+              </div>
+              <div className="flex flex-col gap-4 pb-4">
+                <label className="text-xl text-zinc-700 w-full text-left p-5">
+                  This action cannot be undone. This will permanently delete the product from the database.
+                </label>
+              </div>
 
-        {/* Pagination */}
-        <Pagination
-          prevClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          nextClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          currentPage={currentPage}
-          totalPages={totalPages}
-        />
+              <div className="flex flex-col items-center gap-2">
+                {/* Loading Spinner */}
+                {loading ? (
+                  <div className="flex justify-center items-center py-2">
+                    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                    onClick={() => {
+                      handleDeleteProduct(targetProductId || "");
+                    }}
+                  >
+                    Confirm
+                  </motion.button>
+                )}
+              </div>
 
-      </div>
-    </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
