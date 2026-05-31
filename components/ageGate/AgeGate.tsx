@@ -7,19 +7,19 @@ import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 export default function AgeGate({ onVerified }: { onVerified: () => void }) {
   const [visible, setVisible] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const verified = localStorage.getItem("ageVerified");
-    if (!verified) setVisible(true);
-  }, []);
-
+  
   const handleVerify = () => {
     localStorage.setItem("ageVerified", "true");
     setVisible(false);
     onVerified();
   };
-
+  
   if (!visible) return null;
+  
+  useEffect(() => {
+    const verified = localStorage.getItem("ageVerified");
+    if (!verified) setVisible(true);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

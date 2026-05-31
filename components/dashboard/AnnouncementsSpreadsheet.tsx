@@ -17,14 +17,9 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest-oldest");
-  const announcementsRef = useRef<HTMLTableElement | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
   const [refresh, setRefresh] = useState(false);
-
-  // Scroll to products grid on pagination/search/sort change
-  useEffect(() => {
-    announcementsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [currentPage, searchTerm, sortOption]);
+  const announcementsRef = useRef<HTMLTableElement | null>(null);
 
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredAnnouncements = useMemo(() => {
@@ -167,6 +162,11 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+
+  // Scroll to products grid on pagination/search/sort change
+  useEffect(() => {
+    announcementsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentPage, searchTerm, sortOption]);
 
   return (
     <div>

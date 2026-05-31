@@ -27,41 +27,12 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
-  const productsRef = useRef<HTMLTableElement | null>(null);
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
   const [targetProductId, setTargetProductId] = useState<string | null>(null);
-
-  //Delete confirmation modal
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  // Close the modal
-  const closeEventModal = () => {
-    setDeleteConfirm(false);
-  };
-
-  const openEventModal = (product: Product) => {
-    setTargetProductId(product.id || null);
-    setDeleteConfirm(true);
-  }
-
-
-
-  // Scroll to products grid on pagination/search/sort change
-  useEffect(() => {
-    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [currentPage, searchTerm, sortOption]);
-
-  const toggleExpanded = (productId: string) => {
-    setExpandedImages((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  };
-
-  // Apply filters, seach terms, and sorting
+  const productsRef = useRef<HTMLTableElement | null>(null);
   const sortedAndFilteredProducts = useMemo(() => {
     const term = deferredSearch.toLowerCase();
 
@@ -117,6 +88,35 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
     return sorted;
   }, [categoryFilters, products, deferredSearch, sortOption, subcategoryFilters]);
+
+  //Delete confirmation modal
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Close the modal
+  const closeEventModal = () => {
+    setDeleteConfirm(false);
+  };
+
+  const openEventModal = (product: Product) => {
+    setTargetProductId(product.id || null);
+    setDeleteConfirm(true);
+  }
+
+
+
+  // Scroll to products grid on pagination/search/sort change
+  useEffect(() => {
+    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentPage, searchTerm, sortOption]);
+
+  const toggleExpanded = (productId: string) => {
+    setExpandedImages((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
+
+  // Apply filters, seach terms, and sorting
 
   // Handlers for search and sort
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
