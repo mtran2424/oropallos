@@ -266,11 +266,8 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                     <div className="flex w-full items-center justify-center">
                       <input
                         type="number"
-                        // inputMode="decimal"
                         step="1"
-                        min="-1"
                         className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                        // placeholder="Qty"
                         onChange={(e) => {
                           const value = e.target.value;
                           setQuantity(parseInt(value));

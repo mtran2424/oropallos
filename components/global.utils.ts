@@ -464,6 +464,17 @@ export const announcementTableColumns = [
 ] as const;
 
 // Headers for product tables in admin view
+export const inventoryTableColumns = [
+  { field: "id", label: "Product ID", width: "200px" },
+  { field: "name", label: "Name", width: "300px" },
+  { field: "price", label: "Price", width: "150px" },
+  { field: "size", label: "Size", width: "200px" },
+  { field: "upc", label: "UPC", width: "200px" },
+  { field: "unitPrice", label: "Unit Price", width: "150px" },
+  { field: "unitCount", label: "Unit Count", width: "150px" },
+] as const;
+
+// Headers for product tables in admin view
 export const transactionItemTableColumns = [
   { field: "id", label: "Transaction Item ID", width: "100px" },
   { field: "name", label: "Name", width: "200px" },

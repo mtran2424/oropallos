@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
-import { Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
+import { inventoryTableColumns, Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
 import AddProduct from "@/components/utils/AddProduct";
 import { deleteProduct, favoriteProduct, hideProduct } from "@/app/api/productapi";
 import toast from "react-hot-toast";
@@ -15,11 +15,13 @@ import AddSize from "../utils/AddSize";
 import { getProducts } from "@/app/api/adminapi";
 import TextButton from "../ui/TextButton";
 import EditUnitPrice from "../utils/EditUnitPrice";
+import AddUPC from "../utils/AddUPC";
+import AddUnit from "../utils/AddUnit";
 
 const PRODUCTS_PER_PAGE = 25;
 
 // This component is responsible for crud operations on products
-const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }) => {
+const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
@@ -222,79 +224,6 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
           style: "currency",
           currency: "USD",
         });
-      case "category":
-        return product.category;
-      case "subcategory":
-        return product.subcategory;
-      case "type":
-        return product.type;
-      case "description":
-        return (
-          <div
-            className="flex flex-col items-center justify-center space-y-2"
-          >
-            <textarea
-              readOnly
-              className="w-full h-22.5 border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={product.description}
-            ></textarea>
-            {product.description && <CopyButton text={product.description} />}
-          </div>)
-      case "imageUrl":
-        if (product.id) {
-          // Check if the image is expanded
-          const isExpanded = expandedImages[product.id] ?? false;
-          return product.imageUrl ? (
-            <div className="flex flex-col items-center justify-center space-y-2">
-              {/* Button to toggle image expansion */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                onClick={() => product.id && toggleExpanded(product.id)}
-                className="text-2xl text-zinc-500 hover:text-blue-400 transition duration-200 ease-in-out"
-              >
-                {isExpanded ? "..." : <FaImage />}
-              </motion.button>
-
-              {/* Image */}
-              <AnimatePresence initial={false}>
-                {isExpanded && (
-                  <motion.div
-                    key="about"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="overflow-hidden"
-                  >
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      width={300}
-                      height={300}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Image URL */}
-              <a
-                href={product.imageUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 font-serif underline-animate break-all truncate max-w-full block"
-              >
-                {product.imageUrl}
-              </a>
-              <CopyButton text={product.imageUrl} />
-            </div>
-          ) : (
-            product.imageUrl
-          );
-        }
-      case "abv":
-        return product.abv ? `${product.abv}%` : "N/A";
       case "size":
         return product.size;
       case "upc":
@@ -359,7 +288,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         <div className="flex flex-col justify-between items-start mb-3 space-y-4 px-2">
 
           {/* Header */}
-          <h1 className="text-2xl font-semibold text-zinc-900">Products</h1>
+          <h1 className="text-2xl font-semibold text-zinc-900">Inventory</h1>
 
           {/* Filters for categories */}
           <div>
@@ -418,15 +347,14 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
           </div>
 
-          {/* Search Bar Component */}
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            handleSearchChange={handleSearchChange}
-          />
 
           <div className="flex flex-row w-full whitespace-nowrap">
-            <AddProduct onAddProduct={handleAddProduct} products={products} />
+            {/* Search Bar Component */}
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              handleSearchChange={handleSearchChange}
+            />
 
             {/* Sort Dropdown */}
             <div className="flex justify-end w-full">
@@ -458,7 +386,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
                 {/* Table Headers */}
                 <thead className="sticky top-0 bg-white z-20">
                   <tr>
-                    {productTableColumns.map((column) => (
+                    {inventoryTableColumns.map((column) => (
                       <th
                         key={column.field}
                         className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
@@ -467,13 +395,6 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
                         <strong>{column.label}</strong>
                       </th>
                     ))}
-
-                    <th
-                      className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
-                      style={{ width: "200px" }}
-                    >
-                      <strong>Favorite</strong>
-                    </th>
 
                     <th
                       className="px-4 py-3 text-left text-xs font-medium uppercase tracking-widest whitespace-nowrap"
@@ -496,7 +417,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
                   {currentProducts.length > 0 ? (
                     currentProducts.map((product) => (
                       <tr key={product.id} className="hover:bg-zinc-200 transition duration-200">
-                        {productTableColumns.map((column) => (
+                        {inventoryTableColumns.map((column) => (
                           // Render each cell based on the column field
                           <td
                             key={column.field}
@@ -532,27 +453,6 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
                           </motion.button>
                         </td>
 
-                        <td
-                          className="px-4 py-3 text-sm align-center"
-                          style={{
-                            width: "200px",
-                            maxWidth: "200px",
-                            whiteSpace: "pre-line",
-                          }}
-                        >
-                          {/* Favorite Product Button */}
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="text-center"
-                            onClick={() => handleHiddenToggle(product.id || "", product)}
-                          >
-                            {product.hidden ?
-                              <FaEye size={40} className="text-blue-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
-                              <FaEyeSlash size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
-                          </motion.button>
-                        </td>
-
                         {/* Actions Column */}
                         <td
                           className="px-4 py-3 text-sm align-center"
@@ -573,11 +473,11 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
                               <MdDelete size={30} />
                             </motion.button>
 
-                            {/* Edit Product Button */}
-                            <EditProduct onEditProduct={handleEditProduct} product={product} products={products} />
+                            <AddUnit onAddUnit={handleEditProduct} product={product} />
 
-                            {/* Add Another Product Size */}
-                            <AddSize onAddSize={handleAddProduct} product={product} products={products} />
+                            <EditUnitPrice onEditPrice={handleEditProduct} product={product} />
+
+                            <AddUPC onAddUpc={handleEditProduct} product={product} />
                           </div>
                         </td>
 
@@ -673,4 +573,4 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   );
 }
 
-export default ProductsSpreadsheet;
+export default InventoryMenu;

@@ -1,39 +1,47 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Product } from "@/components/global.utils";
-import { createProduct, editProduct } from "@/app/api/productapi";
+import { editProduct } from "@/app/api/productapi";
 import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { BsCurrencyDollar } from "react-icons/bs";
+import { FaBoxOpen } from "react-icons/fa6";
 import TextButton from "../ui/TextButton";
 
 // This component is a button that opens a modal for adding a product
-const EditUnitPrice = ({ onEditPrice, product }: {
-  onEditPrice: () => void;
+const AddUnit = ({ onAddUnit, product }: {
+  onAddUnit: () => void;
   product: Product;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const [editPrice, setEditPrice] = useState(false);
+  const [addUnit, setAddUnit] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // States for form fields
-  const [unitPrice, setUnitPrice] = useState<number | undefined>(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
-  const [price, setPrice] = useState<number | undefined>(product.price || undefined);
+  const [unitCount, setUnitCount] = useState<number>(product.unitCount !== undefined ? product.unitCount : 0);
+  const [quantity, setQuantity] = useState<number>(0);
+  const [caseCount, setCaseCount] = useState<number>(6);
+  const [mode, setMode] = useState<"Add" | "Edit">("Edit");
+
+  // Multiplier determines whether to multiply the unit count by case (for cases) or leave it as is (for units)
+  const [type, setType] = useState<"Case" | "Unit">("Unit");
+
   // Upon form submission, validate the input and send it to the backend
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!price) {
+    if (unitCount === undefined) {
       toast.error(`Please fill in all required fields.`);
       setLoading(false);
       return;
     }
 
+    // TODO: Add case count field to db
+
     // Construct product data object to be sent to the API
     const productData = {
       name: product.name,
       description: product.description,
-      price: price,
+      price: product.price,
       category: product.category,
       subcategory: product.subcategory,
       type: product.type,
@@ -43,21 +51,21 @@ const EditUnitPrice = ({ onEditPrice, product }: {
       size: product.size,
       upc: product.upc,
       hidden: product.hidden,
-      unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
-      unitCount: product.unitCount,
+      unitPrice: product.unitPrice,
+      unitCount: unitCount + (type === "Case" ? quantity * caseCount : quantity),
     };
 
     if (product.id) {
       // Send the product data to the backend API to create a new product
       editProduct(product.id, productData)
         .then(() => {
-          onEditPrice();
+          onAddUnit();
           // Show success message
-          toast.success(`Product ${product.name} - ${product.size} unit price added successfully!`);
+          toast.success(`Product ${product.name} - ${product.size} UPC added successfully!`);
 
           // Close the modal after submission
-          setEditPrice(false);
-          setUnitPrice(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
+          setAddUnit(false);
+          setUnitCount(product.unitCount !== undefined ? product.unitCount : 0);
         }).finally(() => {
           setLoading(false);
         });
@@ -68,12 +76,12 @@ const EditUnitPrice = ({ onEditPrice, product }: {
 
   // Open the modal for adding a product
   const openEventModal = () => {
-    setEditPrice(true);
+    setAddUnit(true);
   };
 
   // Close the modal for adding a product
   const closeEventModal = () => {
-    setEditPrice(false);
+    setAddUnit(false);
   };
 
   // Close the modal when clicking outside of it
@@ -85,18 +93,25 @@ const EditUnitPrice = ({ onEditPrice, product }: {
 
   // Add event listener for closing the modal when clicking outside of it
   useEffect(() => {
-    if (editPrice) {
+    if (addUnit) {
       document.addEventListener('mousedown', closeModalOnOutsideClick);
     }
     return () => {
       document.removeEventListener('mousedown', closeModalOnOutsideClick);
     };
-  }, [closeModalOnOutsideClick, editPrice]);
+  }, [closeModalOnOutsideClick, addUnit]);
 
   useEffect(() => {
     // Reset form fields when product changes
-    setUnitPrice(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
+    setUnitCount(product.unitCount !== undefined ? product.unitCount : 0);
   }, [product]);
+
+  useEffect(() => {
+    // Reset form fields when product changes
+    setUnitCount(product.unitCount !== undefined ? product.unitCount : 0);
+    setQuantity(0);
+    setType("Unit");
+  }, [mode]);
 
   return (
     <>
@@ -106,12 +121,12 @@ const EditUnitPrice = ({ onEditPrice, product }: {
         whileTap={{ scale: 0.9 }}
         className="flex flex-row text-md items-center text-blue-500 hover:text-blue-300 p-1"
         onClick={openEventModal}>
-        <BsCurrencyDollar size={25} />
+        <FaBoxOpen size={25} />
       </motion.button>
 
       {/* Modal for adding event */}
       <AnimatePresence mode="wait">
-        {editPrice && (
+        {addUnit && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <motion.div
               initial={{ opacity: 0, x: "-100%" }}
@@ -122,7 +137,7 @@ const EditUnitPrice = ({ onEditPrice, product }: {
               className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-auto border border-zinc-500"
             >
               {/* Modal Header */}
-              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Edit Price</h3>
+              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Add Inventory</h3>
 
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
@@ -136,46 +151,54 @@ const EditUnitPrice = ({ onEditPrice, product }: {
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {product.name} - {product.size}
 
+                  <div className="grid grid-cols-4 w-full gap-1">
+                    <TextButton onClick={() => setMode("Edit")} disabled={mode === "Edit"}>
+                      Edit Count
+                    </TextButton>
+                    <TextButton onClick={() => setMode("Add")} disabled={mode === "Add"}>
+                      Add Units
+                    </TextButton>
+                  </div>
+
                   <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
-                  {/* Price Field */}
-                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="Price"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setPrice(value === "" ? undefined : parseFloat(value));
-                    }}
-                    value={price || ""}
-                  />
-                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-                    i.e. {'\"'}19.99{'\"'} - No $ sign needed
-                  </div>
+                  {mode === "Edit" && (
+                    <>
+                      {/* Unit Count Field */}
+                      <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Count</label>
+                      <input
+                        type="number"
+                        step="1"
+                        className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                        placeholder="Unit Count"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setUnitCount(value === "" ? 0 : parseInt(value));
+                        }}
+                        value={unitCount || ""}
+                      />
+                    </>
+                  )}
+                  {mode === "Add" && (<>
+                    {/* Unit Count Field */}
+                    <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
+                    <div className="grid grid-cols-2 w-full gap-1">
+                      <button type="button" className={`p-5 rounded-md text-white text-2xl ${type === "Case" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Case")}>Case</button>
+                      <button type="button" className={`p-5 rounded-md text-white text-2xl ${type === "Unit" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Unit")}>Unit</button>
+                    </div>
 
-                  {/* Unit Price Field */}
-                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    step=".01"
-                    min="0"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="Unit Price"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setUnitPrice(value === "" ? undefined : parseFloat(value));
-                    }}
-                    value={unitPrice ?? ""}
-                  />
-                  <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-                    i.e. {'\"'}19.99{'\"'} - No $ sign needed
-                  </div>
-
+                    <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
+                    <input
+                      type="number"
+                      step="1"
+                      className="text-5xl font-semibold text-center rounded-lg w-40 p-2 outline-1 outline-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setQuantity(parseInt(value));
+                      }}
+                      value={quantity || ""}
+                    />
+                  </>)}
 
                   {loading ? (
                     // Loading spinner
@@ -204,4 +227,4 @@ const EditUnitPrice = ({ onEditPrice, product }: {
   );
 }
 
-export default EditUnitPrice;
+export default AddUnit;

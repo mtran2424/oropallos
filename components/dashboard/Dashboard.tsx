@@ -8,9 +8,10 @@ import { Announcement, Product } from "@/components/global.utils";
 import AnnouncementsSpreadsheet from "./AnnouncementsSpreadsheet";
 import { getProducts } from "@/app/api/adminapi";
 import { getAnnouncements } from "@/app/api/announcementapi";
+import InventoryMenu from "./InventoryMenu";
 
 const Dashboard = () => {
-  const [tab, setTab] = useState<'products' | 'announcements'>('products');
+  const [tab, setTab] = useState<'products' | 'announcements' | 'inventory'>('products');
   const [products, setProducts] = useState<Product[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
@@ -63,7 +64,7 @@ const Dashboard = () => {
         </h1>
 
         {/* Tab Buttons */}
-        <div className="flex flex-row justify-center relative w-full bg-zinc-200">
+        <div className="grid grid-cols-5 gap-4">
           <motion.button
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className={`px-6 py-3 text-md z-10 ${tab === 'products'
@@ -87,6 +88,18 @@ const Dashboard = () => {
           >
             Announcements
           </motion.button>
+
+          <motion.button
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className={`px-6 py-3 text-md z-10 ${tab === 'inventory'
+              ? 'bg-white text-zinc-900'
+              : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
+              } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
+            onClick={() => setTab('inventory')}
+            disabled={tab === 'inventory'}
+          >
+            Inventory
+          </motion.button>
         </div>
 
         {/* Spreadsheets */}
@@ -98,7 +111,7 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="mt-10"
+              className="mt-5"
             >
               <ProductsSpreadsheet initialProducts={products} />
             </motion.div>
@@ -110,9 +123,22 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="mt-10"
+              className="mt-5"
             >
               <AnnouncementsSpreadsheet initialAnnouncements={announcements} />
+            </motion.div>
+          )}
+
+          {tab === 'inventory' && (
+            <motion.div
+              key="inventory"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="mt-5"
+            >
+              <InventoryMenu initialProducts={products} />
             </motion.div>
           )}
         </AnimatePresence>

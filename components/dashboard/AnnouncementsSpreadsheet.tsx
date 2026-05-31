@@ -168,6 +168,11 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
     announcementsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [currentPage, searchTerm, sortOption]);
 
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <div>
       <div className="flex flex-col justify-between items-start mb-3 space-y-4 px-2">
@@ -194,8 +199,6 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
             >
               <option value="name-asc">Name (A-Z)</option>
               <option value="name-desc">Name (Z-A)</option>
-              <option value="price-asc">Price (Low → High)</option>
-              <option value="price-desc">Price (High → Low)</option>
               <option value="newest-oldest">Date (Newest → Oldest)</option>
               <option value="oldest-newest">Date (Oldest → Newest)</option>
             </select>

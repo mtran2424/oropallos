@@ -291,7 +291,7 @@ const AddSize = ({
               </div>
 
               {/* Form for adding event */}
-              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md rounded-lg p-4">
+              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md p-4">
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {name}
 
@@ -410,6 +410,7 @@ const AddSize = ({
                   {imageUrl && (
                     <div className="relative inline-block px-2">
                       <motion.button
+                        type="button"
                         whileHover={{ scale: 1.05 }}
                         onClick={handleRemoveImage}
                         className="relative text-red-500 hover:text-red-400 bg-white rounded-full"

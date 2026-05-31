@@ -343,7 +343,9 @@ const Transactions = ({ products }: { products: Product[] }) => {
             </button>
           </div>
 
-          {/* <TextButton onClick={handlePrint}>Print Receipt</TextButton> */}
+          {/* <TextButton onClick={handlePrint}>Print Receipt</TextButton> 
+              TODO: Finish Creating Receipt
+          */}
 
           <div
             className="hidden"

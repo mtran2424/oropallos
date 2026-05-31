@@ -115,7 +115,7 @@ const AddAnnouncement = ({ onAddAnnouncement }: {
               </div>
 
               {/* Form for adding event */}
-              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md rounded-lg p-4">
+              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md p-4">
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 
                   {/* Content Field */}

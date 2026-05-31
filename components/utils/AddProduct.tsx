@@ -287,7 +287,7 @@ const AddProduct = ({ onAddProduct, products }: {
               </div>
 
               {/* Form for adding event */}
-              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md rounded-lg p-4">
+              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md p-4">
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {/* Name Field */}
                   <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Product Name</label>
@@ -518,7 +518,6 @@ const AddProduct = ({ onAddProduct, products }: {
                   <input
                     type="number"
                     step="1"
-                    min="0"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="Unit Count"
                     onChange={(e) => {
