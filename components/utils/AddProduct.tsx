@@ -488,7 +488,7 @@ const AddProduct = ({ onAddProduct, products }: {
                       const value = e.target.value;
                       setAbv(value === "" ? undefined : parseFloat(value));
                     }}
-                    value={abv ?? ""}
+                    value={abv || ""}
                   />
                   <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
                     i.e. {'\"'}40{'\"'} - No % sign needed
@@ -542,10 +542,10 @@ const AddProduct = ({ onAddProduct, products }: {
                     type="text"
                     className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                     placeholder="UPC"
-                    value={upc}
                     onChange={(e) => {
                       setUpc(e.target.value)
                     }}
+                    value={upc || ""}
                   />
 
                   {/* Image Upload Field */}
@@ -576,6 +576,7 @@ const AddProduct = ({ onAddProduct, products }: {
                   {imageUrl && (
                     <div className="relative inline-block px-2">
                       <motion.button
+                        type="button"
                         whileHover={{ scale: 1.05 }}
                         onClick={handleRemoveImage}
                         className="relative text-red-500 hover:text-red-400 bg-white rounded-full"
