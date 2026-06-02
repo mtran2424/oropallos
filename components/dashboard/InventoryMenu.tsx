@@ -28,7 +28,6 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
-  const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -104,19 +103,10 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
     setDeleteConfirm(true);
   }
 
-
-
   // Scroll to products grid on pagination/search/sort change
   useEffect(() => {
     productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [currentPage, searchTerm, sortOption]);
-
-  const toggleExpanded = (productId: string) => {
-    setExpandedImages((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  };
 
   // Apply filters, seach terms, and sorting
 
@@ -124,13 +114,11 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
-    setExpandedImages({}); // Reset expanded images on search change
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(e.target.value);
     setCurrentPage(1);
-    setExpandedImages({}); // Reset expanded images on sort change
   };
 
   // For pagination
@@ -138,11 +126,6 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
   const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, sortedAndFilteredProducts.length);
   const currentProducts = sortedAndFilteredProducts.slice(startIdx, endIdx);
-
-  // Refresh product list when a new product is added
-  const handleAddProduct = () => {
-    setRefresh(!refresh);
-  }
 
   // Refresh product list when a product is edited
   const handleEditProduct = () => {
@@ -179,22 +162,6 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
       setDeleteConfirm(false);
     }
   };
-
-  // Function to toggle favorite status of a product
-  const handleFavoriteToggle = async (id: string, product: Product) => {
-    try {
-      await favoriteProduct(id, !product.favorite)
-        .then((res) => {
-          if (res.status === 200) {
-            toast.success('Favorite changed successfully');
-            setRefresh(!refresh);
-          }
-        });
-    } catch (error) {
-      console.error('Error favoriting product:', error);
-      toast.error('Failed to favorite product');
-    }
-  }
 
   // Function to toggle hidden status of a product
   const handleHiddenToggle = async (id: string, product: Product) => {
@@ -272,11 +239,6 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
     fetchProducts();
   }, [refresh]);
 
-  // Reset expanded images on search change
-  useEffect(() => {
-    setExpandedImages({});
-  }, [searchTerm, currentPage]);
-
   // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -344,9 +306,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
                 });
               })()}
             </div>
-
           </div>
-
 
           <div className="flex flex-row w-full whitespace-nowrap">
             {/* Search Bar Component */}
@@ -445,11 +405,11 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             className="text-center"
-                            onClick={() => handleFavoriteToggle(product.id || "", product)}
+                            onClick={() => handleHiddenToggle(product.id || "", product)}
                           >
-                            {product.favorite ?
-                              <MdFavorite size={40} className="text-red-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
-                              <MdFavorite size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
+                            {product.hidden ?
+                              <FaEye size={40} className="text-blue-500 hover:text-red-400 transition duration-200 ease-in-out" /> :
+                              <FaEyeSlash size={40} className="text-zinc-400 hover:text-zinc-300 transition duration-200 ease-in-out" />}
                           </motion.button>
                         </td>
 
