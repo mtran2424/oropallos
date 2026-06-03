@@ -14,21 +14,24 @@ import { useReactToPrint } from "react-to-print";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const date = new Date();
+  const user = useUser();
   const [cart, setCart] = useState<TransactionItem[]>([]);
-  const [mode, setMode] = useState<string>("Register");
+  const [mode, setMode] = useState<string>("Search");
   const [input, setInput] = useState<string>("");
   const [cashout, setCashout] = useState<boolean>(false);
+  const [confirm, setConfirm] = useState<boolean>(false);
   const [note, setNote] = useState<string>("");
-  const [amountDue, setAmountDue] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
   const [cash, setCash] = useState<number>(0);
   const [credit, setCredit] = useState<number>(0);
-
+  const [amountTendered, setAmountTendered] = useState<number>(0);
+  const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   // Cashout modal
   const modalRef = useRef<HTMLDivElement>(null);
   // Close the modal for cashout
-  const closeEventModal = () => {
+  const closeCashoutModal = () => {
     setCashout(false);
     setInput("");
     setCash(0);
@@ -36,8 +39,19 @@ const Transactions = ({ products }: { products: Product[] }) => {
     setNote("");
   };
 
+  // Close the modal for confirm
+  const closeConfirmModal = () => {
+    setCart([]);
+    setCash(0);
+    setCredit(0);
+    setNote("");
+    setInput("");
+    setAmountTendered(0);
+    setChange(0);
+    setConfirm(false);
+  };
+
   //TODO: Create register logins and use username to identify which register is being used for each transaction
-  const user = useUser();
 
   const handleQuickAdd = (name: string, type: string, price: number) => {
     const itemExists = cart.findIndex(item => item.name === name);
@@ -64,20 +78,19 @@ const Transactions = ({ products }: { products: Product[] }) => {
     try {
       setLoading(true);
 
+      setAmountTendered((cash + credit) > total ? cash + credit : total);
+      setChange((cash + credit) > total ? (cash + credit) - total : 0);
+
       const transaction = {
         status: "Cashed",
         register: user.user?.username || "Unknown Register",
         transactionItems: cart,
-        cash: ((cash + credit) > amountDue) ? cash : (cash + (amountDue - (cash + credit))),
+        cash: ((cash + credit) > total) ? cash : (cash + (total - (cash + credit))),
         credit: credit,
         notes: note
       }
       const res = await createTransaction(transaction).then((res) => {
-        setCart([]);
-        setCash(0);
-        setCredit(0);
-        setNote("");
-        setInput("");
+        setConfirm(true);
         setCashout(false);
         return res;
       });
@@ -96,7 +109,6 @@ const Transactions = ({ products }: { products: Product[] }) => {
     }
   }
 
-
   // Printing
   const componentRef = useRef<HTMLDivElement>(null);
 
@@ -106,7 +118,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
     pageStyle: `
     @page {
       size: 80mm auto;
-      margin: 4mm;
+      margin: 0;
     }
 
     @media print {
@@ -117,60 +129,67 @@ const Transactions = ({ products }: { products: Product[] }) => {
       }
 
       .receipt {
-        width: 72mm;
+        width: 75mm;
         font-family: monospace;
-        font-size: 12px;
+        font-size: 10px;
       }
     }
   `,
   })
 
+  const handlePrintReceipt = () => {
+    handlePrint();
+    closeConfirmModal();
+  }
+
+  const handleNoReceipt = () => {
+    setConfirm(false);
+    closeConfirmModal();
+  }
+
   const receipt = (
-    <div ref={componentRef} className="flex flex-col w-full items-center p-5">
-      <h1 className="text-2xl font-bold mb-4">OROPALLO'S</h1>
-      <h1 className="text-2xl font-bold mb-4 text-center">WINE & LIQUOR</h1>
-      <h1 className="text-xl mb-4">376 DIX AVENUE</h1>
-      <h1 className="text-xl mb-4">QUEENSBURY, NY 12804</h1>
-      <h1 className="text-2xl font-bold mb-4">518-798-3988</h1>
-      <table className="w-full max-w-3/4 border-separate border-spacing-y-4 text-2xl">
+    <div ref={componentRef} className="flex flex-col w-full items-center text-md pb-10 receipt">
+      <h1 className="font-bold text-center">OROPALLO'S</h1>
+      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
+      <h1 className="text-center">376 DIX AVENUE</h1>
+      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
+      <h1 className="font-bold text-center">518-798-3988</h1>
+      <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
         <tbody>
           <tr>
-            <td className="text-2xl text-start">
-              {formatDate(date, "mm/dd/yyyy")}
-            </td>
-            <td className="text-2xl text-end">
-              {formatTime(date)}
-            </td>
+            <td className="text-start">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
+            <td className="text-end">Reg: {user.user?.username || 'Unknown Register'}</td>
           </tr>
         </tbody>
       </table>
 
-      <table className="w-full max-w-3/4 border-separate border-spacing-y-4">
+      <table className="w-full max-w-3/4 border-separate">
         <tbody>
           {cart.map((item, index) => (
             <tr key={index} className="w-full">
-              <td className="text-2xl text-start">
+              <td className="text-start items-start h-full align-top">
                 <div
-                  className="flex flex-col items-start justify-center">
+                  className="flex flex-col text-start">
                   <div className="font-semibold">
                     {item.type.toUpperCase()}
                   </div>
                   <div>
                     {item.name.toUpperCase()}
                   </div>
+                  <div></div>
                 </div>
               </td>
-              <td className="text-2xl text-start">
-                <div className="flex flex-col items-end justify-center">
+              <td className="text-start items-start h-full align-top">
+                <div className="flex flex-col text-end">
                   <div>
                     {item.quantity > 1 ? `${item.quantity} @ ` : ''}${(item.unitPrice / 100).toFixed(2)}
                   </div>
-                  {item.discount !== "No_Discount" && (
+                  {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                     <div>
-                      {getDiscount(item.discount).name.toUpperCase()}
+                      -{((1 - getDiscount(item.discount).multiplier) * 100).toFixed(0)}%
                     </div>
                   )}
-                  {item.discount !== "No_Discount" && (
+                  {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                     <div>
                       -{(((item.unitPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.unitPrice * item.quantity)) / 100).toFixed(2)}
                     </div>
@@ -179,12 +198,54 @@ const Transactions = ({ products }: { products: Product[] }) => {
               </td>
             </tr>
           ))}
-          <tr>
-            <td className="text-2xl text-start font-semibold">
+        </tbody>
+      </table>
+
+      <table className="w-full max-w-3/4 border-separate pt-2">
+        <tbody>
+          <tr className="">
+            <td className="text-start font-semibold">
+              SUBTOTAL
+            </td>
+            <td className="text-end">
+              ${(calculateSubtotal(cart) / 100).toFixed(2)}
+            </td>
+          </tr>
+          <tr className="">
+            <td className="text-start font-semibold">
+              TAX
+            </td>
+            <td className="text-end">
+              ${(calculateTax(cart) / 100).toFixed(2)}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table className="w-full max-w-3/4 border-separate pt-2">
+        <tbody>
+          <tr className="">
+            <td className="text-start font-semibold">
               TOTAL
             </td>
-            <td className="text-2xl text-end">
-              ${(calculateSubtotal(cart) / 100).toFixed(2)}
+            <td className="text-end">
+              ${(calculateTotal(cart) / 100).toFixed(2)}
+            </td>
+          </tr>
+          <tr>
+            <td className="text-start font-semibold">
+              CASH
+            </td>
+            <td className="text-end">
+              ${(amountTendered / 100).toFixed(2)}
+            </td>
+          </tr>
+          <tr>
+            <td className="text-start font-semibold">
+              CHANGE
+            </td>
+            <td className="text-end">
+              ${(change / 100).toFixed(2)}
             </td>
           </tr>
         </tbody>
@@ -334,7 +395,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                         hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
               onClick={() => {
                 if (cart.length !== 0) {
-                  setAmountDue(calculateTotal(cart));
+                  setTotal(calculateTotal(cart));
                   setCashout(true);
                 }
               }}
@@ -343,9 +404,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
             </button>
           </div>
 
-          {/* <TextButton onClick={handlePrint}>Print Receipt</TextButton> 
-              TODO: Finish Creating Receipt
-          */}
+          <TextButton onClick={handlePrint}>Print Receipt</TextButton>
 
           <div
             className="hidden"
@@ -375,7 +434,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Cashout</h3>
               {/* Close Modal Button */}
               <div className="absolute top-4 right-4">
-                <TextButton onClick={closeEventModal}>
+                <TextButton onClick={closeCashoutModal}>
                   Close
                 </TextButton>
               </div>
@@ -391,10 +450,10 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     {/* Current input dash display */}
                     <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
                       <div className="text-start">
-                        Total: ${(amountDue / 100).toFixed(2)}
+                        Total: ${(total / 100).toFixed(2)}
                       </div>
                       <div className="text-end">
-                        Amount Due: ${((amountDue + cash + credit) / 100).toFixed(2)}
+                        Amount Due: ${((total - (cash + credit)) / 100).toFixed(2)}
                       </div>
                     </div>
 
@@ -598,6 +657,44 @@ const Transactions = ({ products }: { products: Product[] }) => {
                 </div>
               </div>
 
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {confirm && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
+            <motion.div
+              initial={{ opacity: 0, x: "-100%" }}
+              animate={{ opacity: 1, x: "0" }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.3 }}
+              ref={modalRef}
+              className="relative bg-white p-6 rounded-2xl max-w-3xl w-full shadow-lg max-h-[95vh] overflow-y-auto border border-zinc-500"
+            >
+              {/* Modal Header */}
+              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Confirm</h3>
+              {/* Close Modal Button */}
+              <div className="absolute top-4 right-4">
+                <TextButton onClick={closeConfirmModal}>
+                  Close
+                </TextButton>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+
+                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Change</label>
+                <div className="text-2xl font-bold text-zinc-900">
+                  ${(change / 100).toFixed(2)}
+                </div>
+
+                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Receipt Option</label>
+                <div className="grid grid-cols-2 w-full gap-1">
+                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => handleNoReceipt()}>No Receipt</button>
+                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => handlePrintReceipt()}>Print Receipt</button>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}

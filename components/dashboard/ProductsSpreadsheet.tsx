@@ -14,7 +14,6 @@ import Pagination from "@/components/ui/Pagination";
 import AddSize from "../utils/AddSize";
 import { getProducts } from "@/app/api/adminapi";
 import TextButton from "../ui/TextButton";
-import EditUnitPrice from "../utils/EditUnitPrice";
 
 const PRODUCTS_PER_PAGE = 25;
 

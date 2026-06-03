@@ -18,7 +18,6 @@ const Close = ({
 }) => {
   const date = new Date();
   const { user } = useUser();
-
   const modalRef = useRef<HTMLDivElement>(null);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions.filter((transaction) => transaction.batchId === null));
   const [refresh, setRefresh] = useState(false);
@@ -34,7 +33,7 @@ const Close = ({
     pageStyle: `
     @page {
       size: 80mm auto;
-      margin: 4mm;
+      margin: 0;
     }
 
     @media print {
@@ -45,7 +44,7 @@ const Close = ({
       }
 
       .receipt {
-        width: 72mm;
+        width: 75mm;
         font-family: monospace;
         font-size: 12px;
       }
@@ -148,17 +147,17 @@ const Close = ({
   };
 
   const batchTable = (
-    <table className="w-full max-w-3/4 border-separate border-spacing-y-4">
+    <table className="w-full border-separate border-spacing-y-5">
       <tbody>
         <tr>
           {/* Liquor Sales */}
-          <td className="text-2xl">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
-          <td className="text-end text-2xl">Register: {user?.username}</td>
+          <td className="text-start">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
+          <td className="text-end">Reg: {user?.username}</td>
         </tr>
         <tr>
           {/* Liquor Sales */}
-          <td className="font-semibold text-2xl">LIQUOR</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold ">LIQUOR</td>
+          <td className="text-end ">
             <div className="flex flex-col">
               <div>${(grossLiquor / 100).toFixed(2)}</div>
               <div>
@@ -173,8 +172,8 @@ const Close = ({
 
         {/* Wine Sales */}
         <tr>
-          <td className="font-semibold text-2xl">WINE</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold ">WINE</td>
+          <td className="text-end ">
             <div className="flex flex-col">
               <div>${(grossWine / 100).toFixed(2)}</div>
               <div>
@@ -189,73 +188,73 @@ const Close = ({
 
         {/* Total Sales */}
         <tr>
-          <td className="font-semibold text-2xl">SUBTOTAL</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold ">SUBTOTAL</td>
+          <td className="text-end ">
             <div>${(grossTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Total Tax */}
         <tr>
-          <td className="font-semibold text-2xl">TAX</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold ">TAX</td>
+          <td className="text-end ">
             <div>${(taxTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Total w/ Tax */}
         <tr>
-          <td className="font-semibold text-2xl">TTL + TAX</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold ">TTL + TAX</td>
+          <td className="text-end ">
             <div>${((grossTotal + taxTotal) / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Discounts */}
         <tr>
-          <td className="font-semibold text-2xl">-% ITEM</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold ">-% ITEM</td>
+          <td className="text-end ">
             <div>{discountQty} Q</div>
             <div>-${(discountTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">VOID COUNT</td>
-          <td className="text-end text-2xl">{transactions.filter((t) => t.status === "Void").length} Q</td>
+          <td className="font-semibold ">VOID COUNT</td>
+          <td className="text-end ">{transactions.filter((t) => t.status === "Void").length} Q</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">TRANSACTION COUNT</td>
-          <td className="text-end text-2xl">{transactions.length} Q</td>
+          <td className="font-semibold ">TRANSACTION COUNT</td>
+          <td className="text-end ">{transactions.length} Q</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">CASH</td>
-          <td className="text-end text-2xl">${(cashTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold ">CASH</td>
+          <td className="text-end ">${(cashTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">CREDIT</td>
-          <td className="text-end text-2xl">${(creditTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold ">CREDIT</td>
+          <td className="text-end ">${(creditTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">NET TOTAL</td>
-          <td className="text-end text-2xl">${(netTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold ">NET TOTAL</td>
+          <td className="text-end ">${(netTotal / 100).toFixed(2)}</td>
         </tr>
       </tbody>
     </table>
   );
 
   const printableBatch = (
-    <div ref={componentRef} className="flex flex-col w-full items-center p-5">
-      <h1 className="text-2xl font-bold mb-4">OROPALLO'S</h1>
-      <h1 className="text-2xl font-bold mb-4 text-center">WINE & LIQUOR</h1>
-      <h1 className="text-xl mb-4">376 DIX AVENUE</h1>
-      <h1 className="text-xl mb-4">QUEENSBURY, NY 12804</h1>
-      <h1 className="text-2xl font-bold mb-4">518-798-3988</h1>
-      <h1 className="text-2xl font-bold mb-4">Batch Report</h1>
+    <div ref={componentRef} className="flex flex-col w-full items-center text-md px-10 pb-10 receipt">
+      <h1 className="font-bold text-center">OROPALLO'S</h1>
+      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
+      <h1 className="text-center">376 DIX AVENUE</h1>
+      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
+      <h1 className="font-bold text-center">518-798-3988</h1>
+      <h1 className="font-bold text-center">Batch Report</h1>
       {batchTable}
     </div>
   );
@@ -335,9 +334,9 @@ const Close = ({
         exit={{ x: "100%", opacity: 0 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
-        <div className="flex flex-col w-full min-w-[80vw] h-full items-center justify-start px-10 gap-5 pt-5">
+        <div className="flex flex-col text-xl sm:text-2xl w-full min-w-[80vw] h-full items-center justify-start px-10 gap-5 pt-5">
           {/* Header */}
-          <h1 className="flex w-full text-xl sm:text-2xl font-serif font-semibold text-start text-zinc-900 mb-4 px-15">
+          <h1 className="flex w-full font-serif font-semibold text-start text-zinc-900 mb-4 px-15">
             Close Register
           </h1>
 
@@ -367,7 +366,9 @@ const Close = ({
             </button>
           </div>
 
-          {batchTable}
+          <div className="max-w-3/4 w-full">
+            {batchTable}
+          </div>
 
           <div
             className="hidden"
