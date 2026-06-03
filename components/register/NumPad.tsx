@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdKeyboardReturn } from "react-icons/md";
 import { Discount, fifteenPercentDiscount, noDiscount, taxFreeDiscount, TransactionItem } from "../global.utils";
+import { useReactToPrint } from "react-to-print";
 
 const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) => {
   const [input, setInput] = useState<string>("");
@@ -10,6 +11,33 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
   const [item, setItem] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
   const [discount, setDiscount] = useState<Discount>(noDiscount);
+
+  const componentRef = useRef<HTMLDivElement>(null);
+// TODO: make no sale button receipt
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: "Transaction Receipt",
+    pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      .receipt {
+        width: 75mm;
+        font-family: monospace;
+        font-size: 10px;
+      }
+    }
+  `,
+  })
 
   return (
     <motion.div
@@ -82,6 +110,8 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         <button
           className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+          onClick={() => {
+          }}
         >
           No Sale
         </button>

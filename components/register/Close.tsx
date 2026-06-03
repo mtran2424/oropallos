@@ -147,7 +147,7 @@ const Close = ({
   };
 
   const batchTable = (
-    <table className="w-full border-separate border-spacing-y-5">
+    <table className="w-full border-separate border-spacing-y-2">
       <tbody>
         <tr>
           {/* Liquor Sales */}

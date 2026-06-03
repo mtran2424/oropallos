@@ -404,8 +404,6 @@ const Transactions = ({ products }: { products: Product[] }) => {
             </button>
           </div>
 
-          <TextButton onClick={handlePrint}>Print Receipt</TextButton>
-
           <div
             className="hidden"
           >
