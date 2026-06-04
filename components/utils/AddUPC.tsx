@@ -105,7 +105,7 @@ const AddUPC = ({ onAddUpc, product }: {
         whileTap={{ scale: 0.9 }}
         className="flex flex-row text-md items-center text-blue-500 hover:text-blue-300 p-1"
         onClick={openEventModal}>
-        <IoScan size={25} />
+        <IoScan size={35} />
       </motion.button>
 
       {/* Modal for adding event */}

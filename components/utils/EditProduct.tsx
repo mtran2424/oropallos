@@ -268,7 +268,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
         whileTap={{ scale: 0.9 }}
         className="text-xl text-blue-500 hover:text-blue-400 p-1"
         onClick={openEventModal}>
-        <MdModeEditOutline size={30} />
+        <MdModeEditOutline size={35} />
       </motion.button>
 
       {/* Modal for adding event */}

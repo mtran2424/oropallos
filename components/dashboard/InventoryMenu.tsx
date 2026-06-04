@@ -417,7 +417,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
                             whiteSpace: "pre-line",
                           }}
                         >
-                          <div className="flex flex-row">
+                          <div className="flex flex-row gap-4">
                             {/* Remove Product Button */}
                             <motion.button
                               whileHover={{ scale: 1.1 }}
@@ -425,7 +425,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
                               className="text-center text-red-500 hover:text-red-400"
                               onClick={() => { openEventModal(product) }}
                             >
-                              <MdDelete size={30} />
+                              <MdDelete size={35} />
                             </motion.button>
 
                             <AddUnit onAddUnit={handleEditProduct} product={product} />
