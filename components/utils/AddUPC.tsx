@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { IoScan } from "react-icons/io5";
 import TextButton from "../ui/TextButton";
+import Modal from "../ui/Modal";
 
 // This component is a button that opens a modal for adding a product
 const AddUPC = ({ onAddUpc, product }: {
@@ -108,70 +109,45 @@ const AddUPC = ({ onAddUpc, product }: {
         <IoScan size={35} />
       </motion.button>
 
-      {/* Modal for adding event */}
-      <AnimatePresence mode="wait">
-        {addUpc && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-auto border border-zinc-500"
-            >
-              {/* Modal Header */}
-              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Add UPC</h3>
+      {/* Modal for adding upc */}
+      <Modal open={addUpc} title="Add UPC" onClose={closeEventModal} ref={modalRef} height="max-h-[50vh]" width="max-w-2xl">
+        {/* Form for adding upc */}
+        <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md p-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            {product.name} - {product.size}
 
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeEventModal}>
-                  Close
-                </TextButton>
+            <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
+
+            {/* UPC Field */}
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
+            <input
+              type="text"
+              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              placeholder="UPC"
+              onChange={(e) => {
+                setUpc(e.target.value)
+              }}
+              value={upc || ""}
+            />
+
+            {loading ? (
+              // Loading spinner
+              <div className="flex justify-center items-center py-2">
+                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
               </div>
-
-              {/* Form for adding event */}
-              <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md p-4">
-                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                  {product.name} - {product.size}
-
-                  <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
-
-                  {/* UPC Field */}
-                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
-                  <input
-                    type="text"
-                    className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                    placeholder="UPC"
-                    onChange={(e) => {
-                      setUpc(e.target.value)
-                    }}
-                    value={upc || ""}
-                  />
-
-                  {loading ? (
-                    // Loading spinner
-                    <div className="flex justify-center items-center py-2">
-                      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  ) : (
-                    // Submit button
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      type="submit"
-                      className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                    >
-                      Submit
-                    </motion.button>
-                  )}
-                </form>
-              </div>
-            </motion.div>
-          </div >
-        )}
-
-      </AnimatePresence >
-
+            ) : (
+              // Submit button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+              >
+                Submit
+              </motion.button>
+            )}
+          </form>
+        </div>
+      </Modal>
     </>
   );
 }

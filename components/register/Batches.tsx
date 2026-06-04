@@ -1,11 +1,10 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Batch, batchTableColumns, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getCurrentBatchTransactions } from "@/app/api/transactionapi";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { getBatches } from "@/app/api/batchapi";
-import TextButton from "../ui/TextButton";
+import Modal from "../ui/Modal";
 
 const Batches = () => {
   const { user } = useUser();
@@ -235,7 +234,7 @@ const Batches = () => {
           </div>
 
           {/* Current Batch Data Table */}
-          <div className="flex w-[80vw] max-h-[80vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
+          <div className="flex w-[80vw] max-h-[70vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
             {/* Spreadsheet */}
             <div className="flex overflow-auto w-screen px-5">
               {/* Product Table Start */}
@@ -293,109 +292,67 @@ const Batches = () => {
         </div>
 
       </motion.div>
-      <AnimatePresence mode="wait">
-        {showBatch && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
-            <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-[90vw] w-full shadow-lg max-h-[90vh] overflow-auto border border-zinc-500"
-            >
-              {/* Modal Header */}
-              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Transactions</h3>
 
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeBatchModal}>
-                  Close
-                </TextButton>
-              </div>
+      <Modal open={showBatch} title="Transactions" height="max-h-[90vh]" width="max-w-[90vw]" onClose={closeBatchModal} ref={modalRef}>
+        <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+          {/* Spreadsheet */}
+          <div className="flex overflow-auto w-screen px-5">
+            {/* Product Table Start */}
+            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
+              {/* Table Headers */}
+              <thead className="sticky top-0 bg-white z-20">
+                <tr>
+                  {managerTableColumns.map((column) => (
+                    <th
+                      key={column.field}
+                      className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
+                      style={{ width: column.width }}
+                    >
+                      <strong>{column.label}</strong>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
 
-              <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
-                {/* Spreadsheet */}
-                <div className="flex overflow-auto w-screen px-5">
-                  {/* Product Table Start */}
-                  <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
-                    {/* Table Headers */}
-                    <thead className="sticky top-0 bg-white z-20">
-                      <tr>
-                        {managerTableColumns.map((column) => (
-                          <th
-                            key={column.field}
-                            className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
-                            style={{ width: column.width }}
-                          >
-                            <strong>{column.label}</strong>
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-
-                    {/* Table Body */}
-                    <tbody className="divide-y divide-zinc-400">
-                      {transactions.length > 0 ? (
-                        transactions.map((transaction) => (
-                          <tr key={transaction.id}
-                            onClick={() => handleShowTransaction(transaction)}
-                            className="hover:bg-zinc-200 transition duration-200"
-                          >
-                            {managerTableColumns.map((column) => (
-                              // Render each cell based on the column field
-                              <td
-                                key={column.field}
-                                className="px-4 py-3 text-xl align-center"
-                                style={{
-                                  width: column.width,
-                                  maxWidth: column.width,
-                                  whiteSpace: "pre-line",
-                                }}
-                              >
-                                {renderTransactionCell(transaction, column.field as keyof Transaction)}
-                              </td>
-                            ))}
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={managerTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
-                            No transactions.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-            </motion.div>
+              {/* Table Body */}
+              <tbody className="divide-y divide-zinc-400">
+                {transactions.length > 0 ? (
+                  transactions.map((transaction) => (
+                    <tr key={transaction.id}
+                      onClick={() => handleShowTransaction(transaction)}
+                      className="hover:bg-zinc-200 transition duration-200"
+                    >
+                      {managerTableColumns.map((column) => (
+                        // Render each cell based on the column field
+                        <td
+                          key={column.field}
+                          className="px-4 py-3 text-xl align-center"
+                          style={{
+                            width: column.width,
+                            maxWidth: column.width,
+                            whiteSpace: "pre-line",
+                          }}
+                        >
+                          {renderTransactionCell(transaction, column.field as keyof Transaction)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={managerTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
+                      No transactions.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
-      </AnimatePresence>
-      <AnimatePresence mode="wait">
-        {showTransaction && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
-            <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-[90vw] w-full shadow-lg max-h-[90vh] overflow-auto border border-zinc-500"
-            >
-              {/* Modal Header */}
-              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Transaction Items</h3>
+        </div>
+      </Modal>
 
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeTransactionModal}>
-                  Close
-                </TextButton>
-              </div>
-
-              <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+      <Modal open={showTransaction} title="Transaction Items" height="max-h-[90vh]" width="max-w-[90vw]" onClose={closeTransactionModal} ref={modalRef}>
+        <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
                 {/* Spreadsheet */}
                 <div className="flex overflow-auto w-screen px-5">
                   {/* Product Table Start */}
@@ -447,11 +404,7 @@ const Batches = () => {
                   </table>
                 </div>
               </div>
-
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      </Modal>
     </>
   );
 }

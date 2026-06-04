@@ -1,11 +1,12 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { formatDate, formatTime, getDiscount, managerTableColumns, noDiscount, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
+import { motion } from "framer-motion";
+import { formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getCurrentBatchTransactions, updateTransactionStatus } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import TextButton from "../ui/TextButton";
 import toast from "react-hot-toast";
+import Modal from "../ui/Modal";
 
 const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transaction[] }) => {
   const { user } = useUser();
@@ -221,7 +222,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
           </div>
 
           {/* Current Batch Data Table */}
-          <div className="flex w-[80vw] max-h-[80vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
+          <div className="flex w-[80vw] max-h-[70vh] overflow-hidden rounded-md shadow-md text-zinc-800 px-5">
             {/* Spreadsheet */}
             <div className="flex overflow-auto w-screen px-5">
               {/* Product Table Start */}
@@ -260,7 +261,6 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                   {sortedTransactions.length > 0 ? (
                     sortedTransactions.map((transaction) => (
                       <tr key={transaction.id}
-                        // onClick={() => handleShowTransaction(transaction)}
                         className="hover:bg-zinc-200 transition duration-200"
                       >
                         {managerTableColumns.map((column) => (
@@ -325,28 +325,9 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
           </div>
         </div>
       </motion.div>
-      <AnimatePresence mode="wait">
-        {showTransaction && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
-            <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-[90vw] w-full shadow-lg max-h-[90vh] overflow-auto border border-zinc-500"
-            >
-              {/* Modal Header */}
-              <h3 className="text-2xl text-zinc-900 mb-4 mt-2 text-left">Transaction Items</h3>
 
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeTransactionModal}>
-                  Close
-                </TextButton>
-              </div>
-
-              <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+      <Modal open={showTransaction} title="Transaction Items" onClose={closeTransactionModal} ref={modalRef} height="max-h-[90vh]" width="max-w-[90vw]">
+        <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
                 {/* Spreadsheet */}
                 <div className="flex overflow-auto w-screen px-5">
                   {/* Product Table Start */}
@@ -398,11 +379,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                   </table>
                 </div>
               </div>
-
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      </Modal>
     </>
   );
 }

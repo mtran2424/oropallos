@@ -12,6 +12,7 @@ import TextButton from "../ui/TextButton";
 import EditUnitPrice from "../utils/EditUnitPrice";
 import AddUPC from "../utils/AddUPC";
 import AddUnit from "../utils/AddUnit";
+import Modal from "../ui/Modal";
 
 const PRODUCTS_PER_PAGE = 25;
 
@@ -477,53 +478,32 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
       </div>
 
       {/* Confirmation modal */}
-      <AnimatePresence mode="wait">
-        {deleteConfirm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
-            <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border border-zinc-500"
+      <Modal open={deleteConfirm} title="Confirm Deletion" onClose={closeEventModal} ref={modalRef} height="max-h-[40vh]" width="max-w-2xl">
+        <div className="flex flex-col gap-4 pb-4">
+          <label className="text-xl text-zinc-700 w-full text-left p-5">
+            This action cannot be undone. This will permanently delete the product from the database.
+          </label>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          {/* Loading Spinner */}
+          {loading ? (
+            <div className="flex justify-center items-center py-2">
+              <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+              onClick={() => {
+                handleDeleteProduct(targetProductId || "");
+              }}
             >
-              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Are you sure?</h3>
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeEventModal}>
-                  Close
-                </TextButton>
-              </div>
-              <div className="flex flex-col gap-4 pb-4">
-                <label className="text-xl text-zinc-700 w-full text-left p-5">
-                  This action cannot be undone. This will permanently delete the product from the database.
-                </label>
-              </div>
-
-              <div className="flex flex-col items-center gap-2">
-                {/* Loading Spinner */}
-                {loading ? (
-                  <div className="flex justify-center items-center py-2">
-                    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                    onClick={() => {
-                      handleDeleteProduct(targetProductId || "");
-                    }}
-                  >
-                    Confirm
-                  </motion.button>
-                )}
-              </div>
-
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              Confirm
+            </motion.button>
+          )}
+        </div>
+      </Modal>
     </>
   );
 }

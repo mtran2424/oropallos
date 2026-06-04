@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
 import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate } from "../global.utils";
@@ -11,6 +11,7 @@ import { IoBackspaceOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import TextButton from "../ui/TextButton";
 import { useReactToPrint } from "react-to-print";
+import Modal from "../ui/Modal";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const date = new Date();
@@ -443,6 +444,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
             </button>
           </div>
 
+          {/* Receipts */}
           <div className="hidden">
             <div className="print-area" ref={receiptRef} >
               {receipt}
@@ -454,286 +456,243 @@ const Transactions = ({ products }: { products: Product[] }) => {
         </div>
       </motion.div>
 
-      <AnimatePresence mode="wait">
-        {cashout && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
+      {/* Cashout Modal */}
+      <Modal open={cashout} title="Cashout" onClose={closeCashoutModal} ref={modalRef}>
+        <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
+          <div className="flex flex-col items-center justify-center w-full gap-2">
+
+            {/* Input bar */}
             <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-3xl w-full shadow-lg max-h-[95vh] overflow-y-auto border border-zinc-500"
-            >
-              {/* Modal Header */}
-              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Cashout</h3>
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeCashoutModal}>
-                  Close
-                </TextButton>
-              </div>
-
-              <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
-                <div className="flex flex-col items-center justify-center w-full gap-2">
-
-                  {/* Input bar */}
-                  <motion.div
-                    className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+              className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                                 overflow-hidden w-full h-30 mb-2"
-                  >
-                    {/* Current input dash display */}
-                    <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
-                      <div className="text-start">
-                        Total: ${(total / 100).toFixed(2)}
-                      </div>
-                      <div className="text-end">
-                        Amount Due: ${((total - (cash + credit)) / 100).toFixed(2)}
-                      </div>
-                    </div>
-
-                    {/* Input box for amount entry. When cash or credit buttons are pressed, amount is added to respective payment type and input 
-                    is cleared. If amount entered is greater than amount due, change is calculated and displayed in success modal after transaction submission. */}
-                    <input
-                      type="number"
-                      value={input}
-                      min={0}
-                      onChange={(e) => setInput(e.target.value)}
-                      className="p-2 text-3xl overflow-hidden w-full focus:outline-none"
-                      style={{ whiteSpace: "nowrap" }}
-                    />
-
-                    {/* Cash and Credit display under input box for reference when entering amounts. */}
-                    <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
-                      <div className="text-start">
-                        Cash: ${(cash / 100).toFixed(2)}
-                      </div>
-                      <div className="text-end">
-                        Credit: ${(credit / 100).toFixed(2)}
-                      </div>
-                    </div>
-                  </motion.div>
-
-
-                  {/* Need to add num pad for amount input. Enter amount and punch credit or cash to reduce amount. When amount greater than total due, transaction is completed */}
-                  <div className="grid grid-cols-3 gap-x-1 gap-y-1 h-full w-full">
-
-                    {/* First Row */}
-
-                    {/* Clear inputs */}
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => {
-                        setInput("");
-                        setCash(0);
-                        setCredit(0);
-                      }}
-                    >
-
-                      Clear
-                    </button>
-
-                    <button></button>
-
-                    {/* Back space button */}
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => {
-                        setInput(prev => prev.slice(0, -1));
-                      }}
-                    >
-                      <IoBackspaceOutline size={40} />
-                    </button>
-
-                    {/* Second Row */}
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}7`)}
-                    >
-                      7
-                    </button>
-
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}8`)}
-                    >
-                      8
-                    </button>
-
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}9`)}
-                    >
-                      9
-                    </button>
-
-                    {/* Third Row */}
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}4`)}
-                    >
-                      4
-                    </button>
-
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}5`)}
-                    >
-                      5
-                    </button>
-
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}6`)}
-                    >
-                      6
-                    </button>
-
-                    {/* Fourth Row */}
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}1`)}
-                    >
-                      1
-                    </button>
-
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}2`)}
-                    >
-                      2
-                    </button>
-
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}3`)}
-                    >
-                      3
-                    </button>
-
-                    {/* Fifth Row */}
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
-                      onClick={() => setInput(`${input}0`)}
-                    >
-                      0
-                    </button>
-
-                    <button
-                      className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                      onClick={() => setInput(`${input}00`)}
-                    >
-                      00
-                    </button>
-
-                    <button></button>
-
-                  </div>
-
-                  {/* Cash and credit buttons */}
-                  <div className="grid grid-cols-2 w-full gap-1">
-                    <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
-                      onClick={() => {
-                        setCash(cash + Number(input));
-                        setInput("");
-                      }}
-                    >
-                      Cash
-                    </button>
-                    <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
-                      onClick={() => {
-                        setCredit(credit + Number(input));
-                        setInput("");
-                      }}
-                    >
-                      Credit
-                    </button>
-                    {/* <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => { }}>Credit</button> */}
-                  </div>
-
-                  {/* Additional Notes Section */}
-                  <div className="flex flex-col w-full">
-                    <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Notes</label>
-                    <textarea
-                      className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                      placeholder="Additional Notes"
-                      onChange={(e) => setNote(e.target.value)}
-                    ></textarea>
-                  </div>
-
-                  {/* Loading Spinner */}
-                  {loading ? (
-                    <div className="flex justify-center items-center py-2">
-                      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  ) : (
-                    // Transaction submit button
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
-                      onClick={handleSubmitTransaction}
-                    >
-                      Submit
-                    </motion.button>
-                  )}
-                </div>
-              </div>
-
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence mode="wait">
-        {confirm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-200">
-            <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-3xl w-full shadow-lg max-h-[95vh] overflow-y-auto border border-zinc-500"
             >
-              {/* Modal Header */}
-              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Confirm</h3>
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeConfirmModal}>
-                  Close
-                </TextButton>
+              {/* Current input dash display */}
+              <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
+                <div className="text-start">
+                  Total: ${(total / 100).toFixed(2)}
+                </div>
+                <div className="text-end">
+                  Amount Due: ${((total - (cash + credit)) / 100).toFixed(2)}
+                </div>
               </div>
 
-              <div className="flex flex-col items-center gap-2">
+              {/* Input box for amount entry. When cash or credit buttons are pressed, amount is added to respective payment type and input 
+                    is cleared. If amount entered is greater than amount due, change is calculated and displayed in success modal after transaction submission. */}
+              <input
+                type="number"
+                value={input}
+                min={0}
+                onChange={(e) => setInput(e.target.value)}
+                className="p-2 text-3xl overflow-hidden w-full focus:outline-none"
+                style={{ whiteSpace: "nowrap" }}
+              />
 
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Change</label>
-                <div className="text-2xl font-bold text-zinc-900">
-                  ${(change / 100).toFixed(2)}
+              {/* Cash and Credit display under input box for reference when entering amounts. */}
+              <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
+                <div className="text-start">
+                  Cash: ${(cash / 100).toFixed(2)}
                 </div>
-
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Receipt Option</label>
-                <div className="grid grid-cols-2 w-full gap-1">
-                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printNoReceipt()}>No Receipt</button>
-                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printReceipt()}>Print Receipt</button>
+                <div className="text-end">
+                  Credit: ${(credit / 100).toFixed(2)}
                 </div>
               </div>
             </motion.div>
+
+
+            {/* Need to add num pad for amount input. Enter amount and punch credit or cash to reduce amount. When amount greater than total due, transaction is completed */}
+            <div className="grid grid-cols-3 gap-x-1 gap-y-1 h-full w-full">
+
+              {/* First Row */}
+
+              {/* Clear inputs */}
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => {
+                  setInput("");
+                  setCash(0);
+                  setCredit(0);
+                }}
+              >
+
+                Clear
+              </button>
+
+              <button></button>
+
+              {/* Back space button */}
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => {
+                  setInput(prev => prev.slice(0, -1));
+                }}
+              >
+                <IoBackspaceOutline size={40} />
+              </button>
+
+              {/* Second Row */}
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}7`)}
+              >
+                7
+              </button>
+
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}8`)}
+              >
+                8
+              </button>
+
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}9`)}
+              >
+                9
+              </button>
+
+              {/* Third Row */}
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}4`)}
+              >
+                4
+              </button>
+
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}5`)}
+              >
+                5
+              </button>
+
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}6`)}
+              >
+                6
+              </button>
+
+              {/* Fourth Row */}
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}1`)}
+              >
+                1
+              </button>
+
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}2`)}
+              >
+                2
+              </button>
+
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}3`)}
+              >
+                3
+              </button>
+
+              {/* Fifth Row */}
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
+                onClick={() => setInput(`${input}0`)}
+              >
+                0
+              </button>
+
+              <button
+                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                onClick={() => setInput(`${input}00`)}
+              >
+                00
+              </button>
+
+              <button></button>
+
+            </div>
+
+            {/* Cash and credit buttons */}
+            <div className="grid grid-cols-2 w-full gap-1">
+              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
+                onClick={() => {
+                  setCash(cash + Number(input));
+                  setInput("");
+                }}
+              >
+                Cash
+              </button>
+              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
+                onClick={() => {
+                  setCredit(credit + Number(input));
+                  setInput("");
+                }}
+              >
+                Credit
+              </button>
+              {/* <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => { }}>Credit</button> */}
+            </div>
+
+            {/* Additional Notes Section */}
+            <div className="flex flex-col w-full">
+              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Notes</label>
+              <textarea
+                className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                placeholder="Additional Notes"
+                onChange={(e) => setNote(e.target.value)}
+              ></textarea>
+            </div>
+
+            {/* Loading Spinner */}
+            {loading ? (
+              <div className="flex justify-center items-center py-2">
+                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              // Transaction submit button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+                onClick={handleSubmitTransaction}
+              >
+                Submit
+              </motion.button>
+            )}
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      </Modal>
+
+      {/* Cashout Confirmation Modal */}
+      <Modal open={confirm} title="Confirm" onClose={closeConfirmModal} ref={modalRef}>
+        <div className="flex flex-col items-center gap-2">
+
+          <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Change</label>
+          <div className="text-2xl font-bold text-zinc-900">
+            ${(change / 100).toFixed(2)}
+          </div>
+
+          <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Receipt Option</label>
+          <div className="grid grid-cols-2 w-full gap-1">
+            <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printNoReceipt()}>No Receipt</button>
+            <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printReceipt()}>Print Receipt</button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

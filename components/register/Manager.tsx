@@ -6,10 +6,7 @@ import CurrentBatch from "./CurrentBatch";
 import Batches from "./Batches";
 
 const Manager = ({ transactions }: { transactions: Transaction[] }) => {
-  const [refresh, setRefresh] = useState(false);
   const [view, setView] = useState<"currentBatch" | "previousBatches">("currentBatch");
-
-  // TODO: Make popup to show items in transaction when transaction is clicked on
 
   return (
     <motion.div

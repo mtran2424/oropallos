@@ -1,11 +1,11 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
 import SearchBar from "../ui/SearchBar";
-import { Discount, fifteenPercentDiscount, getDiscount, noDiscount, Product, sanitize, taxFreeDiscount, TransactionItem } from "../global.utils";
+import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFreeDiscount, TransactionItem } from "../global.utils";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import TextButton from "../ui/TextButton";
+import Modal from "../ui/Modal";
 
 const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: TransactionItem) => void }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -89,15 +89,15 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
 
   // Calculate price
   const getPrice = (discount: string, price: number) => {
-    switch(discount) {
-      case "Tax_Free": return (price/1.07);
+    switch (discount) {
+      case "Tax_Free": return (price / 1.07);
       default: return price;
     }
   }
 
   const handleSubmit = () => {
     // Type of item and product required to be submitted
-    if(quantity && type && currentProduct) {
+    if (quantity && type && currentProduct) {
       onConfirm({
         type: type,
         name: currentProduct.name,
@@ -116,14 +116,14 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   };
 
   // Add event listener for closing the modal when clicking outside of it
-    useEffect(() => {
-      if (addItem) {
-        document.addEventListener('mousedown', closeModalOnOutsideClick);
-      }
-      return () => {
-        document.removeEventListener('mousedown', closeModalOnOutsideClick);
-      };
-    }, [closeModalOnOutsideClick, addItem]);
+  useEffect(() => {
+    if (addItem) {
+      document.addEventListener('mousedown', closeModalOnOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', closeModalOnOutsideClick);
+    };
+  }, [closeModalOnOutsideClick, addItem]);
 
   return (
     <>
@@ -233,83 +233,61 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
           </div>
         </div>
       </motion.div>
-      <AnimatePresence mode="wait">
-        {addItem && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <motion.div
-              initial={{ opacity: 0, x: "-100%" }}
-              animate={{ opacity: 1, x: "0" }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ duration: 0.3 }}
-              ref={modalRef}
-              className="relative bg-white p-6 rounded-2xl max-w-2xl w-full shadow-lg max-h-[70vh] overflow-y-auto border border-zinc-500"
+
+      <Modal open={addItem} title="Add Item" height="max-h-[95vh]" width="max-w-2xl" onClose={closeEventModal} ref={modalRef}>
+        <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
+          <div className="flex flex-col items-center justify-center w-full gap-4">
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
+            <div className="flex flex-row">
+              <button
+                className="text-blue-600 hover:text-zinc-400"
+                onClick={() => setQuantity(quantity - 1)}
+              >
+                <MdNavigateBefore size={60} />
+              </button>
+              <div className="flex w-full items-center justify-center">
+                <input
+                  type="number"
+                  step="1"
+                  className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setQuantity(parseInt(value));
+                  }}
+                  value={quantity || ""}
+                />
+              </div>
+              <button
+                className="text-blue-600 hover:text-zinc-400"
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                <MdNavigateNext size={60} />
+              </button>
+            </div>
+
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
+            <div className="grid grid-cols-3 w-full gap-1">
+              <button className={`p-5 rounded-md text-white text-2xl ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(noDiscount)}>No Discount</button>
+              <button className={`p-5 rounded-md text-white text-2xl ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(fifteenPercentDiscount)}>15% Discount</button>
+              <button className={`p-5 rounded-md text-white text-2xl ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(taxFreeDiscount)}>Tax Free</button>
+            </div>
+
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
+            <div className="grid grid-cols-2 w-full gap-1">
+              <button className={`p-5 rounded-md text-white text-2xl ${type === "Wine" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Wine")}>Wine</button>
+              <button className={`p-5 rounded-md text-white text-2xl ${type === "Liquor" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Liquor")}>Liquor</button>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+              onClick={handleSubmit}
             >
-              {/* Modal Header */}
-              <h3 className="text-xl text-zinc-900 mb-4 mt-2 text-left">Add Item</h3>
-              {/* Close Modal Button */}
-              <div className="absolute top-4 right-4">
-                <TextButton onClick={closeEventModal}>
-                  Close
-                </TextButton>
-              </div>
-
-              <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
-                <div className="flex flex-col items-center justify-center w-full gap-4">
-                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
-                  <div className="flex flex-row">
-                    <button
-                      className="text-blue-600 hover:text-zinc-400"
-                      onClick={() => setQuantity(quantity - 1)}
-                    >
-                      <MdNavigateBefore size={60} />
-                    </button>
-                    <div className="flex w-full items-center justify-center">
-                      <input
-                        type="number"
-                        step="1"
-                        className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setQuantity(parseInt(value));
-                        }}
-                        value={quantity || ""}
-                      />
-                    </div>
-                    <button
-                      className="text-blue-600 hover:text-zinc-400"
-                      onClick={() => setQuantity(quantity + 1)}
-                    >
-                      <MdNavigateNext size={60} />
-                    </button>
-                  </div>
-
-                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
-                  <div className="grid grid-cols-3 w-full gap-1">
-                    <button className={`p-5 rounded-md text-white text-2xl ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(noDiscount)}>No Discount</button>
-                    <button className={`p-5 rounded-md text-white text-2xl ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(fifteenPercentDiscount)}>15% Discount</button>
-                    <button className={`p-5 rounded-md text-white text-2xl ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(taxFreeDiscount)}>Tax Free</button>
-                  </div>
-
-                  <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
-                  <div className="grid grid-cols-2 w-full gap-1">
-                    <button className={`p-5 rounded-md text-white text-2xl ${type === "Wine" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Wine")}>Wine</button>
-                    <button className={`p-5 rounded-md text-white text-2xl ${type === "Liquor" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Liquor")}>Liquor</button>
-                  </div>
-
-                  <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
-                      onClick={handleSubmit}
-                    >
-                      Submit
-                    </motion.button>
-                </div>
-              </div>
-
-            </motion.div>
+              Submit
+            </motion.button>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      </Modal>
     </>
   );
 }
