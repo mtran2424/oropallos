@@ -370,13 +370,8 @@ const Close = ({
             {batchTable}
           </div>
 
-          <div
-            className="hidden"
-          >
-            <div
-              className="print-area"
-              ref={componentRef}
-            >
+          <div className="hidden" >
+            <div className="print-area" ref={componentRef} >
               {printableBatch}
             </div>
           </div>

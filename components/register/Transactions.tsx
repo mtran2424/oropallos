@@ -110,10 +110,36 @@ const Transactions = ({ products }: { products: Product[] }) => {
   }
 
   // Printing
-  const componentRef = useRef<HTMLDivElement>(null);
+  const receiptRef = useRef<HTMLDivElement>(null);
+  const noReceiptRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
-    contentRef: componentRef,
+  const handlePrintReceipt = useReactToPrint({
+    contentRef: receiptRef,
+    documentTitle: "Transaction Receipt",
+    pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      .receipt {
+        width: 75mm;
+        font-family: monospace;
+        font-size: 10px;
+      }
+    }
+  `,
+  });
+
+  const handlePrintNoReceipt = useReactToPrint({
+    contentRef: noReceiptRef,
     documentTitle: "Transaction Receipt",
     pageStyle: `
     @page {
@@ -137,18 +163,18 @@ const Transactions = ({ products }: { products: Product[] }) => {
   `,
   })
 
-  const handlePrintReceipt = () => {
-    handlePrint();
+  const printReceipt = () => {
+    handlePrintReceipt();
     closeConfirmModal();
   }
 
-  const handleNoReceipt = () => {
-    setConfirm(false);
+  const printNoReceipt = () => {
+    handlePrintNoReceipt();
     closeConfirmModal();
   }
 
   const receipt = (
-    <div ref={componentRef} className="flex flex-col w-full items-center text-md pb-10 receipt">
+    <div ref={receiptRef} className="flex flex-col w-full items-center text-md pb-10 receipt">
       <h1 className="font-bold text-center">OROPALLO'S</h1>
       <h1 className="font-bold text-center">WINE & LIQUOR</h1>
       <h1 className="text-center">376 DIX AVENUE</h1>
@@ -251,7 +277,20 @@ const Transactions = ({ products }: { products: Product[] }) => {
         </tbody>
       </table>
     </div>
-  )
+  );
+
+  const noReceipt = (
+    <div ref={noReceiptRef} className="flex flex-col w-full items-center text-md px-10 pb-10 receipt">
+      <h1 className="font-bold text-center">OROPALLO'S</h1>
+      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
+      <h1 className="text-center">376 DIX AVENUE</h1>
+      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
+      <h1 className="font-bold text-center">518-798-3988</h1>
+      <h1 className=" w-full text-left">
+        No Receipt
+      </h1>
+    </div>
+  );
 
   return (
     <>
@@ -404,14 +443,12 @@ const Transactions = ({ products }: { products: Product[] }) => {
             </button>
           </div>
 
-          <div
-            className="hidden"
-          >
-            <div
-              className="print-area"
-              ref={componentRef}
-            >
+          <div className="hidden">
+            <div className="print-area" ref={receiptRef} >
               {receipt}
+            </div>
+            <div className="print-area" ref={noReceiptRef} >
+              {noReceipt}
             </div>
           </div>
         </div>
@@ -689,8 +726,8 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
                 <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Receipt Option</label>
                 <div className="grid grid-cols-2 w-full gap-1">
-                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => handleNoReceipt()}>No Receipt</button>
-                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => handlePrintReceipt()}>Print Receipt</button>
+                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printNoReceipt()}>No Receipt</button>
+                  <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printReceipt()}>Print Receipt</button>
                 </div>
               </div>
             </motion.div>

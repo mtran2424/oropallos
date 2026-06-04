@@ -39,6 +39,20 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
   `,
   })
 
+  const noSaleReceipt = (
+    <div ref={componentRef} className="flex flex-col w-full items-center text-md px-10 pb-10 receipt">
+      <h1 className="font-bold text-center">OROPALLO'S</h1>
+      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
+      <h1 className="text-center">376 DIX AVENUE</h1>
+      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
+      <h1 className="font-bold text-center">518-798-3988</h1>
+      <h1 className="font-bold text-center">Batch Report</h1>
+      <h1 className=" w-full text-left">
+      No Sale
+      </h1>
+    </div>
+  );
+
   return (
     <motion.div
       initial={{ y: "-100%", opacity: 0 }}
@@ -111,6 +125,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
           className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
           onClick={() => {
+            handlePrint();
           }}
         >
           No Sale
@@ -298,7 +313,12 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         >
           <MdKeyboardReturn size={40} />
         </button>
-
+        
+        <div className="hidden" >
+            <div className="print-area" ref={componentRef} >
+              {noSaleReceipt}
+            </div>
+          </div>
       </div>
     </motion.div>);
 }
