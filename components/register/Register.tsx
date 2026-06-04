@@ -22,6 +22,18 @@ const Register = () => {
 
   const [page, setPage] = useState<string>("Transaction");
 
+  
+  const openCustomerDisplay = () => {
+    window.open(
+      "/admin/customer-display",
+      "customerDisplay",
+      "width=1920,height=1080"
+    );
+  };
+
+  openCustomerDisplay();
+
+
   useEffect(() => {
     // if user is not signed in, redirect to home page
     if (!isSignedIn) {

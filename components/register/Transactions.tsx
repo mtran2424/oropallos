@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
 import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate } from "../global.utils";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchMenu from "./SearchMenu";
 import QuickAddButton from "./QuickAddButton";
 import { createTransaction } from "@/app/api/transactionapi";
@@ -29,8 +29,12 @@ const Transactions = ({ products }: { products: Product[] }) => {
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const channel = new BroadcastChannel(`${user.user?.username}-pos`);
+
+
   // Cashout modal
   const modalRef = useRef<HTMLDivElement>(null);
+
   // Close the modal for cashout
   const closeCashoutModal = () => {
     setCashout(false);
@@ -50,28 +54,59 @@ const Transactions = ({ products }: { products: Product[] }) => {
     setAmountTendered(0);
     setChange(0);
     setConfirm(false);
+    channel.postMessage({
+      type: "cart-clear",
+    });
   };
 
   //TODO: Create register logins and use username to identify which register is being used for each transaction
 
   const handleQuickAdd = (name: string, type: string, price: number) => {
-    const itemExists = cart.findIndex(item => item.name === name);
+    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount === noDiscount.value && item.unitPrice === price);
+
+    const item = {
+      type: type,
+      name: name,
+      quantity: 1,
+      discount: noDiscount.value,
+      unitPrice: price
+    }
 
     if (itemExists != -1) {
       const temp = cart[itemExists];
       temp.quantity++;
-      // const newCart = cart.splice(itemExists);
-      setCart([...cart]);
+      setCart((prev) => [...prev]);
+      channel.postMessage({
+        type: "cart-update",
+        item: item
+      });
     }
     else {
-      const item = {
-        type: type,
-        name: name,
-        quantity: 1,
-        discount: noDiscount.value,
-        unitPrice: price
-      }
-      setCart([...cart, item])
+      setCart((prev) => [...prev, item]);
+      channel.postMessage({
+        type: "cart-add",
+        item: item
+      });
+    }
+  }
+
+  const handleAddItem = (item: TransactionItem) => {
+    const itemExists = cart.findIndex(cartItem => cartItem.name === item.name && cartItem.type === item.type && cartItem.discount === item.discount && cartItem.unitPrice === item.unitPrice);
+    if (itemExists != -1) {
+      const temp = cart[itemExists];
+      temp.quantity += item.quantity;
+      setCart((prev) => [...prev]);
+      channel.postMessage({
+        type: "cart-update",
+        item: item
+      });
+    }
+    else {
+      setCart((prev) => [...prev, item]);
+      channel.postMessage({
+        type: "cart-add",
+        item: item
+      });
     }
   }
 
@@ -293,6 +328,10 @@ const Transactions = ({ products }: { products: Product[] }) => {
     </div>
   );
 
+  useEffect(() => {
+    console.log("Customer display listening on channel:", `${user.user?.username}-pos`);
+  }, []);
+
   return (
     <>
       <motion.div
@@ -347,6 +386,10 @@ const Transactions = ({ products }: { products: Product[] }) => {
                             const newCart = [...cart];
                             newCart.splice(index, 1);
                             setCart(newCart);
+                            channel.postMessage({
+                              type: "cart-remove",
+                              item: item
+                            });
                           }}>
                             <MdDelete size={30} className="text-red-500 hover:text-red-700" />
                           </button>
@@ -382,8 +425,12 @@ const Transactions = ({ products }: { products: Product[] }) => {
               </TextButton>
             </div>
             {/* Tools */}
-            {mode === "Register" && <NumPad onConfirm={(item) => setCart([...cart, item])} />}
-            {mode === "Search" && <SearchMenu products={products} onConfirm={(item) => setCart([...cart, item])} />}
+            {mode === "Register" && <NumPad onConfirm={(item) => {
+              handleAddItem(item);
+            }} />}
+            {mode === "Search" && <SearchMenu products={products} onConfirm={(item) => {
+              handleAddItem(item);
+            }} />}
 
             {/* Cart summary */}
             <table className="w-full my-5">

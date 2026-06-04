@@ -6,6 +6,7 @@ import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 import { adminNavBarElements } from "@/components/global.utils";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import MobileMenu from "./MobileMenu";
+import AdminMobileMenu from "./AdminMobileMenu";
 
 const AdminNavbar = () => {
 
@@ -75,7 +76,7 @@ const AdminNavbar = () => {
         </div>
         
         {/* Mobile Menu Button */}
-        <MobileMenu />
+        <AdminMobileMenu />
       </div>
     </motion.nav>
   );
