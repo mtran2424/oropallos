@@ -250,7 +250,7 @@ const Close = ({
   );
 
   const printableBatch = (
-    <div ref={componentRef} className="flex flex-col w-full items-center p-5">
+    <div ref={componentRef} className="flex flex-col w-full items-center px-10 pb-10 receipt">
       <h1 className="font-bold mb-4">OROPALLO'S</h1>
       <h1 className="font-bold mb-4 text-center">WINE & LIQUOR</h1>
       <h1 className="mb-4">376 DIX AVENUE</h1>
