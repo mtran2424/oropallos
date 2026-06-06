@@ -149,7 +149,7 @@ const Close = ({
   };
 
   const batchTable = (
-    <table className="w-full max-w-3/4 border-separate border-spacing-y-4">
+    <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
       <tbody>
         <tr>
           {/* Liquor Sales */}
@@ -251,11 +251,11 @@ const Close = ({
 
   const printableBatch = (
     <div ref={componentRef} className="flex flex-col w-full items-center px-10 pb-10 receipt">
-      <h1 className="font-bold mb-4">OROPALLO'S</h1>
-      <h1 className="font-bold mb-4 text-center">WINE & LIQUOR</h1>
-      <h1 className="mb-4">376 DIX AVENUE</h1>
-      <h1 className="mb-4">QUEENSBURY, NY 12804</h1>
-      <h1 className="font-bold mb-4">518-798-3988</h1>
+      <h1 className="font-bold text-center">OROPALLO'S</h1>
+      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
+      <h1 className="text-center">376 DIX AVENUE</h1>
+      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
+      <h1 className="font-bold text-center">518-798-3988</h1>
       <h1 className="font-bold mb-4">Batch Report</h1>
       {batchTable}
     </div>
