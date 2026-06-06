@@ -46,7 +46,6 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
       <h1 className="text-center">376 DIX AVENUE</h1>
       <h1 className="text-center">QUEENSBURY, NY 12804</h1>
       <h1 className="font-bold text-center">518-798-3988</h1>
-      <h1 className="font-bold text-center">Batch Report</h1>
       <h1 className=" w-full text-left">
       No Sale
       </h1>

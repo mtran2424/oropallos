@@ -153,13 +153,13 @@ const Close = ({
       <tbody>
         <tr>
           {/* Liquor Sales */}
-          <td className="text-2xl">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
-          <td className="text-end text-2xl">Register: {user?.username}</td>
+          <td className="">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
+          <td className="text-end">Register: {user?.username}</td>
         </tr>
         <tr>
           {/* Liquor Sales */}
-          <td className="font-semibold text-2xl">LIQUOR</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold">LIQUOR</td>
+          <td className="text-end">
             <div className="flex flex-col">
               <div>${(grossLiquor / 100).toFixed(2)}</div>
               <div>
@@ -174,8 +174,8 @@ const Close = ({
 
         {/* Wine Sales */}
         <tr>
-          <td className="font-semibold text-2xl">WINE</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold">WINE</td>
+          <td className="text-end">
             <div className="flex flex-col">
               <div>${(grossWine / 100).toFixed(2)}</div>
               <div>
@@ -190,60 +190,60 @@ const Close = ({
 
         {/* Total Sales */}
         <tr>
-          <td className="font-semibold text-2xl">SUBTOTAL</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold">SUBTOTAL</td>
+          <td className="text-end">
             <div>${(grossTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Total Tax */}
         <tr>
-          <td className="font-semibold text-2xl">TAX</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold">TAX</td>
+          <td className="text-end">
             <div>${(taxTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Total w/ Tax */}
         <tr>
-          <td className="font-semibold text-2xl">TTL + TAX</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold">TTL + TAX</td>
+          <td className="text-end">
             <div>${((grossTotal + taxTotal) / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         {/* Discounts */}
         <tr>
-          <td className="font-semibold text-2xl">-% ITEM</td>
-          <td className="text-end text-2xl">
+          <td className="font-semibold">-% ITEM</td>
+          <td className="text-end">
             <div>{discountQty} Q</div>
             <div>-${(discountTotal / 100).toFixed(2)}</div>
           </td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">VOID COUNT</td>
-          <td className="text-end text-2xl">{transactions.filter((t) => t.status === "Void").length} Q</td>
+          <td className="font-semibold">VOID COUNT</td>
+          <td className="text-end">{transactions.filter((t) => t.status === "Void").length} Q</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">TRANSACTION COUNT</td>
-          <td className="text-end text-2xl">{transactions.length} Q</td>
+          <td className="font-semibold">TRANSACTION COUNT</td>
+          <td className="text-end">{transactions.length} Q</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">CASH</td>
-          <td className="text-end text-2xl">${(cashTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold">CASH</td>
+          <td className="text-end">${(cashTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">CREDIT</td>
-          <td className="text-end text-2xl">${(creditTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold">CREDIT</td>
+          <td className="text-end">${(creditTotal / 100).toFixed(2)}</td>
         </tr>
 
         <tr>
-          <td className="font-semibold text-2xl">NET TOTAL</td>
-          <td className="text-end text-2xl">${(netTotal / 100).toFixed(2)}</td>
+          <td className="font-semibold">NET TOTAL</td>
+          <td className="text-end">${(netTotal / 100).toFixed(2)}</td>
         </tr>
       </tbody>
     </table>
@@ -251,12 +251,12 @@ const Close = ({
 
   const printableBatch = (
     <div ref={componentRef} className="flex flex-col w-full items-center p-5">
-      <h1 className="text-2xl font-bold mb-4">OROPALLO'S</h1>
-      <h1 className="text-2xl font-bold mb-4 text-center">WINE & LIQUOR</h1>
-      <h1 className="text-xl mb-4">376 DIX AVENUE</h1>
-      <h1 className="text-xl mb-4">QUEENSBURY, NY 12804</h1>
-      <h1 className="text-2xl font-bold mb-4">518-798-3988</h1>
-      <h1 className="text-2xl font-bold mb-4">Batch Report</h1>
+      <h1 className="font-bold mb-4">OROPALLO'S</h1>
+      <h1 className="font-bold mb-4 text-center">WINE & LIQUOR</h1>
+      <h1 className="mb-4">376 DIX AVENUE</h1>
+      <h1 className="mb-4">QUEENSBURY, NY 12804</h1>
+      <h1 className="font-bold mb-4">518-798-3988</h1>
+      <h1 className="font-bold mb-4">Batch Report</h1>
       {batchTable}
     </div>
   );
@@ -368,7 +368,9 @@ const Close = ({
             </button>
           </div>
 
-          {batchTable}
+          <div className="flex justify-center w-full text-2xl">
+            {batchTable}
+          </div>
 
           <div
             className="hidden"
@@ -385,35 +387,35 @@ const Close = ({
 
       {/* Confirmation modal */}
       <Modal open={confirm} title="Are you sure?" onClose={closeEventModal} ref={modalRef} height="max-h-[30vh]" width="max-w-2xl">
-        
-              <div className="flex flex-col gap-4 pb-4">
-                <label className="text-xl text-zinc-700 w-full text-left px-2">
-                  Date: {formatDate(date, "mm/dd/yyyy")} {formatTime(date)}
-                </label>
 
-                <label className="text-xl text-zinc-700 w-full text-left px-2">
-                  Closing Register: {user?.username}
-                </label>
-              </div>
+        <div className="flex flex-col gap-4 pb-4">
+          <label className="text-xl text-zinc-700 w-full text-left px-2">
+            Date: {formatDate(date, "mm/dd/yyyy")} {formatTime(date)}
+          </label>
 
-              <div className="flex flex-col items-center gap-2">
-                {/* Loading Spinner */}
-                {loading ? (
-                  <div className="flex justify-center items-center py-2">
-                    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-                    onClick={handleSubmitBatch}
-                  >
-                    Submit
-                  </motion.button>
-                )}
+          <label className="text-xl text-zinc-700 w-full text-left px-2">
+            Closing Register: {user?.username}
+          </label>
+        </div>
 
-                <TextButton onClick={handlePrint}>Print Report</TextButton>
-              </div>
+        <div className="flex flex-col items-center gap-2">
+          {/* Loading Spinner */}
+          {loading ? (
+            <div className="flex justify-center items-center py-2">
+              <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+              onClick={handleSubmitBatch}
+            >
+              Submit
+            </motion.button>
+          )}
+
+          <TextButton onClick={handlePrint}>Print Report</TextButton>
+        </div>
 
       </Modal>
     </>
