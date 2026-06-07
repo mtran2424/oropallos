@@ -41,6 +41,7 @@ export interface Product {
   hidden?: boolean;
   unitPrice?: number;
   unitCount?: number;
+  unitsPerCase?: number;
   createdAt?: Date;
 }
 
@@ -55,9 +56,10 @@ export interface TransactionItem {
   id?: string;
   name: string;
   quantity: number;
-  unitPrice: number;
+  itemPrice: number;
   discount: string;
   type: string;
+  upc?: string;
 }
 
 export interface Transaction {
@@ -472,6 +474,7 @@ export const inventoryTableColumns = [
   { field: "upc", label: "UPC", width: "200px" },
   { field: "unitPrice", label: "Unit Price", width: "150px" },
   { field: "unitCount", label: "Unit Count", width: "150px" },
+  { field: "unitsPerCase", label: "Units Per Case", width: "150px" }
 ] as const;
 
 // Headers for product tables in admin view
@@ -479,7 +482,7 @@ export const transactionItemTableColumns = [
   { field: "id", label: "Transaction Item ID", width: "100px" },
   { field: "name", label: "Name", width: "200px" },
   { field: "quantity", label: "Quantity", width: "100px" },
-  { field: "unitPrice", label: "Unit Price", width: "100px" },
+  { field: "itemPrice", label: "Item Price", width: "100px" },
   { field: "discount", label: "Discount", width: "200px" },
   { field: "type", label: "Type", width: "100px" },
 ] as const;
@@ -538,7 +541,7 @@ export const formatTime = (date: Date | null | undefined) => {
 
 export const getTotal = (item: TransactionItem) => {
   return (
-    item.unitPrice *
+    item.itemPrice *
     item.quantity *
     getDiscount(item.discount).multiplier *
     (1 + taxRate / 100)
@@ -546,7 +549,7 @@ export const getTotal = (item: TransactionItem) => {
 };
 
 export const getSubtotal = (item: TransactionItem) => {
-  return item.unitPrice * item.quantity * getDiscount(item.discount).multiplier;
+  return item.itemPrice * item.quantity * getDiscount(item.discount).multiplier;
 };
 
 export const calculateSubtotal = (cart: TransactionItem[]) => {
@@ -561,7 +564,7 @@ export const calculateSubtotal = (cart: TransactionItem[]) => {
 export const calculateDiscount = (cart: TransactionItem[]) => {
   var total = 0;
   cart.map((item) => {
-    total += item.unitPrice * item.quantity * (1 - getDiscount(item.discount).multiplier);
+    total += item.itemPrice * item.quantity * (1 - getDiscount(item.discount).multiplier);
   });
 
   return total;

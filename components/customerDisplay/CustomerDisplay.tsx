@@ -37,7 +37,7 @@ const CustomerDisplay = () => {
           setCart((prev) => [...prev, event.data.item]);
           break;
         case "cart-update":
-          const itemExists = cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount === event.data.item.discount && item.unitPrice === event.data.item.unitPrice);
+          const itemExists = cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount === event.data.item.discount && item.itemPrice === event.data.item.itemPrice);
           if (itemExists !== -1) {
             const temp = cart[itemExists];
             temp.quantity += event.data.item.quantity;
@@ -45,7 +45,7 @@ const CustomerDisplay = () => {
           }
           break;
         case "cart-remove":
-          setCart((prev) => prev.filter(item => !(item.name === event.data.item.name && item.type === event.data.item.type && item.discount === event.data.item.discount && item.unitPrice === event.data.item.unitPrice)));
+          setCart((prev) => prev.filter(item => !(item.name === event.data.item.name && item.type === event.data.item.type && item.discount === event.data.item.discount && item.itemPrice === event.data.item.itemPrice)));
           break;
         case "cart-clear":
           setCart([]);
@@ -140,7 +140,7 @@ const CustomerDisplay = () => {
                     <td className="text-2xl text-center">{item.name}</td>
                     <td className="text-2xl text-center">{item.quantity}</td>
                     {/* <td className="text-2xl text-center">{getDiscount(item.discount).name}</td> */}
-                    <td className="text-2xl text-center">{(item.unitPrice / 100).toFixed(2)}</td>
+                    <td className="text-2xl text-center">{(item.itemPrice / 100).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>

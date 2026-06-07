@@ -18,8 +18,9 @@ const AddUnit = ({ onAddUnit, product }: {
 
   // States for form fields
   const [unitCount, setUnitCount] = useState<number>(product.unitCount !== undefined ? product.unitCount : 0);
+  const [unitsPerCase, setUnitsPerCase] = useState<number>(product.unitsPerCase !== undefined ? product.unitsPerCase : 0)
   const [quantity, setQuantity] = useState<number>(0);
-  const [caseCount, setCaseCount] = useState<number>(6);
+  const [caseCount, setCaseCount] = useState<number>(product.unitsPerCase !== undefined ? product.unitsPerCase : 0);
   const [mode, setMode] = useState<"Add" | "Edit">("Edit");
 
   // Multiplier determines whether to multiply the unit count by case (for cases) or leave it as is (for units)
@@ -54,6 +55,7 @@ const AddUnit = ({ onAddUnit, product }: {
       hidden: product.hidden,
       unitPrice: product.unitPrice,
       unitCount: unitCount + (type === "Case" ? quantity * caseCount : quantity),
+      unitsPerCase: unitsPerCase
     };
 
     if (product.id) {
@@ -157,6 +159,20 @@ const AddUnit = ({ onAddUnit, product }: {
                     setUnitCount(value === "" ? 0 : parseInt(value));
                   }}
                   value={unitCount || ""}
+                />
+
+                {/* Unit Count Field */}
+                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Units Per Case</label>
+                <input
+                  type="number"
+                  step="1"
+                  className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                  placeholder="Unit Count"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setUnitsPerCase(value === "" ? 0 : parseInt(value));
+                  }}
+                  value={unitsPerCase || ""}
                 />
               </>
             )}

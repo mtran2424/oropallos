@@ -24,6 +24,7 @@ export async function GET() {
         hidden: true,
         unitPrice: true,
         unitCount: true,
+        unitsPerCase: true,
       },
       where: {
         favorite: true,

@@ -63,14 +63,14 @@ const Transactions = ({ products }: { products: Product[] }) => {
   //TODO: Create register logins and use username to identify which register is being used for each transaction
 
   const handleQuickAdd = (name: string, type: string, price: number) => {
-    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount === noDiscount.value && item.unitPrice === price);
+    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount === noDiscount.value && item.itemPrice === price);
 
     const item = {
       type: type,
       name: name,
       quantity: 1,
       discount: noDiscount.value,
-      unitPrice: price
+      itemPrice: price
     }
 
     if (itemExists != -1) {
@@ -92,7 +92,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
   }
 
   const handleAddItem = (item: TransactionItem) => {
-    const itemExists = cart.findIndex(cartItem => cartItem.name === item.name && cartItem.type === item.type && cartItem.discount === item.discount && cartItem.unitPrice === item.unitPrice);
+    const itemExists = cart.findIndex(cartItem => cartItem.name === item.name && cartItem.type === item.type && cartItem.discount === item.discount && cartItem.itemPrice === item.itemPrice);
     if (itemExists != -1) {
       const temp = cart[itemExists];
       temp.quantity += item.quantity;
@@ -240,7 +240,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               <td className="text-start items-start h-full align-top">
                 <div className="flex flex-col text-end">
                   <div>
-                    {item.quantity > 1 ? `${item.quantity} @ ` : ''}${(item.unitPrice / 100).toFixed(2)}
+                    {item.quantity > 1 ? `${item.quantity} @ ` : ''}${(item.itemPrice / 100).toFixed(2)}
                   </div>
                   {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                     <div>
@@ -249,7 +249,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                   )}
                   {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                     <div>
-                      -{(((item.unitPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.unitPrice * item.quantity)) / 100).toFixed(2)}
+                      -{(((item.itemPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
                     </div>
                   )}
                 </div>
@@ -371,7 +371,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                         <td className="text-2xl text-center">{item.name}</td>
                         <td className="text-2xl text-center">{item.quantity}</td>
                         <td className="text-2xl text-center">{getDiscount(item.discount).name}</td>
-                        <td className="text-2xl text-center">{(item.unitPrice / 100).toFixed(2)}</td>
+                        <td className="text-2xl text-center">{(item.itemPrice / 100).toFixed(2)}</td>
                         <td className="text-2xl text-center">
                           <button onClick={() => {
                             const newCart = [...cart];

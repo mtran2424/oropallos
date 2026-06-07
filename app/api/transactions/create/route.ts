@@ -17,15 +17,15 @@ export async function POST(req: NextRequest) {
   const { transaction } = body;
 
   const liquorSubtotal = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Liquor" ? item.unitPrice * item.quantity : 0);
+    return sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0);
   }, 0);
 
   const wineSubtotal = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Wine" ? item.unitPrice * getDiscount(item.discount).multiplier * item.quantity : 0);
+    return sum + (item.type === "Wine" ? item.itemPrice * getDiscount(item.discount).multiplier * item.quantity : 0);
   }, 0);
 
   const discount = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Wine" && getDiscount(item.discount).value !== "No_Discount" ? (item.unitPrice * (1 - getDiscount(item.discount).multiplier) * item.quantity) : 0);
+    return sum + (item.type === "Wine" && getDiscount(item.discount).value !== "No_Discount" ? (item.itemPrice * (1 - getDiscount(item.discount).multiplier) * item.quantity) : 0);
   }, 0);
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
@@ -50,8 +50,9 @@ export async function POST(req: NextRequest) {
           create: transaction.transactionItems.map((item: TransactionItem) => ({
             name: item.name,
             quantity: item.quantity,
-            unitPrice: item.unitPrice,
+            itemPrice: item.itemPrice,
             discount: item.discount,
+            upc: item.upc ? item.upc : null,
             type: item.type
           })),
         },
