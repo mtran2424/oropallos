@@ -33,7 +33,8 @@ export async function GET() {
             id: true,
             name: true,
             quantity: true,
-            unitPrice: true,
+            itemPrice: true,
+            upc: true,
             discount: true,
             type: true,
           }
