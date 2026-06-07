@@ -40,7 +40,8 @@ export async function GET(req: NextRequest) {
             id: true,
             name: true,
             quantity: true,
-            unitPrice: true,
+            itemPrice: true,
+            upc: true,
             discount: true,
             type: true,
           }
