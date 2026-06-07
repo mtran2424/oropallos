@@ -13,14 +13,16 @@ import { GoGraph } from "react-icons/go";
 import { RxExit } from "react-icons/rx";
 import { getProducts } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
-import { IoIosSettings } from "react-icons/io";
+import { IoIosSettings, IoMdClose } from "react-icons/io";
 import Settings from "./Settings";
+import { FaRegSquare } from "react-icons/fa";
 
 const Register = () => {
   // Admin check
   const { isSignedIn } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [page, setPage] = useState<string>("Transaction");
 
@@ -34,6 +36,19 @@ const Register = () => {
   };
 
   openCustomerDisplay();
+
+  // Function to toggle fullscreen mode
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error("Fullscreen error:", err);
+    }
+  };
 
 
   useEffect(() => {
@@ -67,6 +82,20 @@ const Register = () => {
     fetchTransactions();
   }, []);
 
+  // hook to listen for fullscreen changes and update state accordingly
+  useEffect(() => {
+    const handleChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleChange);
+    };
+  }, []);
+
+
   return (
     <motion.div
       initial={{ x: "-100%", opacity: 0 }}
@@ -74,6 +103,34 @@ const Register = () => {
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
     >
+      {/* Fullscreen toggle button */}
+      <div className="absolute top-4 right-4">
+        {isFullscreen ? (
+          <motion.div
+            key={"close"}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            onClick={() => toggleFullscreen()}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="hover:text-[#FFBA04]"
+          >
+            <IoMdClose size={20} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key={"fullscreen"}
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            onClick={() => toggleFullscreen()}
+            exit={{ scaleX: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="hover:text-[#FFBA04]"
+          >
+            <FaRegSquare size={20} />
+          </motion.div>
+        )}
+      </div>
       <motion.div
         initial={{ x: -100 }}
         animate={{ x: 0 }}

@@ -24,6 +24,9 @@ const Settings = ({ configs }: { configs: Transaction[] }) => {
         {/* TODO: Add custom discounts */}
         {/* {view === "currentBatch" && <CurrentBatch initialTransactions={transactions} />} */}
         {/* {view === "previousBatches" && <Batches />} */}
+        <div className="flex flex-col w-full border rounded border-zinc-400">
+          <h1 className="">Configs</h1>
+        </div>
       </div>
 
     </motion.div>

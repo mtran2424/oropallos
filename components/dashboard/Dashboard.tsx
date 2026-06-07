@@ -16,37 +16,40 @@ const Dashboard = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
   // Admin check
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
 
   useEffect(() => {
     // if user is not signed in, redirect to home page
     if (!isSignedIn) {
       redirect('/');
     }
+    else if (user && user.username !== "admin") {
+      redirect('/admin/register');
+    }
   }, [isSignedIn]);
 
   useEffect(() => {
-      const fetchProducts = async () => {
-        try {
-          const data = await getProducts();
-          setProducts(data.products);
-        } catch (error) {
-          console.error("Error fetching products:", error);
-        }
-      };
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data.products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-      const fetchAnnouncements = async () => {
-        try {
-          const data = await getAnnouncements();
-          setAnnouncements(data.announcements);
-        } catch (error) {
-          console.error("Error fetching announcements:", error);
-        }
-      };
-  
-      fetchProducts();
-      fetchAnnouncements();
-    }, []);
+    const fetchAnnouncements = async () => {
+      try {
+        const data = await getAnnouncements();
+        setAnnouncements(data.announcements);
+      } catch (error) {
+        console.error("Error fetching announcements:", error);
+      }
+    };
+
+    fetchProducts();
+    fetchAnnouncements();
+  }, []);
 
   return (
     <motion.div

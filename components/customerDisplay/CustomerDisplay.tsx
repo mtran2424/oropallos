@@ -103,7 +103,7 @@ const CustomerDisplay = () => {
       </div>
       <div className="flex flex-col w-1/2 p-5">
         {/* Cart and Display */}
-        <div className="flex flex-col w-full h-[80vh]">
+        <div className="flex flex-col w-full h-[70vh]">
           <h1
             className="text-xl sm:text-2xl font-serif font-semibold text-center sm:text-start text-zinc-900 mb-4">
             Shopping Cart

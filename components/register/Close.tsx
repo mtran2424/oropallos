@@ -20,7 +20,6 @@ const Close = ({
 }) => {
   const date = new Date();
   const { user } = useUser();
-
   const modalRef = useRef<HTMLDivElement>(null);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions.filter((transaction) => transaction.batchId === null));
   const [refresh, setRefresh] = useState(false);
