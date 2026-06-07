@@ -151,6 +151,7 @@ model Config {
   id        String   @id @default(uuid())
   key       String   @unique
   value     String
+  user      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
