@@ -4,6 +4,7 @@ import { IoBackspaceOutline } from "react-icons/io5";
 import { MdKeyboardReturn } from "react-icons/md";
 import { Discount, fifteenPercentDiscount, noDiscount, taxFreeDiscount, TransactionItem } from "../global.utils";
 import { useReactToPrint } from "react-to-print";
+import Receipt from "../utils/Receipt";
 
 const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) => {
   const [input, setInput] = useState<string>("");
@@ -13,7 +14,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
   const [discount, setDiscount] = useState<Discount>(noDiscount);
 
   const componentRef = useRef<HTMLDivElement>(null);
-// TODO: make no sale button receipt
+  // TODO: make no sale button receipt
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
     documentTitle: "Transaction Receipt",
@@ -40,16 +41,11 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
   })
 
   const noSaleReceipt = (
-    <div ref={componentRef} className="flex flex-col w-full items-center text-md px-10 pb-10 receipt">
-      <h1 className="font-bold text-center">OROPALLO'S</h1>
-      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
-      <h1 className="text-center">376 DIX AVENUE</h1>
-      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
-      <h1 className="font-bold text-center">518-798-3988</h1>
+    <Receipt ref={componentRef}>
       <h1 className=" w-full text-left">
-      No Sale
+        No Sale
       </h1>
-    </div>
+    </Receipt>
   );
 
   return (
@@ -312,12 +308,12 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
         >
           <MdKeyboardReturn size={40} />
         </button>
-        
+
         <div className="hidden" >
-            <div className="print-area" ref={componentRef} >
-              {noSaleReceipt}
-            </div>
+          <div className="print-area" ref={componentRef} >
+            {noSaleReceipt}
           </div>
+        </div>
       </div>
     </motion.div>);
 }

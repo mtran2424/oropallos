@@ -6,6 +6,7 @@ import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import Modal from "../ui/Modal";
+import { FaSearch } from "react-icons/fa";
 
 const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: TransactionItem) => void }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -19,6 +20,8 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   const [discount, setDiscount] = useState<Discount>(noDiscount);
   const [type, setType] = useState<string>("")
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   // Handlers for search and sort
 
   // Apply filters, seach terms, and sorting
@@ -26,7 +29,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     const term = deferredSearch.toLowerCase();
 
     const filtered = term !== "" ? products.filter((product) =>
-      [product.name, product.category, product.subcategory, product.type, product.size, product.upc]
+      [product.name, product.upc]
         .filter(Boolean)
         .some((field) => sanitize(field ? field : "").includes(sanitize(term)))
     ) : [];
@@ -111,6 +114,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
       setQuantity(1);
       setDiscount(noDiscount);
       setType("");
+      setSearchTerm("");
       setAddItem(false);
     }
   };
@@ -125,6 +129,12 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     };
   }, [closeModalOnOutsideClick, addItem]);
 
+  useEffect(() => {
+    if (!addItem && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [addItem]);
+
   return (
     <>
       <motion.div
@@ -135,11 +145,37 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
         className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-10"
       >
         {/* Search Bar Component */}
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          handleSearchChange={handleSearchChange}
-        />
+        <div className="flex flex-center items-center w-full max-w-7xl ">
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="text-gray-600 p-2 focus:outline-none"
+          >
+            <FaSearch size={20} />
+          </motion.div>
+
+          {/* Search Input */}
+          <motion.input
+            type="text"
+            ref={inputRef}
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search by name, or barcode..."
+            initial={{ width: 0, opacity: 0 }}
+            animate={{
+              width: "100%",
+              opacity: 1,
+              paddingLeft: "0.75rem",
+              paddingRight: "0.75rem",
+            }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
+            style={{ whiteSpace: "nowrap" }}
+          />
+
+        </div>
+
 
         <div className="flex flex-row w-full whitespace-nowrap">
 
@@ -170,12 +206,12 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
               <thead className="sticky top-0 bg-white z-20">
                 <tr>
                   <th
-                    className="px-4 py-3 text-left text-lg font-medium uppercase tracking-widest whitespace-nowrap"
+                    className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
                   >
                     <strong>Item</strong>
                   </th>
                   <th
-                    className="px-4 py-3 text-left text-lg font-medium uppercase tracking-widest whitespace-nowrap"
+                    className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
                   >
                     <strong>Price</strong>
                   </th>

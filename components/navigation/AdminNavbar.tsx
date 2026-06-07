@@ -5,7 +5,6 @@ import Image from "next/image";
 import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 import { adminNavBarElements } from "@/components/global.utils";
 import { SignedIn, UserButton } from "@clerk/nextjs";
-import MobileMenu from "./MobileMenu";
 import AdminMobileMenu from "./AdminMobileMenu";
 
 const AdminNavbar = () => {

@@ -11,6 +11,7 @@ import { createBatch } from "@/app/api/batchapi";
 import { useReactToPrint } from "react-to-print";
 import toast from "react-hot-toast/headless";
 import Modal from "../ui/Modal";
+import Receipt from "../utils/Receipt";
 
 const Close = ({
   initialTransactions,
@@ -35,7 +36,7 @@ const Close = ({
     pageStyle: `
     @page {
       size: 80mm auto;
-      margin: 4mm;
+      margin: 0;
     }
 
     @media print {
@@ -46,9 +47,9 @@ const Close = ({
       }
 
       .receipt {
-        width: 72mm;
+        width: 75mm;
         font-family: monospace;
-        font-size: 12px;
+        font-size: 10px;
       }
     }
   `,
@@ -250,15 +251,9 @@ const Close = ({
   );
 
   const printableBatch = (
-    <div ref={componentRef} className="flex flex-col w-full items-center px-10 pb-10 receipt">
-      <h1 className="font-bold text-center">OROPALLO'S</h1>
-      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
-      <h1 className="text-center">376 DIX AVENUE</h1>
-      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
-      <h1 className="font-bold text-center">518-798-3988</h1>
-      <h1 className="font-bold mb-4">Batch Report</h1>
+    <Receipt ref={componentRef} title="Batch Report">
       {batchTable}
-    </div>
+    </Receipt>
   );
 
   // Create batch and submit transactions in batch

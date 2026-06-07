@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import TextButton from "../ui/TextButton";
 import { useReactToPrint } from "react-to-print";
 import Modal from "../ui/Modal";
+import Receipt from "../utils/Receipt";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const date = new Date();
@@ -210,12 +211,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
   }
 
   const receipt = (
-    <div ref={receiptRef} className="flex flex-col w-full items-center text-md pb-10 receipt">
-      <h1 className="font-bold text-center">OROPALLO'S</h1>
-      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
-      <h1 className="text-center">376 DIX AVENUE</h1>
-      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
-      <h1 className="font-bold text-center">518-798-3988</h1>
+    <Receipt ref={receiptRef}>
       <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
         <tbody>
           <tr>
@@ -312,20 +308,15 @@ const Transactions = ({ products }: { products: Product[] }) => {
           </tr>
         </tbody>
       </table>
-    </div>
+    </Receipt>
   );
 
   const noReceipt = (
-    <div ref={noReceiptRef} className="flex flex-col w-full items-center text-md px-10 pb-10 receipt">
-      <h1 className="font-bold text-center">OROPALLO'S</h1>
-      <h1 className="font-bold text-center">WINE & LIQUOR</h1>
-      <h1 className="text-center">376 DIX AVENUE</h1>
-      <h1 className="text-center">QUEENSBURY, NY 12804</h1>
-      <h1 className="font-bold text-center">518-798-3988</h1>
+    <Receipt ref={noReceiptRef}>
       <h1 className=" w-full text-left">
         No Receipt
       </h1>
-    </div>
+    </Receipt>
   );
 
   useEffect(() => {
