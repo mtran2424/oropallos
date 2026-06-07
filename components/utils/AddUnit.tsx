@@ -167,7 +167,7 @@ const AddUnit = ({ onAddUnit, product }: {
                   type="number"
                   step="1"
                   className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  placeholder="Unit Count"
+                  placeholder="Units Per Case"
                   onChange={(e) => {
                     const value = e.target.value;
                     setUnitsPerCase(value === "" ? 0 : parseInt(value));
