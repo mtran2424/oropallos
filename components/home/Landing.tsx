@@ -1,8 +1,13 @@
-// "use client";
+"use client";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
 const Landing = () => {
-  redirect("/home");
+
+  useEffect(() => {
+    redirect("/home");
+  }, []);
+
   return (<></>);
 }
 
