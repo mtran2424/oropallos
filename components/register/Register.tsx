@@ -3,7 +3,7 @@ import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Product, Transaction } from "@/components/global.utils";
+import { Config, Product, Transaction } from "@/components/global.utils";
 import Transactions from "./Transactions";
 import Manager from "./Manager";
 import Close from "./Close";
@@ -14,15 +14,16 @@ import { RxExit } from "react-icons/rx";
 import { getProducts } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
 import { IoIosSettings, IoMdClose } from "react-icons/io";
-import Settings from "./Settings";
 import { FaRegSquare } from "react-icons/fa";
+import { getConfigs } from "@/app/api/configapi";
 
 const Register = () => {
   // Admin check
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [configs, setConfigs] = useState<Config[]>([]);
 
   const [page, setPage] = useState<string>("Transaction");
 
@@ -35,7 +36,11 @@ const Register = () => {
     );
   };
 
-  openCustomerDisplay();
+  useEffect(() => {
+    if (user && user.username !== "admin") {
+      openCustomerDisplay();
+    }
+  }, [user]);
 
   // Function to toggle fullscreen mode
   const toggleFullscreen = async () => {
@@ -78,8 +83,20 @@ const Register = () => {
       }
     };
 
+    const fetchConfigs = async () => {
+      try {
+        if (user?.username) {
+          const data = await getConfigs(user.username);
+          setConfigs(data.configs);
+        }
+      } catch (error) {
+        console.error("Error fetching configs:", error);
+      }
+    };
+
     fetchProducts();
     fetchTransactions();
+    fetchConfigs();
   }, []);
 
   // hook to listen for fullscreen changes and update state accordingly
@@ -196,7 +213,6 @@ const Register = () => {
         {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
-        {page === "Settings" && <Settings configs={transactions} />}
       </div>
     </motion.div>
   );

@@ -32,7 +32,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      afterSignOutUrl="/admin/sign-in"
+    >
       <html lang="en">
         <body
           className={`${montserrat.variable} ${merriweather.variable} bg-white antialiased`}

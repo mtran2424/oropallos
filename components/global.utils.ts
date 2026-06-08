@@ -95,6 +95,19 @@ export interface Batch {
   date?: Date;
 }
 
+export interface Config {
+  id?: string;
+  key: string;
+  user: string | null;
+  value: string;
+}
+
+export interface ConfigRequest {
+  key: string;
+  user: string | null;
+  value: string;
+}
+
 export interface TransactionRequest {
   status: string;
   register: string;

@@ -1,7 +1,7 @@
 // app/api/products/get/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { currentUser } from '@clerk/nextjs/server';
 
 // This function handles the GET request to fetch all products
 export async function GET() {

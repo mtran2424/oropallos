@@ -21,7 +21,7 @@ const Dashboard = () => {
   useEffect(() => {
     // if user is not signed in, redirect to home page
     if (!isSignedIn) {
-      redirect('/');
+      redirect('/home');
     }
     else if (user && user.username !== "admin") {
       redirect('/admin/register');

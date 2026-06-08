@@ -11,7 +11,9 @@ export const Login = () => {
       transition={{ duration: 1, ease: "easeInOut" }}
     >
       <div className="flex justify-center items-center h-screen w-screen">
-        <SignIn />
+        <SignIn 
+          fallbackRedirectUrl="/admin/dashboard"
+        />
       </div>
     </motion.div>
   );
