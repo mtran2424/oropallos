@@ -106,7 +106,8 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
         name: currentProduct.name,
         quantity: quantity,
         discount: discount.value,
-        itemPrice: parseFloat(getPrice(discount.value, currentProduct.price * 100).toFixed(2))
+        upc: currentProduct.upc,
+        itemPrice: parseInt(getPrice(discount.value, currentProduct.price * 100).toFixed(0))
       })
 
       // Reset states upon confirm

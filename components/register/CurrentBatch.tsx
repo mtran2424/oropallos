@@ -33,7 +33,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
   const modalRef = useRef<HTMLDivElement>(null);
   const [showTransaction, setShowTransaction] = useState(false);
   const [transactionItems, setTransactionItems] = useState<TransactionItem[]>([]);
-  const [loadingStatus, setLoadingStatus] = useState<{id: string, state: boolean}>({id: "", state: false});
+  const [loadingStatus, setLoadingStatus] = useState<{ id: string, state: boolean }>({ id: "", state: false });
 
   const handleShowTransaction = (transaction: Transaction) => {
     setShowTransaction(true);
@@ -116,6 +116,8 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
         return getDiscount(item.discount).name;
       case "type":
         return item.type;
+      case "upc":
+        return item.upc;
       default:
         return "";
     }
@@ -123,20 +125,20 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
 
   const handleStatusToggle = async (id: string, status: string) => {
     try {
-      setLoadingStatus({id, state: true});
+      setLoadingStatus({ id, state: true });
 
       await updateTransactionStatus(id, status)
         .then((res) => {
           if (res.status === 200) {
             toast.success('Status changed successfully');
             setRefresh(!refresh);
-            setLoadingStatus({id: "", state: false});
+            setLoadingStatus({ id: "", state: false });
           }
         });
     } catch (error) {
       console.error('Error updating transaction status:', error);
       toast.error('Failed to update transaction status');
-      setLoadingStatus({id: "", state: false});
+      setLoadingStatus({ id: "", state: false });
     }
   }
 
@@ -328,57 +330,57 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
 
       <Modal open={showTransaction} title="Transaction Items" onClose={closeTransactionModal} ref={modalRef} height="max-h-[90vh]" width="max-w-[90vw]">
         <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
-                {/* Spreadsheet */}
-                <div className="flex overflow-auto w-screen px-5">
-                  {/* Product Table Start */}
-                  <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
-                    {/* Table Headers */}
-                    <thead className="sticky top-0 bg-white z-20">
-                      <tr>
-                        {transactionItemTableColumns.map((column) => (
-                          <th
-                            key={column.field}
-                            className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
-                            style={{ width: column.width }}
-                          >
-                            <strong>{column.label}</strong>
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
+          {/* Spreadsheet */}
+          <div className="flex overflow-auto w-screen px-5">
+            {/* Product Table Start */}
+            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
+              {/* Table Headers */}
+              <thead className="sticky top-0 bg-white z-20">
+                <tr>
+                  {transactionItemTableColumns.map((column) => (
+                    <th
+                      key={column.field}
+                      className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
+                      style={{ width: column.width }}
+                    >
+                      <strong>{column.label}</strong>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
 
-                    {/* Table Body */}
-                    <tbody className="divide-y divide-zinc-400">
-                      {transactionItems.length > 0 ? (
-                        transactionItems.map((transactionItem) => (
-                          <tr key={transactionItem.id} className="hover:bg-zinc-200 transition duration-200">
-                            {transactionItemTableColumns.map((column) => (
-                              // Render each cell based on the column field
-                              <td
-                                key={column.field}
-                                className="px-4 py-3 text-xl align-center"
-                                style={{
-                                  width: column.width,
-                                  maxWidth: column.width,
-                                  whiteSpace: "pre-line",
-                                }}
-                              >
-                                {renderTransactionItemCell(transactionItem, column.field as keyof TransactionItem)}
-                              </td>
-                            ))}
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={managerTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
-                            No transactions.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              {/* Table Body */}
+              <tbody className="divide-y divide-zinc-400">
+                {transactionItems.length > 0 ? (
+                  transactionItems.map((transactionItem) => (
+                    <tr key={transactionItem.id} className="hover:bg-zinc-200 transition duration-200">
+                      {transactionItemTableColumns.map((column) => (
+                        // Render each cell based on the column field
+                        <td
+                          key={column.field}
+                          className="px-4 py-3 text-xl align-center"
+                          style={{
+                            width: column.width,
+                            maxWidth: column.width,
+                            whiteSpace: "pre-line",
+                          }}
+                        >
+                          {renderTransactionItemCell(transactionItem, column.field as keyof TransactionItem)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={managerTableColumns.length} className="text-center py-4 text-xl text-zinc-900">
+                      No transactions.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </Modal>
     </>
   );

@@ -497,6 +497,7 @@ export const transactionItemTableColumns = [
   { field: "quantity", label: "Quantity", width: "100px" },
   { field: "itemPrice", label: "Item Price", width: "100px" },
   { field: "discount", label: "Discount", width: "200px" },
+  { field: "upc", label: "UPC", width: "200px" },
   { field: "type", label: "Type", width: "100px" },
 ] as const;
 
