@@ -2,13 +2,12 @@ import { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
 import { inventoryTableColumns, Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
 import { deleteProduct, hideProduct } from "@/app/api/productapi";
 import toast from "react-hot-toast";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
 import { getProducts } from "@/app/api/adminapi";
-import TextButton from "../ui/TextButton";
 import EditUnitPrice from "../utils/EditUnitPrice";
 import AddUPC from "../utils/AddUPC";
 import AddUnit from "../utils/AddUnit";
@@ -66,6 +65,12 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
         break;
       case "price-desc":
         sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+      case "unit-price-asc":
+        sorted.sort((a, b) => (a.unitPrice || 0) - (b.unitPrice || 0));
+        break;
+      case "unit-price-desc":
+        sorted.sort((a, b) => (b.unitPrice || 0) - (a.unitPrice || 0));
         break;
       case "oldest-newest":
         sorted.sort((a, b) => {
@@ -200,7 +205,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
         return product.unitCount || "N/A";
       case "unitsPerCase":
         return product.unitsPerCase || "N/A";
-      
+
       default:
         return null;
     }
@@ -328,6 +333,8 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
                 <option value="size-desc">Size (Large → Small)</option>
                 <option value="price-asc">Price (Low → High)</option>
                 <option value="price-desc">Price (High → Low)</option>
+                <option value="unit-price-asc">Unit Price (Low → High)</option>
+                <option value="unit-price-desc">Unit Price (High → Low)</option>
                 <option value="newest-oldest">Date (Newest → Oldest)</option>
                 <option value="oldest-newest">Date (Oldest → Newest)</option>
               </select>
