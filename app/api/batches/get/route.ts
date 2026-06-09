@@ -47,7 +47,7 @@ export async function GET() {
                 name: true,
                 quantity: true,
                 itemPrice: true,
-                upc: true,
+                productID: true,
                 discount: true,
                 type: true,
               },
