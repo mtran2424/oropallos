@@ -36,7 +36,7 @@ export async function GET() {
             itemPrice: true,
             discount: true,
             type: true,
-            upc: true,
+            productId: true,
           }
         }
       }

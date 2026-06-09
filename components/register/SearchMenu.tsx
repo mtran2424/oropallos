@@ -106,7 +106,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
         name: currentProduct.name,
         quantity: quantity,
         discount: discount.value,
-        upc: currentProduct.upc,
+        productId: currentProduct.id,
         itemPrice: parseInt(getPrice(discount.value, currentProduct.price * 100).toFixed(0))
       })
 

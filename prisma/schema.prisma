@@ -71,24 +71,25 @@ enum ItemType {
 }
 
 model Product {
-  id           String             @id @default(uuid())
-  name         String
-  description  String?
-  category     ProductCategory
-  subcategory  ProductSubcategory
-  type         String?
-  abv          Float?
-  size         String             @default("750mL")
-  price        Float
-  imageUrl     String?
-  upc          String?
-  favorite     Boolean            @default(false)
-  hidden       Boolean            @default(false)
-  unitPrice    Int?
-  unitCount    Int?
-  unitsPerCase Int?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  id               String             @id @default(uuid())
+  name             String
+  description      String?
+  category         ProductCategory
+  subcategory      ProductSubcategory
+  type             String?
+  abv              Float?
+  size             String             @default("750mL")
+  price            Float
+  imageUrl         String?
+  upc              String?
+  favorite         Boolean            @default(false)
+  hidden           Boolean            @default(false)
+  unitPrice        Int?
+  unitCount        Int?
+  unitsPerCase     Int?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  transactionItems TransactionItem[]
 }
 
 model Announcement {
@@ -138,13 +139,14 @@ model Transaction {
 model TransactionItem {
   id            String      @id @default(uuid())
   transactionId String
+  productId     String?
   name          String
   quantity      Int
   itemPrice     Int
-  upc           String?
   discount      Discount
   type          ItemType
   transaction   Transaction @relation(fields: [transactionId], references: [id])
+  product       Product?    @relation(fields: [productId], references: [id])
 }
 
 model Config {

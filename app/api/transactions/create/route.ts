@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
             quantity: item.quantity,
             itemPrice: item.itemPrice,
             discount: item.discount,
-            upc: item.upc ? item.upc : null,
+            productId: item.productId ? item.productId : null,
             type: item.type
           })),
         },

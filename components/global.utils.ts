@@ -59,7 +59,7 @@ export interface TransactionItem {
   itemPrice: number;
   discount: string;
   type: string;
-  upc?: string;
+  productId?: string;
 }
 
 export interface Transaction {

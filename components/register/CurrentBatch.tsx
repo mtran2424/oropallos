@@ -116,8 +116,8 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
         return getDiscount(item.discount).name;
       case "type":
         return item.type;
-      case "upc":
-        return item.upc;
+      case "productId":
+        return item.productId;
       default:
         return "";
     }
