@@ -149,6 +149,7 @@ const AddSize = ({
       favorite: product.favorite,
       abv: abv,
       size: size,
+      unitCount: 0
     };
 
     // Send the product data to the backend API to create a new product
