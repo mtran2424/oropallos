@@ -1,11 +1,8 @@
 import { useUser } from "@clerk/nextjs";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, formatTime, Transaction } from "../global.utils";
-import {
-  getCurrentBatchTransactions,
-  // getTransactions,
-} from "@/app/api/transactionapi";
+import { getCurrentUserBatchTransactions } from "@/app/api/transactionapi";
 import TextButton from "../ui/TextButton";
 import { createBatch } from "@/app/api/batchapi";
 import { useReactToPrint } from "react-to-print";
@@ -298,7 +295,7 @@ const Close = ({
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const data = await getCurrentBatchTransactions(user?.username || "");
+        const data = await getCurrentUserBatchTransactions(user?.username || "");
         setTransactions(data.transactions);
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -357,6 +354,7 @@ const Close = ({
             <button
               className="h-20 text-xl rounded-md mt-2 px-3 py-2 text-white hover:text-blue-600 bg-blue-600 hover:bg-white border order-blue-600 transition-colors font-serif"
               onClick={openEventModal}
+              disabled={user?.username === "admin"}
             >
               Close Register
             </button>

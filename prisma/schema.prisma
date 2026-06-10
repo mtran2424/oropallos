@@ -85,7 +85,7 @@ model Product {
   favorite         Boolean            @default(false)
   hidden           Boolean            @default(false)
   unitPrice        Int?
-  unitCount        Int?
+  unitCount        Int                @default(0)
   unitsPerCase     Int?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt

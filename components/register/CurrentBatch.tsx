@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getCurrentBatchTransactions, updateTransactionStatus } from "@/app/api/transactionapi";
+import { getCurrentBatchTransactions, getCurrentUserBatchTransactions, updateTransactionStatus } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import TextButton from "../ui/TextButton";
 import toast from "react-hot-toast";
@@ -123,11 +123,11 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
     }
   }
 
-  const handleStatusToggle = async (id: string, status: string) => {
+  const handleStatusToggle = async (id: string, status: string, items: TransactionItem[]) => {
     try {
       setLoadingStatus({ id, state: true });
 
-      await updateTransactionStatus(id, status)
+      await updateTransactionStatus(id, status, items)
         .then((res) => {
           if (res.status === 200) {
             toast.success('Status changed successfully');
@@ -146,15 +146,29 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const data = await getCurrentBatchTransactions(user?.username || "");
+        const data = await getCurrentUserBatchTransactions(user?.username || "");
         setTransactions(data.transactions);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
     };
 
-    fetchTransactions();
-  }, [refresh]);
+    const fetchAdminTransactions = async () => {
+      try {
+        const data = await getCurrentBatchTransactions();
+        setTransactions(data.transactions);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
+    if (user?.username === "admin") {
+      fetchAdminTransactions();
+    }
+    else {
+      fetchTransactions();
+    }
+  }, [refresh, user]);
 
   // Recalculate totals when transactions change
   useEffect(() => {
@@ -293,7 +307,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                               <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
                             </div>
                           ) : (
-                            <TextButton onClick={() => handleStatusToggle(transaction.id || "", transaction.status === "Cashed" ? "Void" : "Cashed")}>
+                            <TextButton onClick={() => handleStatusToggle(transaction.id || "", transaction.status === "Cashed" ? "Void" : "Cashed", transaction.transactionItems)}>
                               {transaction.status}
                             </TextButton>
                           )}

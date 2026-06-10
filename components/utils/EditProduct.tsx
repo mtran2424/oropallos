@@ -32,7 +32,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
   const [size, setSize] = useState(product.size);
   const [upc, setUpc] = useState(product.upc);
   const [unitPrice, setUnitPrice] = useState<number | undefined>(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
-  const [unitCount, setUnitCount] = useState<number | undefined>(product.unitCount || undefined);
+  const [unitCount, setUnitCount] = useState<number>(product.unitCount);
 
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
@@ -258,7 +258,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
     setSize(product.size);
     setUpc(product.upc);
     setUnitPrice(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
-    setUnitCount(product.unitCount || undefined);
+    setUnitCount(product.unitCount);
   }, [product]);
 
   return (
@@ -511,9 +511,9 @@ const EditProduct = ({ onEditProduct, product, products }: {
               placeholder="Unit Count"
               onChange={(e) => {
                 const value = e.target.value;
-                setUnitCount(value === "" ? undefined : parseInt(value));
+                setUnitCount(parseInt(value));
               }}
-              value={unitCount || ""}
+              value={unitCount || "0"}
             />
 
             {/* Description Field */}

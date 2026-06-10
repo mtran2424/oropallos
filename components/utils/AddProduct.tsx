@@ -30,7 +30,7 @@ const AddProduct = ({ onAddProduct, products }: {
   const [size, setSize] = useState("750mL");
   const [upc, setUpc] = useState("");
   const [unitPrice, setUnitPrice] = useState<number | undefined>(undefined);
-  const [unitCount, setUnitCount] = useState<number | undefined>(undefined);
+  const [unitCount, setUnitCount] = useState<number>(0);
 
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
@@ -174,7 +174,7 @@ const AddProduct = ({ onAddProduct, products }: {
         setSize("750mL");
         setUpc("");
         setUnitPrice(undefined);
-        setUnitCount(undefined);
+        setUnitCount(0);
 
         // Close the modal after submission
         setAdd(false);
@@ -503,9 +503,9 @@ const AddProduct = ({ onAddProduct, products }: {
               placeholder="Unit Count"
               onChange={(e) => {
                 const value = e.target.value;
-                setUnitCount(value === "" ? undefined : parseInt(value));
+                setUnitCount(parseInt(value));
               }}
-              value={unitCount || ""}
+              value={unitCount || "0"}
             />
 
             {/* Description Field */}

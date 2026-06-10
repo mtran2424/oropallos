@@ -304,7 +304,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
           currency: "USD",
         }) : "N/A";
       case "unitCount":
-        return product.unitCount || "N/A";
+        return product.unitCount;
       default:
         return null;
     }

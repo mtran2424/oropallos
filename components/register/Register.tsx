@@ -199,14 +199,14 @@ const Register = () => {
           >
             <RxExit size={30} />
           </button>
-          <button
+          {/* <button
             className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out`}
             onClick={() => {
               setPage("Settings");
             }}
           >
             <IoIosSettings size={30} />
-          </button>
+          </button> */}
         </div>
       </motion.div>
       <div className="flex flex-col w-full h-full items-center justify-start pl-20">

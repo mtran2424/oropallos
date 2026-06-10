@@ -278,7 +278,11 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
             <div className="flex flex-row">
               <button
                 className="text-blue-600 hover:text-zinc-400"
-                onClick={() => setQuantity(quantity - 1)}
+                onClick={() => {
+                  if (quantity > 1)
+                    setQuantity(quantity - 1)
+                }}
+                disabled={quantity <= 1}
               >
                 <MdNavigateBefore size={60} />
               </button>
@@ -286,12 +290,13 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
                 <input
                   type="number"
                   step="1"
+                  min={0}
                   className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
                   onChange={(e) => {
                     const value = e.target.value;
                     setQuantity(parseInt(value));
                   }}
-                  value={quantity || ""}
+                  value={quantity || "0"}
                 />
               </div>
               <button

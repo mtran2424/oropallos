@@ -40,7 +40,7 @@ export interface Product {
   upc?: string;
   hidden?: boolean;
   unitPrice?: number;
-  unitCount?: number;
+  unitCount: number;
   unitsPerCase?: number;
   createdAt?: Date;
 }
@@ -497,7 +497,7 @@ export const transactionItemTableColumns = [
   { field: "quantity", label: "Quantity", width: "100px" },
   { field: "itemPrice", label: "Item Price", width: "100px" },
   { field: "discount", label: "Discount", width: "200px" },
-  { field: "upc", label: "UPC", width: "200px" },
+  { field: "productId", label: "Product ID", width: "200px" },
   { field: "type", label: "Type", width: "100px" },
 ] as const;
 

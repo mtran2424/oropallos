@@ -2,7 +2,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // Adjust to your prisma client path
 import { currentUser } from "@clerk/nextjs/server";
-import { getDiscount, taxRate, TransactionItem } from "@/components/global.utils";
+import {
+  getDiscount,
+  taxRate,
+  TransactionItem,
+} from "@/components/global.utils";
 
 export async function POST(req: NextRequest) {
   // Check if user has access to route
@@ -16,53 +20,98 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { transaction } = body;
 
-  const liquorSubtotal = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0);
-  }, 0);
+  const liquorSubtotal = transaction.transactionItems.reduce(
+    (sum: number, item: TransactionItem) => {
+      return (
+        sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0)
+      );
+    },
+    0,
+  );
 
-  const wineSubtotal = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Wine" ? item.itemPrice * getDiscount(item.discount).multiplier * item.quantity : 0);
-  }, 0);
+  const wineSubtotal = transaction.transactionItems.reduce(
+    (sum: number, item: TransactionItem) => {
+      return (
+        sum +
+        (item.type === "Wine"
+          ? item.itemPrice *
+            getDiscount(item.discount).multiplier *
+            item.quantity
+          : 0)
+      );
+    },
+    0,
+  );
 
-  const discount = transaction.transactionItems.reduce((sum: number, item: TransactionItem) => {
-    return sum + (item.type === "Wine" && getDiscount(item.discount).value !== "No_Discount" ? (item.itemPrice * (1 - getDiscount(item.discount).multiplier) * item.quantity) : 0);
-  }, 0);
+  const discount = transaction.transactionItems.reduce(
+    (sum: number, item: TransactionItem) => {
+      return (
+        sum +
+        (item.type === "Wine" &&
+        getDiscount(item.discount).value !== "No_Discount"
+          ? item.itemPrice *
+            (1 - getDiscount(item.discount).multiplier) *
+            item.quantity
+          : 0)
+      );
+    },
+    0,
+  );
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
 
   const total = liquorSubtotal + wineSubtotal + tax;
 
   try {
-    const trans = await db.transaction.create({
-      data: {
-        status: transaction.status,
-        register: transaction.register,
-        liquorSubtotal: liquorSubtotal,
-        wineSubtotal: wineSubtotal,
-        discount: discount,
-        tax: tax,
-        total: total,
-        taxRate: taxRate,
-        cash: transaction.cash,
-        credit: transaction.credit,
-        notes: transaction.notes,
-        transactionItems: {
-          create: transaction.transactionItems.map((item: TransactionItem) => ({
-            name: item.name,
-            quantity: item.quantity,
-            itemPrice: item.itemPrice,
-            discount: item.discount,
-            productId: item.productId ? item.productId : null,
-            type: item.type
-          })),
+    const res = await db.$transaction(async (tx) => {
+      const trans = await tx.transaction.create({
+        data: {
+          status: transaction.status,
+          register: transaction.register,
+          liquorSubtotal: liquorSubtotal,
+          wineSubtotal: wineSubtotal,
+          discount: discount,
+          tax: tax,
+          total: total,
+          taxRate: taxRate,
+          cash: transaction.cash,
+          credit: transaction.credit,
+          notes: transaction.notes,
+          transactionItems: {
+            create: transaction.transactionItems.map(
+              (item: TransactionItem) => ({
+                name: item.name,
+                quantity: item.quantity,
+                itemPrice: item.itemPrice,
+                discount: item.discount,
+                productId: item.productId ? item.productId : null,
+                type: item.type,
+              }),
+            ),
+          },
         },
-      },
-      include: {
-        transactionItems: true,
-      },
+        include: {
+          transactionItems: true,
+        },
+      });
+
+      for (const item of transaction.transactionItems) {
+        if (item.productId) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              unitCount: {
+                decrement: item.quantity,
+              },
+            },
+          });
+        }
+      }
+
+      return trans;
     });
 
-    return NextResponse.json(trans, { status: 201 });
+    return NextResponse.json(res, { status: 201 });
   } catch (err) {
     console.error(err);
     return NextResponse.json(
