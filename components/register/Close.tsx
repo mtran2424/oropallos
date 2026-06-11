@@ -104,6 +104,8 @@ const Close = ({
     0,
   ));
 
+  const [cardReceiptTotal, setCardReceiptTotal] = useState<number>(0)
+
   // Recalculate totals when transactions change
   const recalculateTotals = () => {
     setGrossLiquor(
@@ -267,6 +269,7 @@ const Close = ({
         cashTotal: cashTotal,
         creditTotal: creditTotal,
         discount: discountTotal,
+        cardReceiptTotal: parseInt((cardReceiptTotal * 100).toFixed(0)),
         transactions: transactions.map((transaction) => ({
           id: transaction.id,
         })),
@@ -364,9 +367,7 @@ const Close = ({
             {batchTable}
           </div>
 
-          <div
-            className="hidden"
-          >
+          <div className="hidden">
             <div
               className="print-area"
               ref={componentRef}
@@ -378,9 +379,9 @@ const Close = ({
       </motion.div>
 
       {/* Confirmation modal */}
-      <Modal open={confirm} title="Are you sure?" onClose={closeEventModal} ref={modalRef} height="max-h-[30vh]" width="max-w-2xl">
+      <Modal open={confirm} title="Are you sure?" onClose={closeEventModal} ref={modalRef} height="max-h-[50vh]" width="max-w-2xl">
 
-        <div className="flex flex-col gap-4 pb-4">
+        <div className="flex flex-col gap-4 mb-15">
           <label className="text-xl text-zinc-700 w-full text-left px-2">
             Date: {formatDate(date, "mm/dd/yyyy")} {formatTime(date)}
           </label>
@@ -388,7 +389,24 @@ const Close = ({
           <label className="text-xl text-zinc-700 w-full text-left px-2">
             Closing Register: {user?.username}
           </label>
+
+          <label className="text-lg font-semibold text-zinc-700 w-full text-left px-2">Card Receipt Total From Batch</label>
+          <input
+            type="number"
+            inputMode="decimal"
+            step="0.01"
+            min="0"
+            className="border border-zinc-500 rounded-lg text-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+            placeholder="Card Total"
+            onChange={(e) => {
+              const value = e.target.value;
+              setCardReceiptTotal(parseFloat(value));
+            }}
+            value={cardReceiptTotal || "0"}
+          />
         </div>
+
+        {/* Card Receipt Field */}
 
         <div className="flex flex-col items-center gap-2">
           {/* Loading Spinner */}

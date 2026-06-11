@@ -136,11 +136,11 @@ const CustomerDisplay = () => {
               <tbody className="divide-y divide-zinc-400">
                 {cart.map((item, index) => (
                   <tr key={index}>
-                    <td className="text-2xl text-center">{item.type}</td>
-                    <td className="text-2xl text-center">{item.name}</td>
-                    <td className="text-2xl text-center">{item.quantity}</td>
-                    {/* <td className="text-2xl text-center">{getDiscount(item.discount).name}</td> */}
-                    <td className="text-2xl text-center">{(item.itemPrice / 100).toFixed(2)}</td>
+                    <td className="text-2xl text-center p-1">{item.type}</td>
+                    <td className="text-2xl text-left p-1">{item.name}</td>
+                    <td className="text-2xl text-center p-1">{item.quantity}</td>
+                    {/* <td className="text-2xl text-center p-1">{getDiscount(item.discount).name}</td> */}
+                    <td className="text-2xl text-center p-1">{(item.itemPrice / 100).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -166,14 +166,6 @@ const CustomerDisplay = () => {
                 {(calculateTax(cart) / 100).toFixed(2)}
               </td>
             </tr>
-            {/* <tr>
-                <td className="font-semibold text-2xl">
-                  DISCOUNT:
-                </td>
-                <td className="text-end text-2xl">
-                  {(calculateDiscount(cart) / 100).toFixed(2)}
-                </td>
-              </tr> */}
           </tbody>
         </table>
 

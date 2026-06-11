@@ -22,6 +22,7 @@ export async function GET() {
         void: true,
         cashTotal: true,
         creditTotal: true,
+        cardReceiptTotal: true,
         date: true,
         discount: true,
         register: true,

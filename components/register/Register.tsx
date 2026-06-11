@@ -13,9 +13,10 @@ import { GoGraph } from "react-icons/go";
 import { RxExit } from "react-icons/rx";
 import { getProducts } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
-import { IoIosSettings, IoMdClose } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
 import { FaRegSquare } from "react-icons/fa";
 import { getConfigs } from "@/app/api/configapi";
+import Sales from "./Sales";
 
 const Register = () => {
   // Admin check
@@ -83,20 +84,20 @@ const Register = () => {
       }
     };
 
-    const fetchConfigs = async () => {
-      try {
-        if (user?.username) {
-          const data = await getConfigs(user.username);
-          setConfigs(data.configs);
-        }
-      } catch (error) {
-        console.error("Error fetching configs:", error);
-      }
-    };
+    // const fetchConfigs = async () => {
+    //   try {
+    //     if (user?.username) {
+    //       const data = await getConfigs(user.username);
+    //       setConfigs(data.configs);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching configs:", error);
+    //   }
+    // };
 
     fetchProducts();
     fetchTransactions();
-    fetchConfigs();
+    // fetchConfigs();
   }, []);
 
   // hook to listen for fullscreen changes and update state accordingly
@@ -173,15 +174,15 @@ const Register = () => {
           >
             <CiViewTable size={30} />
           </button>
-          <button
+          {user?.username === "admin" && <button
             className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out
               ${page === "Stats" ? "bg-zinc-500 text-white" : ""}`}
             onClick={() => {
-              setPage("Stats");
+              setPage("Sales");
             }}
           >
             <GoGraph size={30} />
-          </button>
+          </button>}
           <button
             className={`flex h-20 items-center justify-center hover:bg-zinc-400 font-semibold transition-colors ease-in-out
               ${page === "Close" ? "bg-zinc-500 text-white" : ""}`}
@@ -194,7 +195,10 @@ const Register = () => {
           <button
             className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out`}
             onClick={() => {
-              redirect("/admin/dashboard");
+              if (user?.username !== "admin")
+                redirect("/home");
+              else
+                redirect("/admin/dashboard")
             }}
           >
             <RxExit size={30} />
@@ -213,6 +217,7 @@ const Register = () => {
         {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
+        {page === "Sales" && <Sales products={products} transactions={transactions} />}
       </div>
     </motion.div>
   );

@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
-import { Batch, batchTableColumns, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
+import { Batch, batchTableColumns, calculateSubtotal, calculateTax, calculateTotal, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { getBatches } from "@/app/api/batchapi";
 import Modal from "../ui/Modal";
+import { useReactToPrint } from "react-to-print";
+import TextButton from "../ui/TextButton";
+import Receipt from "../utils/Receipt";
 
 const Batches = () => {
   const { user } = useUser();
@@ -25,7 +28,11 @@ const Batches = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [showTransaction, setShowTransaction] = useState(false);
-  const [transactionItems, setTransactionItems] = useState<TransactionItem[]>([]);
+  const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
+  const [batch, setBatch] = useState<Batch | undefined>(undefined);
+
+  const receiptRef = useRef<HTMLDivElement>(null);
+  const batchRef = useRef<HTMLDivElement>(null);
 
   const sortedBatches = useMemo(() => {
     return batches.sort((a, b) => {
@@ -42,8 +49,58 @@ const Batches = () => {
 
   const handleShowTransaction = (transaction: Transaction) => {
     setShowTransaction(true);
-    setTransactionItems(transaction.transactionItems);
+    setTransaction(transaction);
   }
+
+  const handleReprintReceipt = useReactToPrint({
+    contentRef: receiptRef,
+    documentTitle: "Transaction Receipt",
+    pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      .receipt {
+        width: 75mm;
+        font-family: monospace;
+        font-size: 10px;
+      }
+    }
+  `,
+  });
+
+  const handleReprintBatch = useReactToPrint({
+    contentRef: batchRef,
+    documentTitle: "Batch Report",
+    pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      .receipt {
+        width: 75mm;
+        font-family: monospace;
+        font-size: 10px;
+      }
+    }
+  `,
+  });
 
   // TODO: Figure out cluster items for batches (gross, net, tax, discount, etc...)
 
@@ -80,6 +137,8 @@ const Batches = () => {
         return `$${(batch.cashTotal / 100).toFixed(2)}`;
       case "creditTotal":
         return `$${(batch.creditTotal / 100).toFixed(2)}`;
+      case "cardReceiptTotal":
+        return `$${(batch.cardReceiptTotal / 100).toFixed(2)}`;
       case "date":
         return batch.date instanceof Date ? formatDate(batch.date, "mm/dd/yyyy") + " " + formatTime(batch.date) :
           batch.date ? formatDate(new Date(batch.date), "mm/dd/yyyy") + " " + formatTime(new Date(batch.date)) : "";
@@ -155,12 +214,13 @@ const Batches = () => {
   const closeBatchModal = () => {
     setShowBatch(false);
     setTransactions([]);
+    setBatch(undefined);
   };
 
   const closeTransactionModal = () => {
     setShowTransaction(false);
     setShowBatch(true);
-    setTransactionItems([]);
+    setTransaction(undefined);
   };
 
   // Fetch batches on load and when refresh is toggled
@@ -262,7 +322,10 @@ const Batches = () => {
                     sortedBatches.map((batch) => (
                       <tr
                         key={batch.id} className="hover:bg-zinc-200 transition duration-200"
-                        onClick={() => handleShowBatch(batch)}
+                        onClick={() => {
+                          handleShowBatch(batch)
+                          setBatch(batch);
+                        }}
                       >
                         {batchTableColumns.map((column) => (
                           // Render each cell based on the column field
@@ -296,7 +359,14 @@ const Batches = () => {
       </motion.div>
 
       <Modal open={showBatch} title="Transactions" height="max-h-[90vh]" width="max-w-[90vw]" onClose={closeBatchModal} ref={modalRef}>
-        <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+        <div className="flex flex-col w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+
+          <div className="w-full justify-start">
+            <TextButton onClick={handleReprintBatch}>
+              Reprint Batch Report
+            </TextButton>
+          </div>
+
           {/* Spreadsheet */}
           <div className="flex overflow-auto w-screen px-5">
             {/* Product Table Start */}
@@ -349,16 +419,139 @@ const Batches = () => {
                 )}
               </tbody>
             </table>
+
+            {/* Batch Receipt */}
+            <div className="hidden">
+              <div
+                className="print-area"
+                ref={batchRef}
+              >
+                {batch && <Receipt ref={batchRef} title="Batch Report">
+                  <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
+                    <tbody>
+                      <tr>
+                        {/* Liquor Sales */}
+                        <td className="text-start">{batch.date instanceof Date ? formatDate(batch.date, "mm/dd/yyyy") + " " + formatTime(batch.date) :
+                          batch.date ? formatDate(new Date(batch.date), "mm/dd/yyyy") + " " + formatTime(new Date(batch.date)) : ""}
+                        </td>
+                        <td className="text-end">Register: {batch.register}</td>
+                      </tr>
+                      <tr>
+                        {/* Liquor Sales */}
+                        <td className="font-semibold">LIQUOR</td>
+                        <td className="text-end">
+                          <div className="flex flex-col">
+                            <div>${(batch.liquorGross / 100).toFixed(2)}</div>
+                            <div>
+                              {batch.liquorGross && batch.gross
+                                ? ((batch.liquorGross / batch.gross) * 100).toFixed(1)
+                                : "0.0"}
+                              %
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Wine Sales */}
+                      <tr>
+                        <td className="font-semibold">WINE</td>
+                        <td className="text-end">
+                          <div className="flex flex-col">
+                            <div>${(batch.wineGross / 100).toFixed(2)}</div>
+                            <div>
+                              {batch.wineGross && batch.gross
+                                ? ((batch.wineGross / batch.gross) * 100).toFixed(1)
+                                : "0.0"}
+                              %
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Total Sales */}
+                      <tr>
+                        <td className="font-semibold">SUBTOTAL</td>
+                        <td className="text-end">
+                          <div>${(batch.gross / 100).toFixed(2)}</div>
+                        </td>
+                      </tr>
+
+                      {/* Total Tax */}
+                      <tr>
+                        <td className="font-semibold">TAX</td>
+                        <td className="text-end">
+                          <div>${(batch.tax / 100).toFixed(2)}</div>
+                        </td>
+                      </tr>
+
+                      {/* Total w/ Tax */}
+                      <tr>
+                        <td className="font-semibold">TTL + TAX</td>
+                        <td className="text-end">
+                          <div>${((batch.gross + batch.tax) / 100).toFixed(2)}</div>
+                        </td>
+                      </tr>
+
+                      {/* Discounts */}
+                      <tr>
+                        <td className="font-semibold">-% ITEM</td>
+                        <td className="text-end">
+                          <div>{batch.transactions.filter((t) => t.status !== "Void").reduce(
+                            (sum, transaction) => sum + transaction.discount,
+                            0,
+                          )} Q</div>
+                          <div>-${(batch.discount / 100).toFixed(2)}</div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td className="font-semibold">VOID COUNT</td>
+                        <td className="text-end">{batch.transactions.filter((t) => t.status === "Void").length} Q</td>
+                      </tr>
+
+                      <tr>
+                        <td className="font-semibold">TRANSACTION COUNT</td>
+                        <td className="text-end">{batch.transactions.length} Q</td>
+                      </tr>
+
+                      <tr>
+                        <td className="font-semibold">CASH</td>
+                        <td className="text-end">${(batch.cashTotal / 100).toFixed(2)}</td>
+                      </tr>
+
+                      <tr>
+                        <td className="font-semibold">CREDIT</td>
+                        <td className="text-end">${(batch.creditTotal / 100).toFixed(2)}</td>
+                      </tr>
+
+                      <tr>
+                        <td className="font-semibold">NET TOTAL</td>
+                        <td className="text-end">${(batch.transactions.filter((t) => t.status !== "Void").reduce(
+                          (sum, transaction) => sum + transaction.total,
+                          0,
+                        ) / 100).toFixed(2)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Receipt>}
+              </div>
+            </div>
           </div>
         </div>
       </Modal>
 
       <Modal open={showTransaction} title="Transaction Items" height="max-h-[90vh]" width="max-w-[90vw]" onClose={closeTransactionModal} ref={modalRef}>
-        <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+        <div className="flex flex-col w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+          <div className="w-full justify-start">
+            <TextButton onClick={handleReprintReceipt}>
+              Reprint Receipt
+            </TextButton>
+          </div>
+
           {/* Spreadsheet */}
           <div className="flex overflow-auto w-screen px-5">
             {/* Product Table Start */}
-            <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
+            {transaction && <table className="w-full divide-y divide-zinc-400" style={{ minWidth: "2000px" }}>
               {/* Table Headers */}
               <thead className="sticky top-0 bg-white z-20">
                 <tr>
@@ -376,8 +569,8 @@ const Batches = () => {
 
               {/* Table Body */}
               <tbody className="divide-y divide-zinc-400">
-                {transactionItems.length > 0 ? (
-                  transactionItems.map((transactionItem) => (
+                {transaction.transactionItems.length > 0 ? (
+                  transaction.transactionItems.map((transactionItem) => (
                     <tr key={transactionItem.id} className="hover:bg-zinc-200 transition duration-200">
                       {transactionItemTableColumns.map((column) => (
                         // Render each cell based on the column field
@@ -403,7 +596,114 @@ const Batches = () => {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table>}
+            {/* Receipts */}
+            <div className="hidden">
+              <div className="print-area" ref={receiptRef} >
+                {transaction &&
+                  <Receipt ref={receiptRef}>
+                    <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
+                      <tbody>
+                        <tr>
+                          {/* <td className="text-start">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td> */}
+                          <td className="text-start">{transaction.createdAt instanceof Date ? formatDate(transaction.createdAt, "mm/dd/yyyy") + " " + formatTime(transaction.createdAt) :
+                            transaction.createdAt ? formatDate(new Date(transaction.createdAt), "mm/dd/yyyy") + " " + formatTime(new Date(transaction.createdAt)) : ""}
+                          </td>
+                          <td className="text-end">Reg: {transaction.register}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table className="w-full max-w-3/4 border-separate">
+                      <tbody>
+                        {transaction?.transactionItems.map((item, index) => (
+                          <tr key={index} className="w-full">
+                            <td className="text-start items-start h-full align-top">
+                              <div
+                                className="flex flex-col text-start">
+                                <div className="font-semibold">
+                                  {item.type.toUpperCase()}
+                                </div>
+                                <div>
+                                  {item.name.toUpperCase()}
+                                </div>
+                                <div></div>
+                              </div>
+                            </td>
+                            <td className="text-start items-start h-full align-top">
+                              <div className="flex flex-col text-end">
+                                <div>
+                                  {item.quantity > 1 ? `${item.quantity} @ ` : ''}${(item.itemPrice / 100).toFixed(2)}
+                                </div>
+                                {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
+                                  <div>
+                                    -{((1 - getDiscount(item.discount).multiplier) * 100).toFixed(0)}%
+                                  </div>
+                                )}
+                                {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
+                                  <div>
+                                    -{(((item.itemPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    <table className="w-full max-w-3/4 border-separate pt-2">
+                      <tbody>
+                        <tr className="">
+                          <td className="text-start font-semibold">
+                            SUBTOTAL
+                          </td>
+                          <td className="text-end">
+                            ${(calculateSubtotal(transaction.transactionItems) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                        <tr className="">
+                          <td className="text-start font-semibold">
+                            TAX
+                          </td>
+                          <td className="text-end">
+                            ${(calculateTax(transaction.transactionItems) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table className="w-full max-w-3/4 border-separate pt-2">
+                      <tbody>
+                        <tr className="">
+                          <td className="text-start font-semibold">
+                            TOTAL
+                          </td>
+                          <td className="text-end">
+                            ${(calculateTotal(transaction.transactionItems) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-start font-semibold">
+                            CASH
+                          </td>
+                          <td className="text-end">
+                            ${(transaction.amountTendered / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-start font-semibold">
+                            CHANGE
+                          </td>
+                          <td className="text-end">
+                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems)) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </Receipt>}
+              </div>
+            </div>
           </div>
         </div>
       </Modal>

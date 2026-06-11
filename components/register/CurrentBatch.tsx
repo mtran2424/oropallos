@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
+import { calculateSubtotal, calculateTax, calculateTotal, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
 import CopyButton from "../ui/CopyButton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getCurrentBatchTransactions, getCurrentUserBatchTransactions, updateTransactionStatus } from "@/app/api/transactionapi";
@@ -7,6 +7,8 @@ import { useUser } from "@clerk/nextjs";
 import TextButton from "../ui/TextButton";
 import toast from "react-hot-toast";
 import Modal from "../ui/Modal";
+import { useReactToPrint } from "react-to-print";
+import Receipt from "../utils/Receipt";
 
 const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transaction[] }) => {
   const { user } = useUser();
@@ -31,18 +33,19 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
 
   // Transaction Modal
   const modalRef = useRef<HTMLDivElement>(null);
+  const receiptRef = useRef<HTMLDivElement>(null);
   const [showTransaction, setShowTransaction] = useState(false);
-  const [transactionItems, setTransactionItems] = useState<TransactionItem[]>([]);
+  const [transaction, setTransaction] = useState<Transaction | undefined>(undefined);
   const [loadingStatus, setLoadingStatus] = useState<{ id: string, state: boolean }>({ id: "", state: false });
 
   const handleShowTransaction = (transaction: Transaction) => {
     setShowTransaction(true);
-    setTransactionItems(transaction.transactionItems);
+    setTransaction(transaction);
   }
 
   const closeTransactionModal = () => {
     setShowTransaction(false);
-    setTransactionItems([]);
+    setTransaction(undefined);
   };
 
   const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
@@ -60,6 +63,33 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
     setTaxTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
     setNetTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.total, 0) / 100);
   }
+
+  const handleReprint = useReactToPrint({
+    contentRef: receiptRef,
+    documentTitle: "Transaction Receipt",
+    pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      .receipt {
+        width: 75mm;
+        font-family: monospace;
+        font-size: 10px;
+      }
+    }
+  `,
+  });
+
+
 
   // Action section to view transaction items
   const renderCell = (transaction: Transaction, column: keyof Transaction) => {
@@ -343,7 +373,13 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
       </motion.div>
 
       <Modal open={showTransaction} title="Transaction Items" onClose={closeTransactionModal} ref={modalRef} height="max-h-[90vh]" width="max-w-[90vw]">
-        <div className="flex w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+        <div className="flex flex-col w-full h-[75vh] overflow-hidden rounded-md shadow-md text-zinc-800 p-10">
+          <div className="w-full justify-start">
+            <TextButton onClick={handleReprint}>
+              Reprint Receipt
+            </TextButton>
+          </div>
+
           {/* Spreadsheet */}
           <div className="flex overflow-auto w-screen px-5">
             {/* Product Table Start */}
@@ -364,9 +400,9 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
               </thead>
 
               {/* Table Body */}
-              <tbody className="divide-y divide-zinc-400">
-                {transactionItems.length > 0 ? (
-                  transactionItems.map((transactionItem) => (
+              {transaction && <tbody className="divide-y divide-zinc-400">
+                {transaction.transactionItems.length > 0 ? (
+                  transaction.transactionItems.map((transactionItem) => (
                     <tr key={transactionItem.id} className="hover:bg-zinc-200 transition duration-200">
                       {transactionItemTableColumns.map((column) => (
                         // Render each cell based on the column field
@@ -391,8 +427,117 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                     </td>
                   </tr>
                 )}
-              </tbody>
+              </tbody>}
+
             </table>
+            {/* Receipts */}
+            <div className="hidden">
+              <div className="print-area" ref={receiptRef} >
+                {transaction &&
+                  <Receipt ref={receiptRef}>
+                    <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
+                      <tbody>
+                        <tr>
+                          {/* <td className="text-start">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td> */}
+                          <td className="text-start">{transaction.createdAt instanceof Date ? formatDate(transaction.createdAt, "mm/dd/yyyy") + " " + formatTime(transaction.createdAt) :
+                            transaction.createdAt ? formatDate(new Date(transaction.createdAt), "mm/dd/yyyy") + " " + formatTime(new Date(transaction.createdAt)) : ""}
+
+                          </td>
+                          <td className="text-end">Reg: {transaction.register}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table className="w-full max-w-3/4 border-separate">
+                      <tbody>
+                        {transaction?.transactionItems.map((item, index) => (
+                          <tr key={index} className="w-full">
+                            <td className="text-start items-start h-full align-top">
+                              <div
+                                className="flex flex-col text-start">
+                                <div className="font-semibold">
+                                  {item.type.toUpperCase()}
+                                </div>
+                                <div>
+                                  {item.name.toUpperCase()}
+                                </div>
+                                <div></div>
+                              </div>
+                            </td>
+                            <td className="text-start items-start h-full align-top">
+                              <div className="flex flex-col text-end">
+                                <div>
+                                  {item.quantity > 1 ? `${item.quantity} @ ` : ''}${(item.itemPrice / 100).toFixed(2)}
+                                </div>
+                                {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
+                                  <div>
+                                    -{((1 - getDiscount(item.discount).multiplier) * 100).toFixed(0)}%
+                                  </div>
+                                )}
+                                {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
+                                  <div>
+                                    -{(((item.itemPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    <table className="w-full max-w-3/4 border-separate pt-2">
+                      <tbody>
+                        <tr className="">
+                          <td className="text-start font-semibold">
+                            SUBTOTAL
+                          </td>
+                          <td className="text-end">
+                            ${(calculateSubtotal(transaction.transactionItems) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                        <tr className="">
+                          <td className="text-start font-semibold">
+                            TAX
+                          </td>
+                          <td className="text-end">
+                            ${(calculateTax(transaction.transactionItems) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table className="w-full max-w-3/4 border-separate pt-2">
+                      <tbody>
+                        <tr className="">
+                          <td className="text-start font-semibold">
+                            TOTAL
+                          </td>
+                          <td className="text-end">
+                            ${(calculateTotal(transaction.transactionItems) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-start font-semibold">
+                            CASH
+                          </td>
+                          <td className="text-end">
+                            ${(transaction.amountTendered / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-start font-semibold">
+                            CHANGE
+                          </td>
+                          <td className="text-end">
+                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems)) / 100).toFixed(2)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </Receipt>}
+              </div>
+            </div>
           </div>
         </div>
       </Modal>

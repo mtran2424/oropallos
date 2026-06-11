@@ -76,6 +76,7 @@ export interface Transaction {
   total: number;
   cash: number;
   credit: number;
+  amountTendered: number;
   createdAt?: Date;
   transactionItems: TransactionItem[];
 }
@@ -92,6 +93,7 @@ export interface Batch {
   register: string;
   discount: number;
   transactions: Transaction[];
+  cardReceiptTotal: number;
   date?: Date;
 }
 
@@ -469,6 +471,7 @@ export const batchTableColumns = [
   { field: "cashTotal", label: "Cash Total", width: "150px" },
   { field: "creditTotal", label: "Credit Total", width: "150px" },
   { field: "void", label: "Void Total", width: "150px" },
+  { field: "cardReceiptTotal", label: "Card Receipt Total", width: "200" },
 ] as const;
 
 // Headers for product tables in admin view

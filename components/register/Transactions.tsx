@@ -124,6 +124,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
         transactionItems: cart,
         cash: ((cash + credit) > total) ? cash : (cash + (total - (cash + credit))),
         credit: credit,
+        amountTendered: (cash + credit) > total ? cash + credit : total,
         notes: note
       }
       const res = await createTransaction(transaction).then((res) => {
@@ -367,12 +368,12 @@ const Transactions = ({ products }: { products: Product[] }) => {
                   <tbody className="divide-y divide-zinc-400">
                     {cart.map((item, index) => (
                       <tr key={index}>
-                        <td className="text-2xl text-center">{item.type}</td>
-                        <td className="text-2xl text-center">{item.name}</td>
-                        <td className="text-2xl text-center">{item.quantity}</td>
-                        <td className="text-2xl text-center">{getDiscount(item.discount).name}</td>
-                        <td className="text-2xl text-center">{(item.itemPrice / 100).toFixed(2)}</td>
-                        <td className="text-2xl text-center">
+                        <td className="text-2xl text-center p-1">{item.type}</td>
+                        <td className="text-2xl text-left p-1">{item.name}</td>
+                        <td className="text-2xl text-center p-1">{item.quantity}</td>
+                        <td className="text-2xl text-center p-1">{getDiscount(item.discount).name}</td>
+                        <td className="text-2xl text-center p-1">{(item.itemPrice / 100).toFixed(2)}</td>
+                        <td className="text-2xl text-center p-1">
                           <button onClick={() => {
                             const newCart = [...cart];
                             newCart.splice(index, 1);
@@ -382,7 +383,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                               item: item
                             });
                           }}>
-                            <MdDelete size={30} className="text-red-500 hover:text-red-700" />
+                            <MdDelete size={40} className="text-red-500 hover:text-red-700" />
                           </button>
                         </td>
                       </tr>
@@ -716,7 +717,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
       </Modal>
 
       {/* Cashout Confirmation Modal */}
-      <Modal open={confirm} title="Confirm" onClose={closeConfirmModal} ref={modalRef}>
+      <Modal open={confirm} height="max-h-[40vh]" title="Confirm" onClose={closeConfirmModal} ref={modalRef}>
         <div className="flex flex-col items-center gap-2">
 
           <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Change</label>

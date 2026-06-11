@@ -28,6 +28,7 @@ export async function GET() {
         total: true,
         cash: true,
         credit: true,
+        amountTendered: true,
         transactionItems: {
           select: {
             id: true,

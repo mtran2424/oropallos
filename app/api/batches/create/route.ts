@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
         creditTotal: batch.creditTotal,
         register: batch.register,
         discount: batch.discount,
+        cardReceiptTotal: batch.cardReceiptTotal,
         transactions: {
           connect: batch.transactions.map((transaction: { id: string | undefined }) => ({
             id: transaction.id,
