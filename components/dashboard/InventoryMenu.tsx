@@ -33,8 +33,8 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
     const term = deferredSearch.toLowerCase();
 
     const filtered = products.filter((product) =>
-      [product.name, product.category, product.subcategory, product.type, product.size]
-        .filter(Boolean)
+      [product.name, product.category, product.subcategory, product.type, product.size, product.upc]
+        .filter((field): field is string => Boolean(field))
         .some((field) => sanitize(field).includes(sanitize(term)))
     )
       .filter((product) =>
