@@ -152,7 +152,7 @@ const AddSize = ({
       abv: abv,
       size: size,
       unitCount: 0,
-      unitPrice: unitPrice,
+      unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
       upc: upc
     };
 
