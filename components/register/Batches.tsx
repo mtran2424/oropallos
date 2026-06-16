@@ -199,6 +199,8 @@ const Batches = () => {
         return item.quantity;
       case "itemPrice":
         return `$${(item.itemPrice / 100).toFixed(2)}`;
+      case "unitPrice":
+        return item.unitPrice ? `$${(item.unitPrice / 100).toFixed(2)}` : "";
       case "discount":
         return item.discount ? getDiscount(item.discount).name : "";
       case "type":

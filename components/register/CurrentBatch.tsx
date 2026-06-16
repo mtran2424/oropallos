@@ -142,6 +142,8 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
         return item.quantity;
       case "itemPrice":
         return `$${(item.itemPrice / 100).toFixed(2)}`;
+      case "unitPrice":
+        return item.unitPrice ? `$${(item.unitPrice / 100).toFixed(2)}` : "";
       case "discount":
         return getDiscount(item.discount).name;
       case "type":

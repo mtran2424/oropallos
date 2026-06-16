@@ -48,6 +48,7 @@ export async function GET() {
                 name: true,
                 quantity: true,
                 itemPrice: true,
+                unitPrice: true,
                 productId: true,
                 discount: true,
                 type: true,
@@ -61,9 +62,6 @@ export async function GET() {
     return NextResponse.json({ batches });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { message: error },
-      { status: 500 },
-    );
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 }

@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
             name: true,
             quantity: true,
             itemPrice: true,
+            unitPrice: true,
             productId: true,
             discount: true,
             type: true,

@@ -35,7 +35,7 @@ const Sales = ({
         </h1>
         <div className="absolute h-screen w-screen rounded-full bg-white/20 blur-3xl" />
 
-        <div className="grid lg:grid-cols-8 grid-cols-4 w-full items-center px-10 pb-5 gap-2">
+        {/* <div className="grid lg:grid-cols-8 grid-cols-4 w-full items-center px-10 pb-5 gap-2">
           <StatCard
             title="Inventory On Hand"
             value={(inventory / 100).toFixed(2)}
@@ -84,7 +84,7 @@ const Sales = ({
             gradient="bg-linear-to-r from-emerald-700 to-emerald-200"
             columns="2"
           />
-        </div>
+        </div> */}
         {/* Graph Usage Examples
         <div className="grid grid-cols-2">
           <SidewaysBarChart title="Top 10 Bestsellers" data={[{ name: "Liquor", Qty: 100, fill: "#1447e6" }, { name: "Wines", Qty: 100, fill: "#1447e6" }]} unit="Qty" width={75} height={300} />

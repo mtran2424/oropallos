@@ -57,6 +57,7 @@ export interface TransactionItem {
   name: string;
   quantity: number;
   itemPrice: number;
+  unitPrice?: number;
   discount: string;
   type: string;
   productId?: string;
@@ -499,6 +500,7 @@ export const transactionItemTableColumns = [
   { field: "name", label: "Name", width: "200px" },
   { field: "quantity", label: "Quantity", width: "100px" },
   { field: "itemPrice", label: "Item Price", width: "100px" },
+  { field: "unitPrice", label: "Unit Price", width: "100px" },
   { field: "discount", label: "Discount", width: "200px" },
   { field: "productId", label: "Product ID", width: "200px" },
   { field: "type", label: "Type", width: "100px" },
