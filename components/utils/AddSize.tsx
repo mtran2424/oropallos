@@ -32,6 +32,8 @@ const AddSize = ({
   const [type, setType] = useState(product.type);
   const [imageUrl, setImageUrl] = useState(product.imageUrl);
   const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
+  const [upc, setUpc] = useState("");
+  const [unitPrice, setUnitPrice] = useState<number | undefined>(undefined);
   const [size, setSize] = useState('750mL');
 
   // States for suggestions
@@ -149,7 +151,9 @@ const AddSize = ({
       favorite: product.favorite,
       abv: abv,
       size: size,
-      unitCount: 0
+      unitCount: 0,
+      unitPrice: unitPrice,
+      upc: upc
     };
 
     // Send the product data to the backend API to create a new product
@@ -257,6 +261,8 @@ const AddSize = ({
     setImageUrl(product.imageUrl);
     setAbv(product.abv || undefined);
     setSize(product.size);
+    setUnitPrice(undefined);
+    setUpc("");
   }, [product]);
 
   return (
@@ -364,6 +370,37 @@ const AddSize = ({
               onChange={(e) => setDescription(e.target.value)}
               value={description}
             ></textarea>
+
+            {/* Unit Price Field */}
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>
+            <input
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0"
+              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              placeholder="Unit Price"
+              onChange={(e) => {
+                const value = e.target.value;
+                setUnitPrice(value === "" ? undefined : parseFloat(value));
+              }}
+              value={unitPrice || ""}
+            />
+            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+              i.e. {'\"'}19.99{'\"'} - No $ sign needed
+            </div>
+
+            {/* UPC Field */}
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
+            <input
+              type="text"
+              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              placeholder="UPC"
+              onChange={(e) => {
+                setUpc(e.target.value)
+              }}
+              value={upc || ""}
+            />
 
             {/* Image Upload Field */}
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
