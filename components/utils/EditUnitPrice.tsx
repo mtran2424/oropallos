@@ -44,7 +44,7 @@ const EditUnitPrice = ({ onEditPrice, product }: {
       size: product.size,
       upc: product.upc,
       hidden: product.hidden,
-      unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
+      unitPrice: unitPrice !== undefined ? parseInt((unitPrice * 100).toFixed(0)) : undefined,
       unitCount: product.unitCount,
     };
 
