@@ -111,7 +111,8 @@ model Batch {
   cashTotal        Int
   creditTotal      Int
   register         String
-  cardReceiptTotal Int @default(0)
+  archive          Boolean       @default(false)
+  cardReceiptTotal Int           @default(0)
   transactions     Transaction[]
   date             DateTime      @default(now())
 }
