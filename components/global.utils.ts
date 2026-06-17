@@ -506,6 +506,27 @@ export const transactionItemTableColumns = [
   { field: "type", label: "Type", width: "100px" },
 ] as const;
 
+export const colorPool = [
+  "#F71735",
+  "#F9C22E",
+  "#99D19C",
+  "#3626A7",
+  "#8093F1",
+  "#6457A6",
+  "#CC59D2",
+  "#004385",
+  "#FB6376",
+  "#93E5AB",
+  "#ADE25D",
+  "#F487B6",
+  "#FCEC52",
+  "#F49CBB",
+  "#23022E",
+  "#9CFFD9",
+  "#501537",
+  "#473198",
+] as const;
+
 // Utility function to sanitize strings for search
 export const sanitize = (str: string) =>
   str

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Product, Transaction } from "../global.utils";
+import { colorPool, Product, Transaction } from "../global.utils";
 import { useState } from "react";
 import StatCard from "../ui/StatCard";
 import DonutChart from "../utils/DonutChart";
@@ -15,12 +15,53 @@ const Sales = ({
 }) => {
   const date = new Date();
   const [inventory, setInventory] = useState<number>(products.reduce((sum, product) => sum + ((product.unitPrice ? product.unitPrice : 0) * product.unitCount), 0));
-  const data = [
-    { date: "Mon", sales: 1200 },
-    { date: "Tue", sales: 1800 },
-    { date: "Wed", sales: 1500 },
-    { date: "Thu", sales: 2200 },
-  ];
+  const [liquorSales, setLiquorSales] = useState<number>(transactions.reduce((sum, transaction) => sum + transaction.liquorSubtotal, 0));
+  const [salesTax, setSalesTax] = useState<number>(transactions.reduce((sum, transaction) => sum + transaction.tax, 0));
+  const [wineSales, setWineSales] = useState<number>(transactions.reduce((sum, transaction) => sum + transaction.wineSubtotal, 0))
+  const [liquorProfit, setLiquorProfit] = useState<number>(transactions.reduce((sum, transaction) => sum + transaction.transactionItems.reduce((sum, item) => sum + (item.type === "Liquor" ? sum + (item.itemPrice - (item.unitPrice ? item.unitPrice : 0)) : 0), 0), 0));
+  const [wineProfit, setWineProfit] = useState<number>(transactions.reduce((sum, transaction) => sum + transaction.transactionItems.reduce((sum, item) => sum + (item.type === "Wine" ? sum + (item.itemPrice - (item.unitPrice ? item.unitPrice : 0)) : 0), 0), 0));
+
+  const LiquorWineReport = [
+    { name: 'Liquor', value: liquorSales, fill: colorPool[0] },
+    { name: 'Wine', value: wineSales, fill: colorPool[1] }
+  ]
+
+  const items = transactions.flatMap((transaction) => transaction.transactionItems.map((item) => products.find((product) => product.id === item.productId)));
+  const liquorBreakdown = Object.entries(
+    items
+      .filter((item) => item?.category === "Liquor")
+      .reduce((count, item) => {
+        if (item?.subcategory) {
+          count[item.subcategory] =
+            (count[item.subcategory] || 0) + 1;
+        }
+        return count;
+      }, {} as Record<string, number>)
+  ).map(([type, qty], index) => ({
+    type,
+    qty,
+    fill: colorPool[index],
+  }));
+  const wineBreakdown = Object.entries(
+    items
+      .filter((item) => item?.category !== "Liquor")
+      .reduce((count, item) => {
+        if (item?.type) {
+          count[item.type] =
+            (count[item.type] || 0) + 1;
+        }
+        else if (item?.subcategory) {
+          count[item.subcategory] =
+            (count[item.subcategory] || 0) + 1;
+        }
+        return count;
+      }, {} as Record<string, number>)
+  ).map(([type, qty], index) => ({
+    type,
+    qty,
+    fill: colorPool[index],
+  }))
+
   return (
     <motion.div
       initial={{ x: "-100%", opacity: 0 }}
@@ -35,7 +76,7 @@ const Sales = ({
         </h1>
         <div className="absolute h-screen w-screen rounded-full bg-white/20 blur-3xl" />
 
-        {/* <div className="grid lg:grid-cols-8 grid-cols-4 w-full items-center px-10 pb-5 gap-2">
+        <div className="grid lg:grid-cols-8 grid-cols-4 w-full items-center px-10 pb-5 gap-2">
           <StatCard
             title="Inventory On Hand"
             value={(inventory / 100).toFixed(2)}
@@ -44,47 +85,72 @@ const Sales = ({
           />
           <StatCard
             title="Liquor Sales"
-            value={(inventory / 100).toFixed(2)}
+            value={(liquorSales / 100).toFixed(2)}
             gradient="bg-linear-to-r from-blue-700 to-cyan-600"
             columns="2"
           />
           <StatCard
             title="Wine Sales"
-            value={(inventory / 100).toFixed(2)}
+            value={(wineSales / 100).toFixed(2)}
             gradient="bg-linear-to-r from-cyan-700 to-emerald-600"
             columns="2"
           />
           <StatCard
             title="Total Sales"
-            value={(inventory / 100).toFixed(2)}
+            value={((liquorSales + wineSales) / 100).toFixed(2)}
             gradient="bg-linear-to-r from-emerald-700 to-emerald-200"
             columns="2"
           />
           <StatCard
             title="Overall Profit"
-            value={(inventory / 100).toFixed(2)}
+            value={((liquorProfit + wineProfit) / 100).toFixed(2)}
             gradient="bg-linear-to-r from-violet-700 to-blue-600"
             columns="2"
           />
           <StatCard
             title="Average Liquor Profit Margin"
-            value={(inventory / 100).toFixed(2)}
+            value={((liquorProfit / liquorSales) * 100).toFixed(2)}
             gradient="bg-linear-to-r from-blue-700 to-cyan-600"
             columns="2"
           />
           <StatCard
             title="Average Wine Profit Margin"
-            value={(inventory / 100).toFixed(2)}
+            value={((wineProfit / wineSales) * 100).toFixed(2)}
             gradient="bg-linear-to-r from-cyan-700 to-emerald-600"
             columns="2"
           />
           <StatCard
-            title="Total Tax"
-            value={(inventory / 100).toFixed(2)}
+            title="Total Sales Tax"
+            value={(salesTax / 100).toFixed(2)}
             gradient="bg-linear-to-r from-emerald-700 to-emerald-200"
             columns="2"
           />
-        </div> */}
+        </div>
+        <div className="grid grid-cols-2">
+          <DonutChart
+            title="Liquor/Wine Sale Report"
+            data={LiquorWineReport}
+            height={300}
+            width={100}
+            format
+          />
+          <DonutChart
+            title="Liquor Breakdown"
+            data={liquorBreakdown}
+            dataKey="qty"
+            nameKey="type"
+            height={300}
+            width={100}
+          />
+          <DonutChart
+            title="Wine Breakdown"
+            data={wineBreakdown}
+            dataKey="qty"
+            nameKey="type"
+            height={300}
+            width={100}
+          />
+        </div>
         {/* Graph Usage Examples
         <div className="grid grid-cols-2">
           <SidewaysBarChart title="Top 10 Bestsellers" data={[{ name: "Liquor", Qty: 100, fill: "#1447e6" }, { name: "Wines", Qty: 100, fill: "#1447e6" }]} unit="Qty" width={75} height={300} />
