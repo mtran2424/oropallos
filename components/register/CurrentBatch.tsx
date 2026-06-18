@@ -89,8 +89,6 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
   `,
   });
 
-
-
   // Action section to view transaction items
   const renderCell = (transaction: Transaction, column: keyof Transaction) => {
     switch (column) {

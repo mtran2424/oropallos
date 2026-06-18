@@ -39,6 +39,7 @@ export async function GET() {
             discount: true,
             type: true,
             productId: true,
+            product: true
           }
         }
       }

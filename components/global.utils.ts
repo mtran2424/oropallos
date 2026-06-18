@@ -61,6 +61,7 @@ export interface TransactionItem {
   discount: string;
   type: string;
   productId?: string;
+  product?: Product;
 }
 
 export interface Transaction {
@@ -504,6 +505,28 @@ export const transactionItemTableColumns = [
   { field: "discount", label: "Discount", width: "200px" },
   { field: "productId", label: "Product ID", width: "200px" },
   { field: "type", label: "Type", width: "100px" },
+] as const;
+
+export const colorPool = [
+  "#83C9F4",
+  "#F71735",
+  "#F9C22E",
+  "#99D19C",
+  "#3626A7",
+  "#8093F1",
+  "#6457A6",
+  "#CC59D2",
+  "#004385",
+  "#FB6376",
+  "#93E5AB",
+  "#F487B6",
+  "#ADE25D",
+  "#FCEC52",
+  "#F49CBB",
+  "#23022E",
+  "#9CFFD9",
+  "#501537",
+  "#473198",
 ] as const;
 
 // Utility function to sanitize strings for search

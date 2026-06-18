@@ -8,13 +8,15 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recha
 const SidewaysBarChart = ({
   title,
   data,
-  unit,
+  nameKey,
+  dataKey,
   height,
   width,
 }: {
   title: string;
   data: any[];
-  unit: string;
+  nameKey?: string;
+  dataKey?: string;
   height?: number
   width?: number
 }) => {
@@ -25,7 +27,7 @@ const SidewaysBarChart = ({
         {title}
       </h1>
 
-      <ResponsiveContainer width={width ? `${width}%`: "100%"} height={height ? height : 300}>
+      <ResponsiveContainer width={width ? `${width}%` : "100%"} height={height ? height : 300}>
         <BarChart
           layout="vertical"
           data={data}
@@ -33,12 +35,13 @@ const SidewaysBarChart = ({
         >
           <XAxis type="number" />
           <YAxis
-            dataKey="name"
+            dataKey={nameKey ? nameKey : "name"} 
             type="category"
-            width={100}
+            width={200}
+            fontSize={12}
           />
           <Tooltip />
-          <Bar dataKey={unit} radius={[0, 4, 4, 0]} />
+          <Bar dataKey={dataKey ? dataKey : "value"} radius={[0, 4, 4, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

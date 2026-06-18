@@ -217,7 +217,7 @@ const Register = () => {
         {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
-        {page === "Sales" && <Sales products={products} transactions={transactions} />}
+        {page === "Sales" && <Sales products={products}/>}
       </div>
     </motion.div>
   );

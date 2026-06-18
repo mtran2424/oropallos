@@ -1,12 +1,5 @@
 import { Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-interface input {
-  name: string;
-  value: number | string;
-  fill: string
-}
-
-
 /**
  * Takes title and data field and displays data in Donut chart.
  * data consists of list of a name, value, and fill color (hexadecimal)
@@ -16,11 +9,17 @@ const DonutChart = ({
   data,
   height,
   width,
+  nameKey,
+  dataKey,
+  format,
 }: {
   title: string;
-  data: input[];
+  data: any[];
   height?: number;
-  width?: number
+  width?: number;
+  nameKey?: string;
+  dataKey?: string;
+  format?: boolean
 }) => {
 
   return (
@@ -29,18 +28,24 @@ const DonutChart = ({
         {title}
       </h1>
 
-      <ResponsiveContainer width={width ? `${width}%`: "100%"} height={height ? height : 300}>
+      <ResponsiveContainer width={width ? `${width}%` : "100%"} height={height ? height : 300}>
         <PieChart
           accessibilityLayer={false}
         >
           <Pie
             data={data}
-            dataKey="value"
-            nameKey="name"
+            dataKey={dataKey ? dataKey : "value"}
+            nameKey={nameKey ? nameKey : "name"}
             outerRadius={120}
             innerRadius={90}
           />
-          <Tooltip />
+          {format ?
+            <Tooltip
+              formatter={(value) => (Number(value) / 100).toFixed(2)}
+            /> :
+            <Tooltip
+            />
+          }
           <Legend
             layout="vertical"
             align="right"
