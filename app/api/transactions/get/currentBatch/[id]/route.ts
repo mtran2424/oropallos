@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
             itemPrice: true,
             unitPrice: true,
             productId: true,
+            product: true,
             discount: true,
             type: true,
           }

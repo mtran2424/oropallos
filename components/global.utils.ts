@@ -61,6 +61,7 @@ export interface TransactionItem {
   discount: string;
   type: string;
   productId?: string;
+  product?: Product;
 }
 
 export interface Transaction {
@@ -507,6 +508,7 @@ export const transactionItemTableColumns = [
 ] as const;
 
 export const colorPool = [
+  "#83C9F4",
   "#F71735",
   "#F9C22E",
   "#99D19C",
@@ -517,8 +519,8 @@ export const colorPool = [
   "#004385",
   "#FB6376",
   "#93E5AB",
-  "#ADE25D",
   "#F487B6",
+  "#ADE25D",
   "#FCEC52",
   "#F49CBB",
   "#23022E",
