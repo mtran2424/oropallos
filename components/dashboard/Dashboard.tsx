@@ -9,9 +9,10 @@ import AnnouncementsSpreadsheet from "./AnnouncementsSpreadsheet";
 import { getProducts } from "@/app/api/adminapi";
 import { getAnnouncements } from "@/app/api/announcementapi";
 import InventoryMenu from "./InventoryMenu";
+import Orders from "./Orders";
 
 const Dashboard = () => {
-  const [tab, setTab] = useState<'products' | 'announcements' | 'inventory'>('products');
+  const [tab, setTab] = useState<'products' | 'announcements' | 'inventory' | 'orders'>('products');
   const [products, setProducts] = useState<Product[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
@@ -103,6 +104,18 @@ const Dashboard = () => {
           >
             Inventory
           </motion.button>
+
+          <motion.button
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className={`px-6 py-3 text-md z-10 ${tab === 'orders'
+              ? 'bg-white text-zinc-900'
+              : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
+              } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
+            onClick={() => setTab('orders')}
+            disabled={tab === 'orders'}
+          >
+            Orders
+          </motion.button>
         </div>
 
         {/* Spreadsheets */}
@@ -142,6 +155,19 @@ const Dashboard = () => {
               className="mt-5"
             >
               <InventoryMenu initialProducts={products} />
+            </motion.div>
+          )}
+
+          {tab === 'orders' && (
+            <motion.div
+              key="orders"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="mt-5"
+            >
+              <Orders initialProducts={products} />
             </motion.div>
           )}
         </AnimatePresence>
