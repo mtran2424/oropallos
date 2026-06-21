@@ -7,6 +7,7 @@ import { CiImageOff } from "react-icons/ci";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import Modal from "../ui/Modal";
 import { FaSearch } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: TransactionItem) => void }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -137,6 +138,12 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
     }
   }, [addItem]);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
     <>
       <motion.div
@@ -148,14 +155,31 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
       >
         {/* Search Bar Component */}
         <div className="flex flex-center items-center w-full max-w-7xl ">
+          {searchTerm !== "" ? (
           <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            key={"close"}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            onClick={() => setSearchTerm("")}
+            exit={{ scale: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="text-gray-600 p-2 focus:outline-none"
           >
-            <FaSearch size={20} />
+            <IoMdClose size={30} />
           </motion.div>
+        ) : (
+          <motion.div
+            key={"fullscreen"}
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            // onClick={() => toggleFullscreen()}
+            exit={{ scaleX: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="text-gray-600 p-2 focus:outline-none"
+          >
+            <FaSearch size={25} />
+          </motion.div>
+        )}
 
           {/* Search Input */}
           <motion.input
