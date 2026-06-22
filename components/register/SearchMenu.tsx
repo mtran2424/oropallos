@@ -139,9 +139,12 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   }, [addItem]);
 
   useEffect(() => {
-    if (inputRef.current) {
+    const intervalId = setInterval(() => {
+      if (inputRef.current) {
       inputRef.current.focus();
     }
+    }, 10000);
+    return () => clearInterval(intervalId);
   }, []);
 
   return (

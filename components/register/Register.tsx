@@ -34,7 +34,7 @@ const Register = () => {
       "/admin/customer-display",
       "customerDisplay",
       "width=1920, height=1080, right=1920",
-      
+
     );
   };
 
@@ -218,7 +218,7 @@ const Register = () => {
         {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
-        {page === "Sales" && <Sales products={products}/>}
+        {page === "Sales" && <Sales products={products} />}
       </div>
     </motion.div>
   );
