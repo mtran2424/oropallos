@@ -33,7 +33,7 @@ const Register = () => {
     window.open(
       "/admin/customer-display",
       "customerDisplay",
-      "width=1920, height=1080, right=1920",
+      "width=1080, height=540, right=-1920",
 
     );
   };

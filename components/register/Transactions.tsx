@@ -70,7 +70,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
       name: name,
       quantity: 1,
       discount: noDiscount.value,
-      itemPrice: price
+      itemPrice: price,
     }
 
     if (itemExists != -1) {
