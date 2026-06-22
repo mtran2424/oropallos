@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // Adjust to your prisma client path
 import { currentUser } from "@clerk/nextjs/server";
 import {
+  calculateDiscount,
+  calculateSubtotal,
+  calculateTotal,
   getDiscount,
   taxRate,
   TransactionItem,
@@ -20,47 +23,52 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { transaction } = body;
 
-  const liquorSubtotal = transaction.transactionItems.reduce(
-    (sum: number, item: TransactionItem) => {
-      return (
-        sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0)
-      );
-    },
-    0,
-  );
+  // const liquorSubtotal = transaction.transactionItems.reduce(
+  //   (sum: number, item: TransactionItem) => {
+  //     return (
+  //       sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0)
+  //     );
+  //   },
+  //   0,
+  // );
 
-  const wineSubtotal = transaction.transactionItems.reduce(
-    (sum: number, item: TransactionItem) => {
-      return (
-        sum +
-        (item.type === "Wine"
-          ? item.itemPrice *
-            getDiscount(item.discount).multiplier *
-            item.quantity
-          : 0)
-      );
-    },
-    0,
-  );
+  const liquorSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Liquor"));
+  const wineSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Wine"));
 
-  const discount = transaction.transactionItems.reduce(
-    (sum: number, item: TransactionItem) => {
-      return (
-        sum +
-        (item.type === "Wine" &&
-        getDiscount(item.discount).value !== "No_Discount"
-          ? item.itemPrice *
-            (1 - getDiscount(item.discount).multiplier) *
-            item.quantity
-          : 0)
-      );
-    },
-    0,
-  );
+  // const wineSubtotal = transaction.transactionItems.reduce(
+  //   (sum: number, item: TransactionItem) => {
+  //     return (
+  //       sum +
+  //       (item.type === "Wine"
+  //         ? item.itemPrice *
+  //         getDiscount(item.discount).multiplier *
+  //         item.quantity
+  //         : 0)
+  //     );
+  //   },
+  //   0,
+  // );
+
+  // const discount = transaction.transactionItems.reduce(
+  //   (sum: number, item: TransactionItem) => {
+  //     return (
+  //       sum +
+  //       (item.type === "Wine" &&
+  //         getDiscount(item.discount).value !== "No_Discount"
+  //         ? item.itemPrice *
+  //         (1 - getDiscount(item.discount).multiplier) *
+  //         item.quantity
+  //         : 0)
+  //     );
+  //   },
+  //   0,
+  // );
+
+  const discount = calculateDiscount(transaction.transactionItems.filter((item: TransactionItem) => item.type !== "Wine" && getDiscount(item.discount).value !== "No_Discount"));
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
 
-  const total = liquorSubtotal + wineSubtotal + tax;
+  const total = calculateTotal(transaction.transactionItems);
 
   try {
     const res = await db.$transaction(async (tx) => {
@@ -68,11 +76,11 @@ export async function POST(req: NextRequest) {
         data: {
           status: transaction.status,
           register: transaction.register,
-          liquorSubtotal: liquorSubtotal,
-          wineSubtotal: wineSubtotal,
-          discount: discount,
+          liquorSubtotal: parseInt(liquorSubtotal.toFixed(0)),
+          wineSubtotal: parseInt(wineSubtotal.toFixed(0)),
+          discount:  parseInt(discount.toFixed(0)),
           tax: tax,
-          total: total,
+          total: parseInt(total.toFixed(0)),
           taxRate: taxRate,
           cash: transaction.cash,
           credit: transaction.credit,

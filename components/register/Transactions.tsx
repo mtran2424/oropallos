@@ -143,6 +143,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
         toast.success("Transaction successful")
       }
     } catch (err) {
+      setLoading(false);
       console.error(err);
     }
   }
@@ -322,6 +323,9 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
   useEffect(() => {
     console.log("Customer display listening on channel:", `${user.user?.username}-pos`);
+    channel.postMessage({
+      type: "cart-clear",
+    });
   }, []);
 
   return (
@@ -508,7 +512,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               {/* Current input dash display */}
               <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
                 <div className="text-start">
-                  Total: ${(total / 100).toFixed(2)}
+                  Total: ${(parseInt(total.toFixed(0)) / 100).toFixed(2)}
                 </div>
                 <div className="text-end">
                   Amount Due: ${((total - (cash + credit)) / 100).toFixed(2)}
