@@ -180,8 +180,8 @@ const AddUnit = ({ onAddUnit, product }: {
               {/* Unit Count Field */}
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
               <div className="grid grid-cols-2 w-full gap-1">
-                <button type="button" className={`p-5 rounded-md text-white text-2xl ${type === "Case" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Case")}>Case</button>
-                <button type="button" className={`p-5 rounded-md text-white text-2xl ${type === "Unit" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Unit")}>Unit</button>
+                <button type="button" className={`p-5 rounded-md text-white text-2xl ${type === "Case" ? "bg-blue-600" : "bg-zinc-500"} hover:bg-zinc-400`} onClick={() => setType("Case")}>Case</button>
+                <button type="button" className={`p-5 rounded-md text-white text-2xl ${type === "Unit" ? "bg-blue-600" : "bg-zinc-500"} hover:bg-zinc-400`} onClick={() => setType("Unit")}>Unit</button>
               </div>
 
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>

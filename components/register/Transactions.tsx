@@ -44,6 +44,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
     setCash(0);
     setCredit(0);
     setNote("");
+    setType("Credit");
   };
 
   // Close the modal for confirm
@@ -447,26 +448,26 @@ const Transactions = ({ products }: { products: Product[] }) => {
             <table className="w-full my-5">
               <tbody>
                 <tr>
-                  <td className="font-semibold text-2xl">
+                  <td className="font-semibold text-3xl">
                     SUBTOTAL:
                   </td>
-                  <td className="text-end text-2xl">
+                  <td className="text-end text-3xl">
                     {(calculateSubtotal(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="font-semibold text-2xl">
+                  <td className="font-semibold text-3xl">
                     TAX:
                   </td>
-                  <td className="text-end text-2xl">
+                  <td className="text-end text-3xl">
                     {(calculateTax(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="font-semibold text-2xl">
+                  <td className="font-semibold text-3xl">
                     DISCOUNT:
                   </td>
-                  <td className="text-end text-2xl">
+                  <td className="text-end text-3xl">
                     {(calculateDiscount(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
@@ -476,10 +477,10 @@ const Transactions = ({ products }: { products: Product[] }) => {
             <table className="w-full">
               <tbody>
                 <tr>
-                  <td className="font-semibold text-2xl">
+                  <td className="font-semibold text-3xl">
                     TOTAL
                   </td>
-                  <td className="text-end text-2xl">
+                  <td className="text-end text-3xl">
                     {(calculateTotal(cart) / 100).toFixed(2)}
                   </td>
                 </tr>
@@ -699,7 +700,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
             {/* Cash and credit buttons */}
             <div className="grid grid-cols-2 w-full gap-1">
-              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Cash" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`}
+              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Cash" ? "bg-blue-600" : "bg-zinc-500"} hover:bg-zinc-400`}
                 onClick={() => {
                   setType("Cash")
                   if (input !== "") {
@@ -710,7 +711,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               >
                 Cash
               </button>
-              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Credit" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`}
+              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Credit" ? "bg-blue-600" : "bg-zinc-500"} hover:bg-zinc-400`}
                 onClick={() => {
                   setType("Credit")
                   if (input !== "") {
