@@ -14,7 +14,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
   const [discount, setDiscount] = useState<Discount>(noDiscount);
 
   const componentRef = useRef<HTMLDivElement>(null);
-  // TODO: make no sale button receipt
+  // TODO: Gift card
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
     documentTitle: "Transaction Receipt",

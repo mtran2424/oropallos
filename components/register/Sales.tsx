@@ -179,7 +179,7 @@ const Sales = ({
     const fetchTransactions = async () => {
       try {
         const data = await getTransactions();
-        setTransactions(data.transactions);
+        setTransactions(data.transactions.filter((transaction: Transaction) => transaction.status === "Cashed"));
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
