@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // Adjust to your prisma client path
 import { currentUser } from "@clerk/nextjs/server";
 import {
+  calculateDiscount,
+  calculateTax,
+  calculateTotal,
   getDiscount,
   taxRate,
   TransactionItem,
@@ -20,47 +23,40 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { transaction } = body;
 
-  const liquorSubtotal = transaction.transactionItems.reduce(
-    (sum: number, item: TransactionItem) => {
-      return (
-        sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0)
-      );
-    },
-    0,
+  const liquorSubtotal = parseInt(
+    transaction.transactionItems
+      .reduce((sum: number, item: TransactionItem) => {
+        return (
+          sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0)
+        );
+      }, 0)
+      .toFixed(0),
   );
 
-  const wineSubtotal = transaction.transactionItems.reduce(
-    (sum: number, item: TransactionItem) => {
-      return (
-        sum +
-        (item.type === "Wine"
-          ? item.itemPrice *
-            getDiscount(item.discount).multiplier *
-            item.quantity
-          : 0)
-      );
-    },
-    0,
+  const wineSubtotal = parseInt(
+    transaction.transactionItems
+      .reduce((sum: number, item: TransactionItem) => {
+        return (
+          sum +
+          (item.type === "Wine"
+            ? item.itemPrice *
+              getDiscount(item.discount).multiplier *
+              item.quantity
+            : 0)
+        );
+      }, 0)
+      .toFixed(0),
   );
 
-  const discount = transaction.transactionItems.reduce(
-    (sum: number, item: TransactionItem) => {
-      return (
-        sum +
-        (item.type === "Wine" &&
-        getDiscount(item.discount).value !== "No_Discount"
-          ? item.itemPrice *
-            (1 - getDiscount(item.discount).multiplier) *
-            item.quantity
-          : 0)
-      );
-    },
-    0,
+  const discount = parseInt(
+    calculateDiscount(transaction.transactionItems).toFixed(0),
   );
 
-  const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
+  const tax = parseInt(calculateTax(transaction.transactionItems).toFixed(0));
 
-  const total = liquorSubtotal + wineSubtotal + tax;
+  const total = parseInt(
+    calculateTotal(transaction.transactionItems).toFixed(0),
+  );
 
   try {
     const res = await db.$transaction(async (tx) => {

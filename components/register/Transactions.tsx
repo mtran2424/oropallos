@@ -26,12 +26,13 @@ const Transactions = ({ products }: { products: Product[] }) => {
   const [total, setTotal] = useState<number>(0);
   const [cash, setCash] = useState<number>(0);
   const [credit, setCredit] = useState<number>(0);
+
+  const [type, setType] = useState<"Cash" | "Credit">("Credit")
   const [amountTendered, setAmountTendered] = useState<number>(0);
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   const channel = new BroadcastChannel(`${user.user?.username}-pos`);
-
 
   // Cashout modal
   const modalRef = useRef<HTMLDivElement>(null);
@@ -118,12 +119,32 @@ const Transactions = ({ products }: { products: Product[] }) => {
       setAmountTendered((cash + credit) > total ? cash + credit : total);
       setChange((cash + credit) > total ? (cash + credit) - total : 0);
 
+      const creditTotal =
+        // Fill Credit
+        (type === "Credit") ? (
+          (cash < total) ? (
+            total - cash
+          ) : 0
+        ) : (credit < total) ?
+          credit : total;
+
+      const cashTotal =
+        // Fill Credit
+        (type === "Cash") ? (
+          (credit < total) ? (
+            total - credit
+          ) : 0
+        ) : (cash < total) ?
+          cash : total;
+
+      // Cash Overflow
+
       const transaction = {
         status: "Cashed",
         register: user.user?.username || "Unknown Register",
         transactionItems: cart,
-        cash: ((cash + credit) > total) ? cash : (cash + (total - (cash + credit))),
-        credit: credit,
+        cash: cashTotal,
+        credit: creditTotal,
         amountTendered: (cash + credit) > total ? cash + credit : total,
         notes: note
       }
@@ -203,12 +224,10 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
   const printReceipt = () => {
     handlePrintReceipt();
-    closeConfirmModal();
   }
 
   const printNoReceipt = () => {
     handlePrintNoReceipt();
-    closeConfirmModal();
   }
 
   const receipt = (
@@ -288,7 +307,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               TOTAL
             </td>
             <td className="text-end">
-              ${(calculateTotal(cart) / 100).toFixed(2)}
+              ${(parseInt(calculateTotal(cart).toFixed(0)) / 100).toFixed(2)}
             </td>
           </tr>
           <tr>
@@ -474,7 +493,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                         hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
               onClick={() => {
                 if (cart.length !== 0) {
-                  setTotal(calculateTotal(cart));
+                  setTotal(parseInt(calculateTotal(cart).toFixed(0)));
                   setCashout(true);
                 }
               }}
@@ -500,21 +519,21 @@ const Transactions = ({ products }: { products: Product[] }) => {
         <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
           <div className="flex flex-col items-center justify-center w-full gap-2">
 
+            {/* Current input dash display */}
+            <div className="grid grid-cols-2 text-xl w-full">
+              <div className="text-start">
+                TOTAL: ${(total / 100).toFixed(2)}
+              </div>
+              <div className="text-end">
+                AMOUNT DUE: ${((total - (cash + credit)) / 100).toFixed(2)}
+              </div>
+            </div>
+
             {/* Input bar */}
             <motion.div
               className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                                overflow-hidden w-full h-30 mb-2"
+                                overflow-hidden w-full h-25 mb-2 justify-center items-center"
             >
-              {/* Current input dash display */}
-              <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
-                <div className="text-start">
-                  Total: ${(total / 100).toFixed(2)}
-                </div>
-                <div className="text-end">
-                  Amount Due: ${((total - (cash + credit)) / 100).toFixed(2)}
-                </div>
-              </div>
-
               {/* Input box for amount entry. When cash or credit buttons are pressed, amount is added to respective payment type and input 
                     is cleared. If amount entered is greater than amount due, change is calculated and displayed in success modal after transaction submission. */}
               <input
@@ -522,20 +541,32 @@ const Transactions = ({ products }: { products: Product[] }) => {
                 value={input}
                 min={0}
                 onChange={(e) => setInput(e.target.value)}
-                className="p-2 text-3xl overflow-hidden w-full focus:outline-none"
+                className="text-4xl overflow-hidden w-full h-full focus:outline-none"
                 style={{ whiteSpace: "nowrap" }}
               />
 
-              {/* Cash and Credit display under input box for reference when entering amounts. */}
-              <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
-                <div className="text-start">
-                  Cash: ${(cash / 100).toFixed(2)}
-                </div>
-                <div className="text-end">
-                  Credit: ${(credit / 100).toFixed(2)}
-                </div>
-              </div>
             </motion.div>
+
+            <table className="w-full">
+              <tbody>
+                <tr>
+                  <td className="font-semibold text-xl">
+                    CASH
+                  </td>
+                  <td className="text-end text-xl">
+                    ${(cash / 100).toFixed(2)}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="font-semibold text-xl">
+                    CREDIT
+                  </td>
+                  <td className="text-end text-xl">
+                    ${(credit / 100).toFixed(2)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
 
             {/* Need to add num pad for amount input. Enter amount and punch credit or cash to reduce amount. When amount greater than total due, transaction is completed */}
@@ -668,18 +699,24 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
             {/* Cash and credit buttons */}
             <div className="grid grid-cols-2 w-full gap-1">
-              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
+              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Cash" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`}
                 onClick={() => {
-                  setCash(cash + Number(input));
-                  setInput("");
+                  setType("Cash")
+                  if (input !== "") {
+                    setCash(cash + parseInt(Number(input).toFixed(0)));
+                    setInput("");
+                  }
                 }}
               >
                 Cash
               </button>
-              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`}
+              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Credit" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`}
                 onClick={() => {
-                  setCredit(credit + Number(input));
-                  setInput("");
+                  setType("Credit")
+                  if (input !== "") {
+                    setCredit(credit + parseInt(Number(input).toFixed(0)));
+                    setInput("");
+                  }
                 }}
               >
                 Credit
@@ -717,8 +754,29 @@ const Transactions = ({ products }: { products: Product[] }) => {
       </Modal>
 
       {/* Cashout Confirmation Modal */}
-      <Modal open={confirm} height="max-h-[40vh]" title="Confirm" onClose={closeConfirmModal} ref={modalRef}>
-        <div className="flex flex-col items-center gap-2">
+      <Modal open={confirm} height="max-h-[60vh]" title="Confirm" onClose={closeConfirmModal} ref={modalRef}>
+        <div className="flex flex-col items-center gap-3">
+
+          <table className="w-full">
+            <tbody>
+              <tr>
+                <td className="font-semibold text-2xl">
+                  TOTAL
+                </td>
+                <td className="text-end text-2xl">
+                  {(calculateTotal(cart) / 100).toFixed(2)}
+                </td>
+              </tr>
+              <tr>
+                <td className="font-semibold text-2xl">
+                  AMOUNT TENDERED
+                </td>
+                <td className="text-end text-2xl">
+                  {(amountTendered / 100).toFixed(2)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Change</label>
           <div className="text-2xl font-bold text-zinc-900">
@@ -726,10 +784,18 @@ const Transactions = ({ products }: { products: Product[] }) => {
           </div>
 
           <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Receipt Option</label>
-          <div className="grid grid-cols-2 w-full gap-1">
+          <div className="grid grid-cols-2 w-full gap-2">
             <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printNoReceipt()}>No Receipt</button>
             <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printReceipt()}>Print Receipt</button>
           </div>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+            onClick={closeConfirmModal}
+          >
+            Close
+          </motion.button>
         </div>
       </Modal>
     </>
