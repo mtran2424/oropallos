@@ -39,7 +39,7 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (user?.username !== "admin") {
+    if (user && user.username !== "admin") {
       openCustomerDisplay();
     }
   }, [user]);
