@@ -601,17 +601,18 @@ const Batches = () => {
             </table>}
             {/* Receipts */}
             <div className="hidden">
-              <div className="print-area" ref={receiptRef} >
+              <div className="print-area receipt" ref={receiptRef} >
                 {transaction &&
                   <Receipt ref={receiptRef}>
                     <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
                       <tbody>
                         <tr>
                           {/* <td className="text-start">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td> */}
-                          <td className="text-start">{transaction.createdAt instanceof Date ? formatDate(transaction.createdAt, "mm/dd/yyyy") + " " + formatTime(transaction.createdAt) :
-                            transaction.createdAt ? formatDate(new Date(transaction.createdAt), "mm/dd/yyyy") + " " + formatTime(new Date(transaction.createdAt)) : ""}
+                          <td className="text-start">{transaction.createdAt instanceof Date ?
+                            formatDate(transaction.createdAt, "mm/dd/yyyy") + "\n" + formatTime(transaction.createdAt) :
+                            transaction.createdAt ? formatDate(new Date(transaction.createdAt), "mm/dd/yyyy") + "\n" + formatTime(new Date(transaction.createdAt)) : ""}
                           </td>
-                          <td className="text-end">Reg: {transaction.register}</td>
+                          <td className="text-end">Reg:<br /> {transaction.register}</td>
                         </tr>
                       </tbody>
                     </table>
