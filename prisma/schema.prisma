@@ -68,6 +68,7 @@ enum Discount {
 enum ItemType {
   Wine
   Liquor
+  Giftcard
 }
 
 model Product {

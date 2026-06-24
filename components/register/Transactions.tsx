@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate } from "../global.utils";
+import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate, Discount } from "../global.utils";
 import { useEffect, useRef, useState } from "react";
 import SearchMenu from "./SearchMenu";
 import QuickAddButton from "./QuickAddButton";
@@ -13,6 +13,7 @@ import TextButton from "../ui/TextButton";
 import { useReactToPrint } from "react-to-print";
 import Modal from "../ui/Modal";
 import Receipt from "../utils/Receipt";
+import AddCustom from "./AddCustom";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const date = new Date();
@@ -56,6 +57,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
     setInput("");
     setAmountTendered(0);
     setChange(0);
+    setType("Credit");
     setConfirm(false);
     channel.postMessage({
       type: "cart-clear",
@@ -78,6 +80,43 @@ const Transactions = ({ products }: { products: Product[] }) => {
     if (itemExists != -1) {
       const temp = cart[itemExists];
       temp.quantity++;
+      setCart((prev) => [...prev]);
+      channel.postMessage({
+        type: "cart-update",
+        item: item
+      });
+    }
+    else {
+      setCart((prev) => [...prev, item]);
+      channel.postMessage({
+        type: "cart-add",
+        item: item
+      });
+    }
+  }
+
+  const handleCustomAdd = (
+    product: Product,
+    quantity: number,
+    name: string,
+    type: string,
+    discount: Discount,
+    price: number
+  ) => {
+    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount === noDiscount.value && item.itemPrice === price);
+
+    const item = {
+      type: type,
+      name: name,
+      quantity: quantity,
+      discount: discount.value,
+      itemPrice: price,
+      product: product
+    }
+
+    if (itemExists != -1) {
+      const temp = cart[itemExists];
+      temp.quantity += quantity;
       setCart((prev) => [...prev]);
       channel.postMessage({
         type: "cart-update",
@@ -236,8 +275,8 @@ const Transactions = ({ products }: { products: Product[] }) => {
       <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
         <tbody>
           <tr>
-            <td className="text-start">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
-            <td className="text-end">Reg: {user.user?.username || 'Unknown Register'}</td>
+            <td className="text-start">{formatDate(date, "mm/dd/yyyy")}<br />{formatTime(date)}</td>
+            <td className="text-end">Reg:<br /> {user.user?.username || 'Unknown Register'}</td>
           </tr>
         </tbody>
       </table>
@@ -389,7 +428,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
                     {cart.map((item, index) => (
                       <tr key={index}>
                         <td className="text-2xl text-center p-1">{item.type}</td>
-                        <td className="text-2xl text-left p-1">{item.name}</td>
+                        <td className="text-2xl text-left p-1">{item.name} {item.product ? " - " + item.product.size : ""}</td>
                         <td className="text-2xl text-center p-1">{item.quantity}</td>
                         <td className="text-2xl text-center p-1">{getDiscount(item.discount).name}</td>
                         <td className="text-2xl text-center p-1">{(item.itemPrice / 100).toFixed(2)}</td>
@@ -414,6 +453,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
             </div>
             <div className="grid grid-cols-4 gap-1">
+              <AddCustom products={products} ref={modalRef} onClick={handleCustomAdd} />
               <QuickAddButton label="50mL Liquor - 0.99" type="Liquor" price={99} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={149} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 1.99" type="Liquor" price={199} onClick={handleQuickAdd} />
@@ -421,7 +461,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
               <QuickAddButton label="50mL Liquor - 4.99" type="Liquor" price={499} onClick={handleQuickAdd} />
               <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={999} onClick={handleQuickAdd} />
               <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={1299} onClick={handleQuickAdd} />
-              <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={1399} onClick={handleQuickAdd} />
+              {/* <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={1399} onClick={handleQuickAdd} /> */}
             </div>
           </div>
 

@@ -194,7 +194,7 @@ const Batches = () => {
       case "id":
         return item.id;
       case "name":
-        return item.name;
+        return item.name + (item.product ? " - " + item.product.size : "");
       case "quantity":
         return item.quantity;
       case "itemPrice":
