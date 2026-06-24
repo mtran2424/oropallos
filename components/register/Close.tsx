@@ -43,9 +43,9 @@ const Close = ({
       }
 
       .receipt {
-        width: 75mm;
+        width: 78mm;
         font-family: monospace;
-        font-size: 10px;
+        font-size: 11px;
       }
     }
   `,
@@ -152,8 +152,8 @@ const Close = ({
       <tbody>
         <tr>
           {/* Liquor Sales */}
-          <td className="">{formatDate(date, "mm/dd/yyyy")} {formatTime(date)}</td>
-          <td className="text-end">Register: {user?.username}</td>
+          <td className="">{formatDate(date, "mm/dd/yyyy")} <br /> {formatTime(date)}</td>
+          <td className="text-end">Register: <br /> {user?.username}</td>
         </tr>
         <tr>
           {/* Liquor Sales */}
@@ -369,7 +369,7 @@ const Close = ({
 
           <div className="hidden">
             <div
-              className="print-area"
+              className="print-area receipt"
               ref={componentRef}
             >
               {printableBatch}

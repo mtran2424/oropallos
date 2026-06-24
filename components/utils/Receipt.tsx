@@ -8,7 +8,7 @@ const Receipt = ({
   children: React.ReactNode
 }) => {
   return (
-    <div ref={ref} className="flex flex-col w-full items-center text-md px-10 pb-10 receipt">
+    <div ref={ref} className="flex flex-col w-full items-center text-md pr-5 pb-10 receipt">
       <h1 className="font-bold text-center">OROPALLO'S</h1>
       <h1 className="font-bold text-center">WINE & LIQUOR</h1>
       <h1 className="text-center">376 DIX AVENUE</h1>

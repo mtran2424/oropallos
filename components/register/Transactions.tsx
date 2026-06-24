@@ -190,9 +190,9 @@ const Transactions = ({ products }: { products: Product[] }) => {
       }
 
       .receipt {
-        width: 75mm;
+        width: 78mm;
         font-family: monospace;
-        font-size: 10px;
+        font-size: 11px;
       }
     }
   `,
@@ -215,9 +215,9 @@ const Transactions = ({ products }: { products: Product[] }) => {
       }
 
       .receipt {
-        width: 75mm;
+        width: 78mm;
         font-family: monospace;
-        font-size: 10px;
+        font-size: 11px;
       }
     }
   `,

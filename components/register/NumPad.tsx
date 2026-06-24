@@ -32,9 +32,9 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
       }
 
       .receipt {
-        width: 75mm;
+        width: 78mm;
         font-family: monospace;
-        font-size: 10px;
+        font-size: 11px;
       }
     }
   `,
