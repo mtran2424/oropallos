@@ -204,6 +204,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
         toast.success("Transaction successful")
       }
     } catch (err) {
+      setLoading(false);
       console.error(err);
     }
   }
@@ -381,6 +382,9 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
   useEffect(() => {
     console.log("Customer display listening on channel:", `${user.user?.username}-pos`);
+    channel.postMessage({
+      type: "cart-clear",
+    });
   }, []);
 
   return (
@@ -573,8 +577,18 @@ const Transactions = ({ products }: { products: Product[] }) => {
             {/* Input bar */}
             <motion.div
               className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                                overflow-hidden w-full h-25 mb-2 justify-center items-center"
+                                overflow-hidden w-full h-30 mb-2"
             >
+              {/* Current input dash display */}
+              <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
+                <div className="text-start">
+                  Total: ${(parseInt(total.toFixed(0)) / 100).toFixed(2)}
+                </div>
+                <div className="text-end">
+                  Amount Due: ${((total - (cash + credit)) / 100).toFixed(2)}
+                </div>
+              </div>
+
               {/* Input box for amount entry. When cash or credit buttons are pressed, amount is added to respective payment type and input 
                     is cleared. If amount entered is greater than amount due, change is calculated and displayed in success modal after transaction submission. */}
               <input
