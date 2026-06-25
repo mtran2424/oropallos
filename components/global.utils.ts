@@ -623,7 +623,7 @@ export const calculateTotal = (cart: TransactionItem[]) => {
 
 export const calculateTax = (cart: TransactionItem[]) => {
   var total = 0;
-  cart.map((item) => {
+  cart.filter((item) => item.type !== "Giftcard").map((item) => {
     total += getSubtotal(item) * (taxRate / 100);
   });
   return total;

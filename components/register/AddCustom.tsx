@@ -102,7 +102,7 @@ const AddCustom = ({ products, ref, onClick }: {
 
   const handleConfirm = () => {
     if (currentProduct) {
-      onClick(currentProduct, quantity, currentProduct.name, type, discount, (quantity > 1) ? parseInt((price / quantity).toFixed(0)) : price);
+      onClick(currentProduct, quantity, currentProduct.name, type, discount, (quantity > 1) ? (price / quantity) : price);
       closeModal();
     }
   }
@@ -366,9 +366,9 @@ const AddCustom = ({ products, ref, onClick }: {
                 className="p-2 text-3xl overflow-hidden w-full focus:outline-none"
                 style={{ whiteSpace: "nowrap" }}
               />
-              {discount && <div className="text-start text-lg text-zinc-500">
+              {/* {discount && <div className="text-start text-lg text-zinc-500">
                 {discount.name}
-              </div>}
+              </div>} */}
             </motion.div>
             <div className="grid grid-cols-4 gap-x-1 gap-y-1">
               {/* First Row */}
