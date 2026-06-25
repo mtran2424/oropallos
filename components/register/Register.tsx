@@ -17,6 +17,7 @@ import { IoMdClose } from "react-icons/io";
 import { FaRegSquare } from "react-icons/fa";
 import { getConfigs } from "@/app/api/configapi";
 import Sales from "./Sales";
+import HelpButton from "./HelpButton";
 
 const Register = () => {
   // Admin check
@@ -85,17 +86,6 @@ const Register = () => {
       }
     };
 
-    // const fetchConfigs = async () => {
-    //   try {
-    //     if (user?.username) {
-    //       const data = await getConfigs(user.username);
-    //       setConfigs(data.configs);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching configs:", error);
-    //   }
-    // };
-
     fetchProducts();
     fetchTransactions();
     // fetchConfigs();
@@ -150,6 +140,11 @@ const Register = () => {
           </motion.div>
         )}
       </div>
+
+      <div className="absolute bottom-4 left-25">
+        <HelpButton />
+      </div>
+
       <motion.div
         initial={{ x: -100 }}
         animate={{ x: 0 }}
@@ -214,7 +209,7 @@ const Register = () => {
           </button> */}
         </div>
       </motion.div>
-      <div className="flex flex-col w-full h-full items-center justify-start pl-20">
+      <div className="flex flex-col w-full h-screen items-center justify-start pl-20">
         {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
