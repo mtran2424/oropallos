@@ -23,52 +23,16 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { transaction } = body;
 
-  // const liquorSubtotal = transaction.transactionItems.reduce(
-  //   (sum: number, item: TransactionItem) => {
-  //     return (
-  //       sum + (item.type === "Liquor" ? item.itemPrice * item.quantity : 0)
-  //     );
-  //   },
-  //   0,
-  // );
-
   const liquorSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Liquor"));
   const wineSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Wine"));
-
-  // const wineSubtotal = transaction.transactionItems.reduce(
-  //   (sum: number, item: TransactionItem) => {
-  //     return (
-  //       sum +
-  //       (item.type === "Wine"
-  //         ? item.itemPrice *
-  //         getDiscount(item.discount).multiplier *
-  //         item.quantity
-  //         : 0)
-  //     );
-  //   },
-  //   0,
-  // );
-
-  // const discount = transaction.transactionItems.reduce(
-  //   (sum: number, item: TransactionItem) => {
-  //     return (
-  //       sum +
-  //       (item.type === "Wine" &&
-  //         getDiscount(item.discount).value !== "No_Discount"
-  //         ? item.itemPrice *
-  //         (1 - getDiscount(item.discount).multiplier) *
-  //         item.quantity
-  //         : 0)
-  //     );
-  //   },
-  //   0,
-  // );
 
   const discount = calculateDiscount(transaction.transactionItems.filter((item: TransactionItem) => item.type !== "Wine" && getDiscount(item.discount).value !== "No_Discount"));
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
 
-  const total = calculateTotal(transaction.transactionItems);
+  const total = calculateTotal(transaction.transactionItems.filter((item: TransactionItem) => item.type !== "Giftcard"));
+
+  const giftcardTotal = calculateTotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Giftcard"))
 
   try {
     const res = await db.$transaction(async (tx) => {
@@ -82,7 +46,7 @@ export async function POST(req: NextRequest) {
           tax: tax,
           total: parseInt(total.toFixed(0)),
           taxRate: taxRate,
-          cash: transaction.cash,
+          cash: transaction.cash - giftcardTotal,
           credit: transaction.credit,
           notes: transaction.notes,
           amountTendered: transaction.amountTendered,
@@ -95,6 +59,7 @@ export async function POST(req: NextRequest) {
                 unitPrice: item.unitPrice,
                 discount: item.discount,
                 productId: item.productId ? item.productId : null,
+                product: item.product,
                 type: item.type,
               }),
             ),

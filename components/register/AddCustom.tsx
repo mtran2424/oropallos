@@ -7,7 +7,7 @@ import { IoMdClose } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
 import { CiImageOff } from "react-icons/ci";
 import { IoBackspaceOutline } from "react-icons/io5";
-import { MdKeyboardReturn } from "react-icons/md";
+import { MdKeyboardReturn, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
 const AddCustom = ({ products, ref, onClick }: {
   products: Product[];
@@ -24,6 +24,7 @@ const AddCustom = ({ products, ref, onClick }: {
   const [add, setAdd] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [quantity, setQuantity] = useState<number>(1);
+  const [units, setUnits] = useState<number>(1);
   const [type, setType] = useState<"Liquor" | "Wine">("Liquor");
   const [price, setPrice] = useState<number>(0);
   const [discount, setDiscount] = useState<Discount>(noDiscount);
@@ -102,10 +103,16 @@ const AddCustom = ({ products, ref, onClick }: {
 
   const handleConfirm = () => {
     if (currentProduct) {
-      onClick(currentProduct, quantity, currentProduct.name, type, discount, (quantity > 1) ? (price / quantity) : price);
+      onClick(currentProduct, quantity * units, currentProduct.name, type, discount, (units > 1) ? (price / units) : price);
       closeModal();
     }
   }
+
+  useEffect(() => {
+    if (add && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [add]);
 
   return (
     <>
@@ -152,7 +159,6 @@ const AddCustom = ({ products, ref, onClick }: {
                   key={"search"}
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={{ scaleX: 1, opacity: 1 }}
-                  // onClick={() => toggleFullscreen()}
                   exit={{ scaleX: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="text-gray-600 p-2 focus:outline-none"
@@ -272,18 +278,60 @@ const AddCustom = ({ products, ref, onClick }: {
               </div>
             </div>
 
+            <div className="flex flex-col my-10">
+              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
+              <div className="flex flex-row">
+                <button
+                  className="text-blue-600 hover:text-zinc-400"
+                  onClick={() => {
+                    if (quantity > 1)
+                      setQuantity(quantity - 1)
+                  }}
+                  disabled={quantity <= 1}
+                >
+                  <MdNavigateBefore size={60} />
+                </button>
+                <div className="flex w-full items-center justify-center">
+                  <input
+                    type="number"
+                    step="1"
+                    min={0}
+                    className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setQuantity(parseInt(value));
+                    }}
+                    value={quantity || "0"}
+                  />
+                </div>
+                <button
+                  className="text-blue-600 hover:text-zinc-400"
+                  onClick={() => setQuantity(quantity + 1)}
+                >
+                  <MdNavigateNext size={60} />
+                </button>
+              </div>
+              <div className="text-md font-medium text-zinc-500 text-left px-2 wrap-break-word">
+                Number of custom products
+              </div>
+            </div>
+
             {/* Input Fields */}
             <div className="flex flex-row w-full space-x-2">
+
               <div className="flex flex-col w-1/4">
-                {/* Quantity Field */}
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Qty</label>
+                {/* Units Field */}
+                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Units Per</label>
                 <input
                   type="number"
                   className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  placeholder="Quantity"
+                  placeholder="Units Per"
                   readOnly
-                  value={quantity.toFixed(0)}
+                  value={units.toFixed(0)}
                 />
+                <div className="text-md font-medium text-zinc-500 text-left px-2 wrap-break-word">
+                  How many units in custom product.
+                </div>
               </div>
 
               <div className="flex flex-col w-full">
@@ -298,8 +346,15 @@ const AddCustom = ({ products, ref, onClick }: {
                   readOnly
                   value={(price / 100).toFixed(2)}
                 />
+                <div className="text-md font-medium text-zinc-500 text-left px-2 wrap-break-word">
+                  Price of a custom product
+                </div>
               </div>
             </div>
+
+            <div className="text-md font-medium text-zinc-500 text-left px-2 wrap-break-word">
+                i.e. 10 units per 9.99 Red Stag 10 pack. Quantity of 2 for 2 10 packs
+              </div>
 
             <div className="flex flex-row space-x-2 w-full">
               <button
@@ -351,19 +406,11 @@ const AddCustom = ({ products, ref, onClick }: {
                         overflow-hidden w-full h-30 mb-5"
             >
               {/* Current input dash display */}
-              {/* <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
-                {quantity ? <div className="text-start">
-                  Qty: {quantity}
-                </div> : <div />}
-                {type ? <div className="text-end">
-                  {type}
-                </div> : <div />}
-              </div> */}
               <input
                 type="number"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="p-2 text-3xl overflow-hidden w-full focus:outline-none"
+                className="px-2 text-4xl overflow-hidden w-full h-full focus:outline-none"
                 style={{ whiteSpace: "nowrap" }}
               />
               {/* {discount && <div className="text-start text-lg text-zinc-500">
@@ -378,7 +425,7 @@ const AddCustom = ({ products, ref, onClick }: {
                               hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => {
                   if (input !== "") {
-                    setQuantity(parseInt(input));
+                    setUnits(parseInt(input));
                     setInput("");
                   }
                 }}
@@ -396,7 +443,6 @@ const AddCustom = ({ products, ref, onClick }: {
                   setInput("");
                   setDiscount(noDiscount);
                   setType("Liquor");
-                  // setItem("");
                   setQuantity(1);
                 }}
               >
@@ -404,16 +450,6 @@ const AddCustom = ({ products, ref, onClick }: {
                 Clear
               </button>
 
-              {/* TODO: Implement no sale order */}
-              {/* <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  handlePrint();
-                }}
-              >
-                No Sale
-              </button> */}
               <button />
 
               {/* Second Row */}
@@ -571,11 +607,6 @@ const AddCustom = ({ products, ref, onClick }: {
                 <MdKeyboardReturn size={40} />
               </button>
 
-              {/* <div className="hidden" >
-                <div className="print-area" ref={componentRef} >
-                  {noSaleReceipt}
-                </div>
-              </div> */}
             </div>
           </motion.div>
           <div />

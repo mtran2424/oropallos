@@ -14,6 +14,7 @@ import { useReactToPrint } from "react-to-print";
 import Modal from "../ui/Modal";
 import Receipt from "../utils/Receipt";
 import AddCustom from "./AddCustom";
+import AddGiftcard from "./AddGiftcard";
 
 const Transactions = ({ products }: { products: Product[] }) => {
   const date = new Date();
@@ -111,7 +112,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
       quantity: quantity,
       discount: discount.value,
       itemPrice: price,
-      product: product
+      productId: product.id,
     }
 
     if (itemExists != -1) {
@@ -130,6 +131,22 @@ const Transactions = ({ products }: { products: Product[] }) => {
         item: item
       });
     }
+  }
+  const handleGiftcardAdd = (
+    price: number
+  ) => {
+    const item = {
+      type: "Giftcard",
+      name: "Gift Card",
+      quantity: 1,
+      discount: noDiscount.value,
+      itemPrice: price,
+    }
+    setCart((prev) => [...prev, item]);
+    channel.postMessage({
+      type: "cart-add",
+      item: item
+    });
   }
 
   const handleAddItem = (item: TransactionItem) => {
@@ -458,13 +475,14 @@ const Transactions = ({ products }: { products: Product[] }) => {
             </div>
             <div className="grid grid-cols-4 gap-1">
               <AddCustom products={products} ref={modalRef} onClick={handleCustomAdd} />
+              <AddGiftcard ref={modalRef} onClick={handleGiftcardAdd} />
               <QuickAddButton label="50mL Liquor - 0.99" type="Liquor" price={99} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={149} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 1.99" type="Liquor" price={199} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 2.99" type="Liquor" price={299} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 4.99" type="Liquor" price={499} onClick={handleQuickAdd} />
               <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={999} onClick={handleQuickAdd} />
-              <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={1299} onClick={handleQuickAdd} />
+              {/* <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={1299} onClick={handleQuickAdd} /> */}
               {/* <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={1399} onClick={handleQuickAdd} /> */}
             </div>
           </div>
@@ -576,18 +594,10 @@ const Transactions = ({ products }: { products: Product[] }) => {
 
             {/* Input bar */}
             <motion.div
-              className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+              className="px-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                                 overflow-hidden w-full h-30 mb-2"
             >
               {/* Current input dash display */}
-              <div className="grid grid-cols-2 text-lg w-full text-zinc-500">
-                <div className="text-start">
-                  Total: ${(parseInt(total.toFixed(0)) / 100).toFixed(2)}
-                </div>
-                <div className="text-end">
-                  Amount Due: ${((total - (cash + credit)) / 100).toFixed(2)}
-                </div>
-              </div>
 
               {/* Input box for amount entry. When cash or credit buttons are pressed, amount is added to respective payment type and input 
                     is cleared. If amount entered is greater than amount due, change is calculated and displayed in success modal after transaction submission. */}

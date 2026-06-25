@@ -586,7 +586,7 @@ export const getTotal = (item: TransactionItem) => {
     item.itemPrice *
     item.quantity *
     getDiscount(item.discount).multiplier *
-    (1 + taxRate / 100)
+    (item.type !== "Giftcard" ? (1 + taxRate / 100) : 1)
   );
 };
 
