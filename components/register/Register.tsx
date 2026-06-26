@@ -3,7 +3,7 @@ import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Config, Product, Transaction } from "@/components/global.utils";
+import { Batch, Config, Product, Transaction } from "@/components/global.utils";
 import Transactions from "./Transactions";
 import Manager from "./Manager";
 import Close from "./Close";
@@ -18,12 +18,14 @@ import { FaRegSquare } from "react-icons/fa";
 import { getConfigs } from "@/app/api/configapi";
 import Sales from "./Sales";
 import HelpButton from "./HelpButton";
+import { getBatches } from "@/app/api/batchapi";
 
 const Register = () => {
   // Admin check
   const { isSignedIn, user } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [batches, setBatches] = useState<Batch[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [configs, setConfigs] = useState<Config[]>([]);
 
@@ -35,7 +37,6 @@ const Register = () => {
       "/admin/customer-display",
       "customerDisplay",
       "width=1080, height=540, right=-1920",
-
     );
   };
 
@@ -86,6 +87,16 @@ const Register = () => {
       }
     };
 
+    const fetchBatches = async () => {
+      try {
+        const data = await getBatches();
+        setBatches(data.batches);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
+    fetchBatches();
     fetchProducts();
     fetchTransactions();
     // fetchConfigs();
@@ -141,7 +152,7 @@ const Register = () => {
         )}
       </div>
 
-      <div className="absolute bottom-4 left-25">
+      <div className="fixed bottom-4 left-4 z-250">
         <HelpButton />
       </div>
 
@@ -213,7 +224,7 @@ const Register = () => {
         {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
-        {page === "Sales" && <Sales products={products} />}
+        {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches}/>}
       </div>
     </motion.div>
   );

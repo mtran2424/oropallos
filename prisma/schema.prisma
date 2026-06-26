@@ -91,6 +91,7 @@ model Product {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   transactionItems TransactionItem[]
+  // quickAddButtons  QuickAddButtons[]
 }
 
 model Announcement {
@@ -162,3 +163,12 @@ model Config {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// model QuickAddButtons {
+//   id        String   @id @default(uuid())
+//   productId String?
+//   name      String   @unique
+//   unitsPer  Int?
+//   price     String
+//   product   Product? @relation(fields: [productId], references: [id])
+// }

@@ -574,6 +574,11 @@ export const formatDate = (date: Date | null | undefined, format?: string) => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
+export const getDateTime = (date: Date | null | undefined) => {
+  return date instanceof Date ? formatDate(date, "mm/dd/yyyy") + " " + formatTime(date) :
+          date ? formatDate(new Date(date), "mm/dd/yyyy") + " " + formatTime(new Date(date)) : "";
+}
+
 export const formatTime = (date: Date | null | undefined) => {
   if (date === null || date === undefined) return null; // Handle null or undefined date
   const hours = String(date.getHours() % 12 || 12).padStart(2, "0");
