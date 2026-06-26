@@ -43,16 +43,33 @@ const Sales = ({
   const [salesTax, setSalesTax] = useState<number>(initialTransactions.reduce((sum, transaction) => sum + transaction.tax, 0));
   const [wineSales, setWineSales] = useState<number>(initialTransactions.reduce((sum, transaction) => sum + transaction.wineSubtotal, 0));
   const [liquorProfit, setLiquorProfit] = useState<number>(
-    initialTransactions.reduce((sum, transaction) =>
-      sum + transaction.transactionItems.reduce((sum, item) =>
-        sum + (item.type === "Liquor" ? sum + (item.itemPrice - (item.unitPrice ? item.unitPrice : 0)) : 0), 0)
-      , 0)
-  );
+    initialTransactions.reduce((transactionSum, transaction) => {
+      return (
+        transactionSum +
+        transaction.transactionItems.reduce((itemSum, item) => {
+          return (
+            itemSum +
+            (item.type === "Liquor"
+              ? item.itemPrice - (item.unitPrice ?? 0)
+              : 0)
+          );
+        }, 0)
+      );
+    }, 0));
   const [wineProfit, setWineProfit] = useState<number>(
-    initialTransactions.reduce((sum, transaction) =>
-      sum + transaction.transactionItems.reduce((sum, item) =>
-        sum + (item.type === "Wine" ? sum + (item.itemPrice - (item.unitPrice ? item.unitPrice : 0)) : 0), 0)
-      , 0));
+    initialTransactions.reduce((transactionSum, transaction) => {
+      return (
+        transactionSum +
+        transaction.transactionItems.reduce((itemSum, item) => {
+          return (
+            itemSum +
+            (item.type === "Wine"
+              ? item.itemPrice - (item.unitPrice ?? 0)
+              : 0)
+          );
+        }, 0)
+      );
+    }, 0));
   const [liquorBreakdown, setLiquorBreakdown] = useState<breakdownObject[]>(
     Object.entries(
       items
@@ -188,18 +205,34 @@ const Sales = ({
     );
 
     setLiquorProfit(
-      transactions.reduce((sum, transaction) =>
-        sum + transaction.transactionItems.reduce((sum, item) =>
-          sum + (item.type === "Liquor" ? sum + (item.itemPrice - (item.unitPrice ? item.unitPrice : 0)) : 0), 0)
-        , 0)
-    );
+      transactions.reduce((transactionSum, transaction) => {
+        return (
+          transactionSum +
+          transaction.transactionItems.reduce((itemSum, item) => {
+            return (
+              itemSum +
+              (item.type === "Liquor"
+                ? item.itemPrice - (item.unitPrice ?? 0)
+                : 0)
+            );
+          }, 0)
+        );
+      }, 0));
 
     setWineProfit(
-      transactions.reduce((sum, transaction) =>
-        sum + transaction.transactionItems.reduce((sum, item) =>
-          sum + (item.type === "Wine" ? sum + (item.itemPrice - (item.unitPrice ? item.unitPrice : 0)) : 0), 0)
-        , 0)
+      transactions.reduce((transactionSum, transaction) => {
+    return (
+      transactionSum +
+      transaction.transactionItems.reduce((itemSum, item) => {
+        return (
+          itemSum +
+          (item.type === "Wine"
+            ? item.itemPrice - (item.unitPrice ?? 0)
+            : 0)
+        );
+      }, 0)
     );
+  }, 0));
 
     setLiquorWineReport([
       { name: 'Liquor', value: liquorSales, fill: colorPool[0] },
