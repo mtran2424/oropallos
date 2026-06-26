@@ -12,6 +12,7 @@ const DonutChart = ({
   nameKey,
   dataKey,
   format,
+  legend
 }: {
   title: string;
   data: any[];
@@ -19,7 +20,8 @@ const DonutChart = ({
   width?: number;
   nameKey?: string;
   dataKey?: string;
-  format?: boolean
+  format?: boolean;
+  legend?: boolean;
 }) => {
 
   return (
@@ -46,11 +48,12 @@ const DonutChart = ({
             <Tooltip
             />
           }
-          <Legend
+          {legend && <Legend
             layout="vertical"
             align="right"
             verticalAlign="middle"
-          />
+            
+          />}
         </PieChart>
       </ResponsiveContainer>
     </div>

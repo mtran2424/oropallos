@@ -402,6 +402,7 @@ const Sales = ({
           <div className="grid grid-cols-2 gap-1">
             <DonutChart
               title="Liquor/Wine Sale Report"
+              legend
               data={liquorWineReport}
               height={300}
               width={95}
@@ -411,6 +412,7 @@ const Sales = ({
             />
             <DonutChart
               title="Liquor Breakdown"
+              legend
               data={liquorBreakdown}
               dataKey="qty"
               nameKey="type"
