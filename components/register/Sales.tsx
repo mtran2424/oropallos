@@ -402,7 +402,6 @@ const Sales = ({
           <div className="grid grid-cols-2 gap-1">
             <DonutChart
               title="Liquor/Wine Sale Report"
-              legend
               data={liquorWineReport}
               height={300}
               width={95}
@@ -412,7 +411,6 @@ const Sales = ({
             />
             <DonutChart
               title="Liquor Breakdown"
-              legend
               data={liquorBreakdown}
               dataKey="qty"
               nameKey="type"
@@ -446,8 +444,8 @@ const Sales = ({
         </div>
 
         {/* Sidebar Filter Menu */}
-        <div className="hidden md:flex p-5 justify-start">
-          <div className="flex flex-col border-gray-400 border p-5 rounded w-full h-[150vh] min-w-70 overflow-hidden">
+        <div className="hidden md:flex p-5 justify-start self-start sticky top-5 h-fit">
+          <div className="flex flex-col border-gray-400 border p-5 rounded w-full h-1/4 min-w-70 overflow-hidden">
             {/* Close Modal Button */}
             <div className="flex w-full justify-end">
               <motion.button
