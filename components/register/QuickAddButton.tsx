@@ -8,6 +8,7 @@ const QuickAddButton = ({ label, type, price, onClick }: {
     <button
       className="font-semibold bg-blue-900 text-white text-2xl hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear py-10 px-2 rounded-sm"
       onClick={() => onClick(label, type, price)}
+      disabled
     >
       {label}
     </button>

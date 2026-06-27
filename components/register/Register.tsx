@@ -13,12 +13,13 @@ import { GoGraph } from "react-icons/go";
 import { RxExit } from "react-icons/rx";
 import { getProducts } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
-import { IoMdClose } from "react-icons/io";
+import { IoIosSettings, IoMdClose } from "react-icons/io";
 import { FaRegSquare } from "react-icons/fa";
 import { getConfigs } from "@/app/api/configapi";
 import Sales from "./Sales";
 import HelpButton from "./HelpButton";
 import { getBatches } from "@/app/api/batchapi";
+import Settings from "./Settings";
 
 const Register = () => {
   // Admin check
@@ -199,6 +200,14 @@ const Register = () => {
           >
             X1/Z1
           </button>
+          {user?.username === "admin" && <button
+            className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out`}
+            onClick={() => {
+              setPage("Settings");
+            }}
+          >
+            <IoIosSettings size={30} />
+          </button>}
           <button
             className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out`}
             onClick={() => {
@@ -210,21 +219,15 @@ const Register = () => {
           >
             <RxExit size={30} />
           </button>
-          {/* <button
-            className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out`}
-            onClick={() => {
-              setPage("Settings");
-            }}
-          >
-            <IoIosSettings size={30} />
-          </button> */}
+
         </div>
       </motion.div>
-      <div className="flex flex-col w-full h-screen items-center justify-start pl-20">
+      <div className="pl-20">
         {page === "Transaction" && <Transactions products={products} />}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
-        {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches}/>}
+        {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches} />}
+        {page === "Settings" && <Settings />}
       </div>
     </motion.div>
   );

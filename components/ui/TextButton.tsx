@@ -5,7 +5,7 @@ const TextButton = ({ children, onClick, disabled }: { children: React.ReactNode
     <motion.button
       type="button"
       whileHover={{ scale: 1.05 }}
-      className={`text-xl text-blue-500 hover:text-zinc-500 ${disabled ? "text-zinc-400 hover:text-zinc-400" : ""}`}
+      className={`text-xl text-nowrap text-blue-500 hover:text-zinc-500 ${disabled ? "text-zinc-400 hover:text-zinc-400" : ""}`}
       disabled={disabled}
       onClick={onClick}
     >
