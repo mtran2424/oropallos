@@ -68,7 +68,7 @@ const Dashboard = () => {
         </h1>
 
         {/* Tab Buttons */}
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-5">
           <motion.button
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className={`px-6 py-3 text-md z-10 ${tab === 'products'

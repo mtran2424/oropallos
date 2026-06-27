@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
-import SearchBar from "../ui/SearchBar";
 import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFreeDiscount, TransactionItem } from "../global.utils";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
@@ -15,7 +14,6 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   const [sortOption, setSortOption] = useState("newest-oldest");
   const modalRef = useRef<HTMLDivElement>(null);
   const [addItem, setAddItem] = useState(false);
-
   const [quantity, setQuantity] = useState<number>(1);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [discount, setDiscount] = useState<Discount>(noDiscount);
@@ -141,8 +139,8 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (inputRef.current) {
-      inputRef.current.focus();
-    }
+        inputRef.current.focus();
+      }
     }, 10000);
     return () => clearInterval(intervalId);
   }, []);
@@ -159,30 +157,30 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
         {/* Search Bar Component */}
         <div className="flex flex-center items-center w-full max-w-7xl ">
           {searchTerm !== "" ? (
-          <motion.div
-            key={"close"}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            onClick={() => setSearchTerm("")}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="text-gray-600 p-2 focus:outline-none"
-          >
-            <IoMdClose size={30} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key={"fullscreen"}
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 1 }}
-            // onClick={() => toggleFullscreen()}
-            exit={{ scaleX: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="text-gray-600 p-2 focus:outline-none"
-          >
-            <FaSearch size={25} />
-          </motion.div>
-        )}
+            <motion.div
+              key={"close"}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={() => setSearchTerm("")}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="text-gray-600 p-2 focus:outline-none"
+            >
+              <IoMdClose size={30} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={"fullscreen"}
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              // onClick={() => toggleFullscreen()}
+              exit={{ scaleX: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="text-gray-600 p-2 focus:outline-none"
+            >
+              <FaSearch size={25} />
+            </motion.div>
+          )}
 
           {/* Search Input */}
           <motion.input
@@ -205,10 +203,8 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
 
         </div>
 
-
+        {/* Sort Dropdown */}
         <div className="flex flex-row w-full whitespace-nowrap">
-
-          {/* Sort Dropdown */}
           <div className="flex justify-end w-full p-2">
             <select
               value={sortOption}
