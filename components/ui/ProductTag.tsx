@@ -5,14 +5,14 @@ import { IoMdClose } from "react-icons/io";
 import { Product } from "../global.utils";
 
 const ProductTag = ({
-product,
-onDelete
-}:{
-product: Product;
-onDelete: () => void
+  product,
+  onDelete
+}: {
+  product: Product;
+  onDelete: () => void
 }) => {
   return (
-    <div className="flex flex-row text-xl justify-center items-center space-x-3 border border-zinc-300 rounded-lg px-5 py-1">
+    <div className="grid grid-cols-5 text-xl justify-center items-center space-x-3 border border-zinc-300 rounded-lg px-2 py-1">
       <motion.div
         key={"close"}
         initial={{ scale: 0, opacity: 0 }}
@@ -20,34 +20,38 @@ onDelete: () => void
         onClick={onDelete}
         exit={{ scale: 0, opacity: 0 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="hover:text-[#FFBA04]"
+        className="flex flex-col hover:text-[#FFBA04] items-center"
       >
-        <IoMdClose size={20} />
+        <IoMdClose size={25} />
       </motion.div>
-
-      <div className="relative w-10 h-10 mx-auto mb-2 overflow-hidden rounded-lg">
-        {product.imageUrl ? (
-          <motion.div
-            className="w-full h-full"
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Image
-              priority
-              src={product.imageUrl}
-              alt={product.name}
-              className="object-cover w-full h-full"
-              width={300}
-              height={300}
-            />
-          </motion.div>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-zinc-100">
-            <CiImageOff size={40} className="text-zinc-400" />
-          </div>
-        )}
+      <div className="flex flex-col items-center">
+        <div className="relative w-10 h-10 mx-auto mb-2 overflow-hidden rounded-lg">
+          {product.imageUrl ? (
+            <motion.div
+              className="w-full h-full"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Image
+                priority
+                src={product.imageUrl}
+                alt={product.name}
+                className="object-cover w-full h-full"
+                width={300}
+                height={300}
+              />
+            </motion.div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-zinc-100">
+              <CiImageOff size={40} className="text-zinc-400" />
+            </div>
+          )}
+        </div>
       </div>
-      {product.name + " - " + product.size}
+      <div className="col-span-3">
+
+        {product.name + " - " + product.size}
+      </div>
 
     </div>
   );

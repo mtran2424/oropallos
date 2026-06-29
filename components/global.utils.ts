@@ -99,6 +99,12 @@ export interface Batch {
   date?: Date;
 }
 
+export interface OrderItem {
+  product: Product;
+  quantity: number;
+  unitType: string
+}
+
 export interface Config {
   id?: string;
   key: string;
@@ -117,6 +123,10 @@ export interface TransactionRequest {
   register: string;
   notes?: string;
   transactionItems: TransactionItem[];
+
+}
+export interface InventoryRequest {
+  orderItems: OrderItem[];
 }
 
 export interface BatchRequest {
@@ -576,7 +586,7 @@ export const formatDate = (date: Date | null | undefined, format?: string) => {
 
 export const getDateTime = (date: Date | null | undefined) => {
   return date instanceof Date ? formatDate(date, "mm/dd/yyyy") + " " + formatTime(date) :
-          date ? formatDate(new Date(date), "mm/dd/yyyy") + " " + formatTime(new Date(date)) : "";
+    date ? formatDate(new Date(date), "mm/dd/yyyy") + " " + formatTime(new Date(date)) : "";
 }
 
 export const formatTime = (date: Date | null | undefined) => {

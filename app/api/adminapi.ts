@@ -1,3 +1,5 @@
+import { InventoryRequest, OrderItem } from "@/components/global.utils";
+
 /**
  * Fetches all products from the server.
  * @returns {products: Product[]} - An array of products.
@@ -46,3 +48,18 @@ export const getFavorites = async () => {
   }
   return res.json();
 };
+
+export const updateInventory = async (order: InventoryRequest) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/products/update/inventory`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ order }),
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to update inventory');
+  }
+  return res;
+}

@@ -37,8 +37,6 @@ const AddUnit = ({ onAddUnit, product }: {
       return;
     }
 
-    // TODO: Add case count field to db
-
     // Construct product data object to be sent to the API
     const productData = {
       name: product.name,

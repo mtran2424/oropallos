@@ -250,8 +250,8 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
 
   return (
     <>
-      <div>
-        <div className="flex flex-col justify-between items-start mb-3 space-y-4 px-2">
+      <div className="flex flex-col w-full items-center justify-start">
+        <div className="flex flex-col mb-3 space-y-4">
 
           {/* Header */}
           <h1 className="text-2xl font-semibold text-zinc-900">Inventory</h1>
@@ -342,7 +342,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
           </div>
 
           {/* Data Table */}
-          <div className="flex max-w-[90vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
+          <div className="flex max-w-[95vw] max-h-[65vh] overflow-hidden rounded-md shadow-md border border-zinc-400 text-zinc-800">
 
             {/* Spreadsheet */}
             <div className="flex overflow-auto w-screen">
