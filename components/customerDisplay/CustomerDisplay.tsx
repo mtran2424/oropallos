@@ -190,7 +190,7 @@ const CustomerDisplay = () => {
           priority
           className=""
         />
-        <h1 className="text-3xl font-semibold text-center mt-10">Please bring your own resusable bag.</h1>
+        <h1 className="text-3xl font-semibold text-center mt-10">Please bring your own reusable bag.</h1>
       </div>
     </div>
   );
