@@ -102,7 +102,7 @@ export interface Batch {
 export interface OrderItem {
   product: Product;
   quantity: number;
-  unitType: string
+  unitType: string;
 }
 
 export interface Config {
@@ -110,6 +110,17 @@ export interface Config {
   key: string;
   user: string | null;
   value: string;
+}
+
+export interface QuickAddButton {
+  id?: string;
+  product: Product;
+  productId: string;
+  name: string;
+  label: string;
+  price: number;
+  units: number;
+  type: "Wine" | "Liquor";
 }
 
 export interface ConfigRequest {
@@ -123,7 +134,6 @@ export interface TransactionRequest {
   register: string;
   notes?: string;
   transactionItems: TransactionItem[];
-
 }
 export interface InventoryRequest {
   orderItems: OrderItem[];
@@ -502,7 +512,7 @@ export const inventoryTableColumns = [
   { field: "upc", label: "UPC", width: "200px" },
   { field: "unitPrice", label: "Unit Price", width: "150px" },
   { field: "unitCount", label: "Unit Count", width: "150px" },
-  { field: "unitsPerCase", label: "Units Per Case", width: "150px" }
+  { field: "unitsPerCase", label: "Units Per Case", width: "150px" },
 ] as const;
 
 // Headers for product tables in admin view
@@ -585,23 +595,28 @@ export const formatDate = (date: Date | null | undefined, format?: string) => {
 };
 
 export const getDateTime = (date: Date | null | undefined) => {
-  return date instanceof Date ? formatDate(date, "mm/dd/yyyy") + " " + formatTime(date) :
-    date ? formatDate(new Date(date), "mm/dd/yyyy") + " " + formatTime(new Date(date)) : "";
-}
+  return date instanceof Date
+    ? formatDate(date, "mm/dd/yyyy") + " " + formatTime(date)
+    : date
+      ? formatDate(new Date(date), "mm/dd/yyyy") +
+        " " +
+        formatTime(new Date(date))
+      : "";
+};
 
 export const formatTime = (date: Date | null | undefined) => {
   if (date === null || date === undefined) return null; // Handle null or undefined date
   const hours = String(date.getHours() % 12 || 12).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`;
-}
+};
 
 export const getTotal = (item: TransactionItem) => {
   return (
     item.itemPrice *
     item.quantity *
     getDiscount(item.discount).multiplier *
-    (item.type !== "Giftcard" ? (1 + taxRate / 100) : 1)
+    (item.type !== "Giftcard" ? 1 + taxRate / 100 : 1)
   );
 };
 
@@ -621,7 +636,10 @@ export const calculateSubtotal = (cart: TransactionItem[]) => {
 export const calculateDiscount = (cart: TransactionItem[]) => {
   var total = 0;
   cart.map((item) => {
-    total += item.itemPrice * item.quantity * (1 - getDiscount(item.discount).multiplier);
+    total +=
+      item.itemPrice *
+      item.quantity *
+      (1 - getDiscount(item.discount).multiplier);
   });
 
   return total;
@@ -638,8 +656,10 @@ export const calculateTotal = (cart: TransactionItem[]) => {
 
 export const calculateTax = (cart: TransactionItem[]) => {
   var total = 0;
-  cart.filter((item) => item.type !== "Giftcard").map((item) => {
-    total += getSubtotal(item) * (taxRate / 100);
-  });
+  cart
+    .filter((item) => item.type !== "Giftcard")
+    .map((item) => {
+      total += getSubtotal(item) * (taxRate / 100);
+    });
   return total;
 };

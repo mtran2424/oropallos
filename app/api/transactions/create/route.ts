@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
                 unitPrice: item.unitPrice,
                 discount: item.discount,
                 productId: item.productId ? item.productId : null,
-                product: item.product,
+                // product: item.product,
                 type: item.type,
               }),
             ),
