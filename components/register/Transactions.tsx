@@ -112,6 +112,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
       quantity: quantity,
       discount: discount.value,
       itemPrice: price,
+      unitPrice: product.unitPrice ? parseInt(product.unitPrice.toFixed(0)) : undefined,
       productId: product.id,
     }
 
