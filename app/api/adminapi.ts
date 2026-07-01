@@ -89,3 +89,28 @@ export const getQuickAddButtons = async () => {
   }
   return res.json();
 }
+
+export const deleteQuickAddButton = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/quick-add-buttons/remove/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to delete button');
+  }
+  return res;
+}
+
+export const editQuickAddButton = async (button: QuickAddButton) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/quick-add-buttons/update/${button.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(button),
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to update quick add button');
+  }
+  return res;
+}

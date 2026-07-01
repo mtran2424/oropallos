@@ -9,15 +9,10 @@ import { CiImageOff } from "react-icons/ci";
 import toast from "react-hot-toast";
 import { createQuickAddButton } from "@/app/api/adminapi";
 
-const AddQuickButton = ({ products, ref }: {
-  products: Product[];
-  ref: React.Ref<HTMLDivElement>;
-  // onClick: (
-  //   product: Product,
-  //   name: string,
-  //   type: string,
-  //   discount: Discount,
-  //   price: number) => void
+const AddQuickButton = ({ products, ref, onAdd }: {
+  products: Product[],
+  ref: React.Ref<HTMLDivElement>,
+  onAdd: () => void,
 }) => {
   const [add, setAdd] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -113,6 +108,7 @@ const AddQuickButton = ({ products, ref }: {
       .then(() => {
         toast.success(`Button ${label} added successfully!`);
 
+        onAdd();
         setLabel("");
         setPrice(0);
         setUnits(1);
@@ -383,20 +379,26 @@ const AddQuickButton = ({ products, ref }: {
               </button>
             </div>
 
-            {/* Confirmation button */}
-            <div className="flex flex-row space-x-2 w-full">
-              <button
-                className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center px-10
+            {loading ? (
+              // Loading spinner
+              <div className="flex justify-center items-center py-2">
+                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              <div className="flex flex-row space-x-2 w-full">
+                <button
+                  className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center px-10
                         hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  if (currentProduct && (price > 0) && (units > 0)) {
-                    handleConfirm();
-                  }
-                }}
-              >
-                Confirm
-              </button>
-            </div>
+                  onClick={() => {
+                    if (currentProduct && (price > 0) && (units > 0)) {
+                      handleConfirm();
+                    }
+                  }}
+                >
+                  Confirm
+                </button>
+              </div>
+            )}
           </motion.div>
           <div />
         </div>

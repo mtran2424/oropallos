@@ -1,12 +1,20 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import QuickAddButtonMenu from "./settings/QuickAddButtonMenu";
-import { Product } from "../global.utils";
+import { Product, QuickAddButton } from "../global.utils";
 
 const Settings = ({
-  products
+  products,
+  quickAddButtons,
+  onEdit,
+  onDelete,
+  onAdd
 }:{
-  products: Product[]
+  products: Product[],
+  quickAddButtons: QuickAddButton[],
+  onEdit: () => void,
+  onDelete: () => void,
+  onAdd: () => void
 }) => {
   const [view, setView] = useState<string>("quickButtons")
   return (
@@ -55,7 +63,7 @@ const Settings = ({
             </button>
           </div>
           <div className="flex flex-col w-full items-start justify-start py-5">
-            {view === "quickButtons" && <QuickAddButtonMenu products={products}/>}
+            {view === "quickButtons" && <QuickAddButtonMenu products={products} quickAddButtons={quickAddButtons} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd}/>}
           </div>
         </div>
       </motion.div>

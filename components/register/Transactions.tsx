@@ -479,15 +479,8 @@ const Transactions = ({ products, quickAddButtons }: { products: Product[]; quic
               <AddCustom products={products} ref={modalRef} onClick={handleCustomAdd} />
               <AddGiftcard ref={modalRef} onClick={handleGiftcardAdd} />
               {quickAddButtons && quickAddButtons.map((button) => (
-                <QuickButton label={button.label} type={button.type} units={button.units} price={button.price} onClick={handleQuickAdd} />
+                <QuickButton key={button.id} quickButton={button} onClick={handleCustomAdd} />
               ))}
-              {/* <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={149} onClick={handleQuickAdd} />
-              <QuickAddButton label="50mL Liquor - 1.99" type="Liquor" price={199} onClick={handleQuickAdd} />
-              <QuickAddButton label="50mL Liquor - 2.99" type="Liquor" price={299} onClick={handleQuickAdd} />
-              <QuickAddButton label="50mL Liquor - 4.99" type="Liquor" price={499} onClick={handleQuickAdd} />
-              <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={999} onClick={handleQuickAdd} /> */}
-              {/* <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={1299} onClick={handleQuickAdd} /> */}
-              {/* <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={1399} onClick={handleQuickAdd} /> */}
             </div>
           </div>
 

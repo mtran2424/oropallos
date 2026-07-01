@@ -103,7 +103,13 @@ const AddCustom = ({ products, ref, onClick }: {
 
   const handleConfirm = () => {
     if (currentProduct) {
-      onClick(currentProduct, quantity * units, currentProduct.name, type, discount, (units > 1) ? (price / units) : price);
+      onClick(
+        currentProduct, 
+        quantity * units, 
+        currentProduct.name, 
+        type, 
+        discount, 
+        (units > 1) ? (price / units) : price);
       closeModal();
     }
   }

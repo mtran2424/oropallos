@@ -29,6 +29,7 @@ const Register = () => {
   const [batches, setBatches] = useState<Batch[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [quickAddButtons, setQuickAddButtons] = useState<QuickAddButton[]>([]);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const [configs, setConfigs] = useState<Config[]>([]);
 
   const [page, setPage] = useState<string>("Transaction");
@@ -112,7 +113,7 @@ const Register = () => {
     fetchTransactions();
     fetchQuickAddButtons();
     // fetchConfigs();
-  }, []);
+  }, [refresh]);
 
   // hook to listen for fullscreen changes and update state accordingly
   useEffect(() => {
@@ -238,7 +239,7 @@ const Register = () => {
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
         {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches} />}
-        {page === "Settings" && <Settings products={products}/>}
+        {page === "Settings" && <Settings products={products} quickAddButtons={quickAddButtons} onEdit={()=> setRefresh(prev => !prev)}  onDelete={()=> setRefresh(prev => !prev)} onAdd={()=> setRefresh(prev => !prev)}/>}
       </div>
     </motion.div>
   );

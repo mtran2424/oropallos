@@ -153,6 +153,7 @@ const AddSize = ({
       size: size,
       unitCount: 0,
       unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
+      unitsPerCase: product.unitsPerCase,
       upc: upc
     };
 
