@@ -169,8 +169,8 @@ model QuickAddButton {
   productId String?
   name      String
   label     String
-  units     Int?
-  price     String
+  units     Int
+  price     Int
   type      ItemType
   product   Product? @relation(fields: [productId], references: [id])
 }

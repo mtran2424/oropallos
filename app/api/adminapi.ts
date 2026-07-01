@@ -1,4 +1,4 @@
-import { InventoryRequest, OrderItem } from "@/components/global.utils";
+import { InventoryRequest, OrderItem, QuickAddButton } from "@/components/global.utils";
 
 /**
  * Fetches all products from the server.
@@ -62,4 +62,30 @@ export const updateInventory = async (order: InventoryRequest) => {
     throw new Error('Failed to update inventory');
   }
   return res;
+}
+
+export const createQuickAddButton = async (button: QuickAddButton) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/quick-add-buttons/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(button),
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to create quick add button');
+  }
+  return res.json();
+}
+
+export const getQuickAddButtons = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/quick-add-buttons/get`, {
+    method: 'GET',
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch buttons');
+  }
+  return res.json();
 }

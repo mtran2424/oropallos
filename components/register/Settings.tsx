@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import QuickAddButtonMenu from "./settings/QuickAddButtonMenu";
+import { Product } from "../global.utils";
 
-const Settings = () => {
+const Settings = ({
+  products
+}:{
+  products: Product[]
+}) => {
   const [view, setView] = useState<string>("quickButtons")
   return (
     <>
@@ -48,8 +54,8 @@ const Settings = () => {
               Archive
             </button>
           </div>
-          <div className="flex flex-col w-full h-full items-center justify-start gap-5 divide-y divide-zinc-400">
-
+          <div className="flex flex-col w-full items-start justify-start py-5">
+            {view === "quickButtons" && <QuickAddButtonMenu products={products}/>}
           </div>
         </div>
       </motion.div>

@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
 import NumPad from "./NumPad";
 import { MdDelete } from "react-icons/md";
-import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate, Discount } from "../global.utils";
+import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate, Discount, QuickAddButton } from "../global.utils";
 import { useEffect, useRef, useState } from "react";
 import SearchMenu from "./SearchMenu";
-import QuickAddButton from "./QuickAddButton";
 import { createTransaction } from "@/app/api/transactionapi";
 import { useUser } from "@clerk/nextjs";
 import { IoBackspaceOutline } from "react-icons/io5";
@@ -15,8 +14,9 @@ import Modal from "../ui/Modal";
 import Receipt from "../utils/Receipt";
 import AddCustom from "./AddCustom";
 import AddGiftcard from "./AddGiftcard";
+import QuickButton from "./QuickButton";
 
-const Transactions = ({ products }: { products: Product[] }) => {
+const Transactions = ({ products, quickAddButtons }: { products: Product[]; quickAddButtons: QuickAddButton[] }) => {
   const date = new Date();
   const user = useUser();
   const [cart, setCart] = useState<TransactionItem[]>([]);
@@ -33,6 +33,7 @@ const Transactions = ({ products }: { products: Product[] }) => {
   const [amountTendered, setAmountTendered] = useState<number>(0);
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  console.log("Quick Add Buttons:", quickAddButtons);
 
   const channel = new BroadcastChannel(`${user.user?.username}-pos`);
 
@@ -477,12 +478,14 @@ const Transactions = ({ products }: { products: Product[] }) => {
             <div className="grid grid-cols-4 gap-1">
               <AddCustom products={products} ref={modalRef} onClick={handleCustomAdd} />
               <AddGiftcard ref={modalRef} onClick={handleGiftcardAdd} />
-              <QuickAddButton label="50mL Liquor - 0.99" type="Liquor" price={99} onClick={handleQuickAdd} />
-              <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={149} onClick={handleQuickAdd} />
+              {quickAddButtons && quickAddButtons.map((button) => (
+                <QuickButton label={button.label} type={button.type} units={button.units} price={button.price} onClick={handleQuickAdd} />
+              ))}
+              {/* <QuickAddButton label="50mL Liquor - 1.49" type="Liquor" price={149} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 1.99" type="Liquor" price={199} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 2.99" type="Liquor" price={299} onClick={handleQuickAdd} />
               <QuickAddButton label="50mL Liquor - 4.99" type="Liquor" price={499} onClick={handleQuickAdd} />
-              <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={999} onClick={handleQuickAdd} />
+              <QuickAddButton label="10 X 50mL Liquor - 9.99" type="Liquor" price={999} onClick={handleQuickAdd} /> */}
               {/* <QuickAddButton label="10 X 50mL Liquor - 12.99" type="Liquor" price={1299} onClick={handleQuickAdd} /> */}
               {/* <QuickAddButton label="10 X 50mL Liquor - 13.99" type="Liquor" price={1399} onClick={handleQuickAdd} /> */}
             </div>

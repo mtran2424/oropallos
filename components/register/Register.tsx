@@ -3,7 +3,7 @@ import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Batch, Config, Product, Transaction } from "@/components/global.utils";
+import { Batch, Config, Product, QuickAddButton, Transaction } from "@/components/global.utils";
 import Transactions from "./Transactions";
 import Manager from "./Manager";
 import Close from "./Close";
@@ -11,7 +11,7 @@ import { PiCashRegister } from "react-icons/pi";
 import { CiViewTable } from "react-icons/ci";
 import { GoGraph } from "react-icons/go";
 import { RxExit } from "react-icons/rx";
-import { getProducts } from "@/app/api/adminapi";
+import { getProducts, getQuickAddButtons } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
 import { IoIosSettings, IoMdClose } from "react-icons/io";
 import { FaRegSquare } from "react-icons/fa";
@@ -28,6 +28,7 @@ const Register = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [quickAddButtons, setQuickAddButtons] = useState<QuickAddButton[]>([]);
   const [configs, setConfigs] = useState<Config[]>([]);
 
   const [page, setPage] = useState<string>("Transaction");
@@ -97,9 +98,19 @@ const Register = () => {
       }
     };
 
+    const fetchQuickAddButtons = async () => {
+      try {
+        const data = await getQuickAddButtons();
+        setQuickAddButtons(data.buttons);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    }
+
     fetchBatches();
     fetchProducts();
     fetchTransactions();
+    fetchQuickAddButtons();
     // fetchConfigs();
   }, []);
 
@@ -223,11 +234,11 @@ const Register = () => {
         </div>
       </motion.div>
       <div className="pl-20">
-        {page === "Transaction" && <Transactions products={products} />}
+        {page === "Transaction" && <Transactions products={products} quickAddButtons={quickAddButtons}/>}
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
         {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches} />}
-        {page === "Settings" && <Settings />}
+        {page === "Settings" && <Settings products={products}/>}
       </div>
     </motion.div>
   );

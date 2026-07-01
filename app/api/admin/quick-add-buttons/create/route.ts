@@ -12,17 +12,16 @@ export async function POST(req: NextRequest) {
   }
 
   // Retreive request and store in values
-  const body = await req.json();
-  const { product, type, productId, units, price, name, label } = body;
+  const { type, productId, units, price, name, label } = await req.json();
   try {
     const button = await db.quickAddButton.create({
       data: {
-        type: type,
-        productId: productId,
-        units: units,
-        name: name,
-        label: label,
-        price: price,
+        type,
+        productId,
+        units,
+        name,
+        label,
+        price
       },
     });
 

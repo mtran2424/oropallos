@@ -114,8 +114,8 @@ export interface Config {
 
 export interface QuickAddButton {
   id?: string;
-  product: Product;
-  productId: string;
+  product?: Product;
+  productId?: string;
   name: string;
   label: string;
   price: number;

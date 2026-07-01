@@ -381,7 +381,7 @@ const AddCustom = ({ products, ref, onClick }: {
 
             <div className="flex flex-col w-full">
               {/* Discount Field */}
-              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
+              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
               <input
                 type="text"
                 className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out w-full"

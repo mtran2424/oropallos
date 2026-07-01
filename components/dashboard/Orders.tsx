@@ -371,7 +371,7 @@ const Orders = ({ initialProducts }: { initialProducts: Product[] }) => {
       </motion.div>
 
       {/* Add Item Modal */}
-      <Modal open={addItem} title="Add Item" height="max-h-[40vh]" width="max-w-2xl" onClose={closeEventModal} ref={modalRef}>
+      <Modal open={addItem} title="Add Item" height="max-h-[60vh]" width="max-w-2xl" onClose={closeEventModal} ref={modalRef}>
         <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
           <div className="flex flex-col items-center justify-center w-full gap-4">
             <div className="flex flex-col w-full space-y-2">
@@ -383,7 +383,7 @@ const Orders = ({ initialProducts }: { initialProducts: Product[] }) => {
                   step="1"
                   min={1}
                   className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  placeholder="Unit Count"
+                  placeholder="Quantity"
                   onChange={(e) => {
                     const value = e.target.value;
                     setCurrentQuantity(value === "" ? 0 : parseInt(value) ?? 0);
