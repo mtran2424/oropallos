@@ -42,6 +42,14 @@ const Batches = () => {
     });
   }, [batches]);
 
+  const sortedTransactions = useMemo(() => {
+    return transactions.sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0);
+      const dateB = new Date(b.createdAt || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [transactions]);
+
   const handleShowBatch = (batch: Batch) => {
     setShowBatch(true);
     setTransactions(batch.transactions);
@@ -391,7 +399,7 @@ const Batches = () => {
               {/* Table Body */}
               <tbody className="divide-y divide-zinc-400">
                 {transactions.length > 0 ? (
-                  transactions.map((transaction) => (
+                  sortedTransactions.map((transaction) => (
                     <tr key={transaction.id}
                       onClick={() => handleShowTransaction(transaction)}
                       className="hover:bg-zinc-200 transition duration-200"
