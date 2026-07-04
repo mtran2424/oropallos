@@ -1,12 +1,20 @@
-import { motion } from "framer-motion";
 import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
-import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFreeDiscount, TransactionItem } from "../global.utils";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
-import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import Modal from "../ui/Modal";
 import { FaSearch } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
+import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { 
+  Discount, 
+  fifteenPercentDiscount, 
+  noDiscount, 
+  Product, 
+  sanitize, 
+  taxFreeDiscount, 
+  TransactionItem 
+} from "@/components/global.utils";
+import Modal from "@/components/ui/Modal";
 
 const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: TransactionItem) => void }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");

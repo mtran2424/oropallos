@@ -1,8 +1,8 @@
-import { Product } from "@/components/global.utils";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
+import { Product } from "@/components/global.utils";
 
 const ProductCard = ({ product }: { product: Product }) => {
   return (

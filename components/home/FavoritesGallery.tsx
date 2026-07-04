@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Product } from "@/components/global.utils";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
+import Image from "next/image";
 import { redirect } from "next/navigation";
+import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
+import { Product } from "@/components/global.utils";
 
 const FavoritesGallery = ({ products }: { products: Product[] }) => {
   const [current, setCurrent] = useState(0);

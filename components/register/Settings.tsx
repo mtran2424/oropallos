@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { Product, QuickAddButton } from "@/components/global.utils";
 import QuickAddButtonMenu from "./settings/QuickAddButtonMenu";
-import { Product, QuickAddButton } from "../global.utils";
 
 const Settings = ({
   products,

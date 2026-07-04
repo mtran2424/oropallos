@@ -2,9 +2,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 import { navBarElements } from "@/components/global.utils";
-import { SignedIn, UserButton } from "@clerk/nextjs";
 import MobileMenu from "./MobileMenu";
 
 const Navbar = () => {

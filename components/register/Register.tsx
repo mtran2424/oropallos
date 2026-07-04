@@ -1,28 +1,32 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Batch, Config, Product, QuickAddButton, Transaction } from "@/components/global.utils";
-import Transactions from "./Transactions";
-import Manager from "./Manager";
-import Close from "./Close";
+import { useUser } from "@clerk/nextjs";
 import { PiCashRegister } from "react-icons/pi";
 import { CiViewTable } from "react-icons/ci";
 import { GoGraph } from "react-icons/go";
 import { RxExit } from "react-icons/rx";
+import { FaRegSquare } from "react-icons/fa";
+import { IoIosSettings, IoMdClose } from "react-icons/io";
+import { getBatches } from "@/app/api/batchapi";
 import { getProducts, getQuickAddButtons } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
-import { IoIosSettings, IoMdClose } from "react-icons/io";
-import { FaRegSquare } from "react-icons/fa";
-import { getConfigs } from "@/app/api/configapi";
+import { 
+  Batch, 
+  Config, 
+  Product, 
+  QuickAddButton, 
+  Transaction 
+} from "@/components/global.utils";
 import Sales from "./Sales";
 import HelpButton from "./HelpButton";
-import { getBatches } from "@/app/api/batchapi";
 import Settings from "./Settings";
+import Transactions from "./Transactions";
+import Manager from "./Manager";
+import Close from "./Close";
 
 const Register = () => {
-  // Admin check
   const { isSignedIn, user } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,7 +37,6 @@ const Register = () => {
   const [configs, setConfigs] = useState<Config[]>([]);
 
   const [page, setPage] = useState<string>("Transaction");
-
 
   const openCustomerDisplay = () => {
     window.open(
@@ -62,14 +65,12 @@ const Register = () => {
     }
   };
 
-
   useEffect(() => {
     // if user is not signed in, redirect to home page
     if (!isSignedIn) {
-      console.log("signed-in")
       redirect('/');
     }
-  }, [isSignedIn]);
+  }, [user]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -112,7 +113,6 @@ const Register = () => {
     fetchProducts();
     fetchTransactions();
     fetchQuickAddButtons();
-    // fetchConfigs();
   }, [refresh]);
 
   // hook to listen for fullscreen changes and update state accordingly

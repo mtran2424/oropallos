@@ -1,8 +1,15 @@
 import { useRef, useState } from "react";
-import { Discount, fifteenPercentDiscount, noDiscount, Product, QuickAddButton, taxFreeDiscount } from "../global.utils";
-import Modal from "../ui/Modal";
-import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { motion } from "framer-motion";
+import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import {
+  Discount,
+  fifteenPercentDiscount,
+  noDiscount,
+  Product,
+  QuickAddButton,
+  taxFreeDiscount
+} from "@/components/global.utils";
+import Modal from "@/components/ui/Modal";
 
 const QuickButton = ({ quickButton, onClick }: {
   quickButton: QuickAddButton

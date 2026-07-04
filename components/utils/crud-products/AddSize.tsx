@@ -1,12 +1,11 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Product, sanitize } from "@/components/global.utils";
 import { createProduct } from "@/app/api/productapi";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import { IoIosAdd, IoIosCloseCircle } from "react-icons/io";
-import TextButton from "../ui/TextButton";
-import Modal from "../ui/Modal";
+import Modal from "@/components/ui/Modal";
 
 // This component is a button that opens a modal for adding a product
 const AddSize = ({

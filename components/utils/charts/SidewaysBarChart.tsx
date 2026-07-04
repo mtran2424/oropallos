@@ -12,13 +12,15 @@ const SidewaysBarChart = ({
   dataKey,
   height,
   width,
+  format,
 }: {
   title: string;
   data: any[];
   nameKey?: string;
   dataKey?: string;
-  height?: number
-  width?: number
+  height?: number;
+  width?: number;
+  format?: boolean;
 }) => {
 
   return (
@@ -35,12 +37,18 @@ const SidewaysBarChart = ({
         >
           <XAxis type="number" />
           <YAxis
-            dataKey={nameKey ? nameKey : "name"} 
+            dataKey={nameKey ? nameKey : "name"}
             type="category"
             width={200}
             fontSize={12}
           />
-          <Tooltip />
+          {format ?
+            <Tooltip
+              formatter={(value) => (Number(value) / 100).toFixed(2)}
+            /> :
+            <Tooltip
+            />
+          }
           <Bar dataKey={dataKey ? dataKey : "value"} radius={[0, 4, 4, 0]} />
         </BarChart>
       </ResponsiveContainer>

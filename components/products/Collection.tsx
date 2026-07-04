@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ProductCard from "./ProductCard";
 import { Product, sanitize } from "@/components/global.utils";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
+import ProductCard from "./ProductCard";
 
 const PRODUCTS_PER_PAGE = 24;
 

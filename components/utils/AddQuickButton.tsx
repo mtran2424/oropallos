@@ -2,17 +2,17 @@ import { motion } from "framer-motion";
 import { useDeferredValue, useMemo, useState } from "react";
 import { IoIosAdd, IoMdClose } from "react-icons/io";
 import Image from "next/image";
-import Modal from "../ui/Modal";
-import { Discount, Product, sanitize } from "../global.utils";
+import Modal from "@/components/ui/Modal";
+import { Product, sanitize } from "@/components/global.utils";
 import { FaSearch } from "react-icons/fa";
 import { CiImageOff } from "react-icons/ci";
 import toast from "react-hot-toast";
 import { createQuickAddButton } from "@/app/api/adminapi";
 
 const AddQuickButton = ({ products, ref, onAdd }: {
-  products: Product[],
-  ref: React.Ref<HTMLDivElement>,
-  onAdd: () => void,
+  products: Product[];
+  ref: React.Ref<HTMLDivElement>;
+  onAdd: () => void;
 }) => {
   const [add, setAdd] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -138,9 +138,9 @@ const AddQuickButton = ({ products, ref, onAdd }: {
         title="New Button"
         onClose={closeModal}
         ref={ref}
-        width="max-w-[60vw]"
+        width="max-w-[80vw] md:max-w-[60vw]"
       >
-        <div className="grid grid-cols-2 w-full space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 w-full space-y-5">
 
           {/* Product Search */}
           <motion.div
@@ -312,11 +312,11 @@ const AddQuickButton = ({ products, ref, onAdd }: {
             </div>
 
             {/* Input Fields */}
-            <div className="flex flex-row w-full space-x-2">
+            <div className="flex flex-col md:flex-row w-full space-x-2">
 
-              <div className="flex flex-col w-1/4">
+              <div className="flex flex-col w-full md:w-1/4">
                 {/* Units Field */}
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Units Per</label>
+                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2 text-nowrap">Units Per</label>
                 <input
                   type="number"
                   step="1"
@@ -334,7 +334,7 @@ const AddQuickButton = ({ products, ref, onAdd }: {
                 </div>
               </div>
 
-              <div className="flex flex-col w-full">
+              <div className="flex flex-col w-full md:w-3/4">
                 {/* Price Field */}
                 <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
                 <input

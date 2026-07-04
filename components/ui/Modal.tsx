@@ -2,14 +2,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import TextButton from "./TextButton";
 
 /**
- * Modal component that can be used to display any content in a modal window. It uses framer-motion for animations and is styled with Tailwind CSS. The modal can be closed by clicking the close button or by clicking outside the modal content.
  * 
- * Props:
- * - open: boolean - Open state
- * - title: string - Modal title
- * - onClose: () => void - Function to close the modal
- * - ref?: React.Ref<HTMLDivElement> - Optional ref for the modal content
- * - children: React.ReactNode - Modal content
+ * @param open booelan - Open state 
+ * @param title string - Title displayed on head of modal 
+ * @param onClose () => void - Function to close modal 
+ * @param ref? React.Ref<HTMLDivElement> - Optional ref for the modal content
+ * @param children React.ReactNode - Modal content
+ * @returns 
  */
 const Modal = ({
   open,

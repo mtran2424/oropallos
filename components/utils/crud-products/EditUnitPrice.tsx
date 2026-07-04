@@ -1,29 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Product } from "@/components/global.utils";
 import { editProduct } from "@/app/api/productapi";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { IoScan } from "react-icons/io5";
-import TextButton from "../ui/TextButton";
-import Modal from "../ui/Modal";
+import { BsCurrencyDollar } from "react-icons/bs";
+import Modal from "@/components/ui/Modal";
 
 // This component is a button that opens a modal for adding a product
-const AddUPC = ({ onAddUpc, product }: {
-  onAddUpc: () => void;
+const EditUnitPrice = ({ onEditPrice, product }: {
+  onEditPrice: () => void;
   product: Product;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const [addUpc, setAddUpc] = useState(false);
+  const [editPrice, setEditPrice] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // States for form fields
-  const [upc, setUpc] = useState("");
+  const [unitPrice, setUnitPrice] = useState<number | undefined>(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
+  const [price, setPrice] = useState<number | undefined>(product.price || undefined);
   // Upon form submission, validate the input and send it to the backend
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!upc) {
+    if (!price) {
       toast.error(`Please fill in all required fields.`);
       setLoading(false);
       return;
@@ -33,7 +33,7 @@ const AddUPC = ({ onAddUpc, product }: {
     const productData = {
       name: product.name,
       description: product.description,
-      price: product.price,
+      price: price,
       category: product.category,
       subcategory: product.subcategory,
       type: product.type,
@@ -41,9 +41,9 @@ const AddUPC = ({ onAddUpc, product }: {
       favorite: product.favorite,
       abv: product.abv,
       size: product.size,
-      upc: upc,
+      upc: product.upc,
       hidden: product.hidden,
-      unitPrice: product.unitPrice,
+      unitPrice: unitPrice !== undefined ? parseInt((unitPrice * 100).toFixed(0)) : undefined,
       unitCount: product.unitCount,
     };
 
@@ -51,13 +51,13 @@ const AddUPC = ({ onAddUpc, product }: {
       // Send the product data to the backend API to create a new product
       editProduct(product.id, productData)
         .then(() => {
-          onAddUpc();
+          onEditPrice();
           // Show success message
-          toast.success(`Product ${product.name} - ${product.size} UPC added successfully!`);
+          toast.success(`Product ${product.name} - ${product.size} unit price added successfully!`);
 
           // Close the modal after submission
-          setAddUpc(false);
-          setUpc("");
+          setEditPrice(false);
+          setUnitPrice(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
         }).finally(() => {
           setLoading(false);
         });
@@ -68,12 +68,12 @@ const AddUPC = ({ onAddUpc, product }: {
 
   // Open the modal for adding a product
   const openEventModal = () => {
-    setAddUpc(true);
+    setEditPrice(true);
   };
 
   // Close the modal for adding a product
   const closeEventModal = () => {
-    setAddUpc(false);
+    setEditPrice(false);
   };
 
   // Close the modal when clicking outside of it
@@ -85,17 +85,17 @@ const AddUPC = ({ onAddUpc, product }: {
 
   // Add event listener for closing the modal when clicking outside of it
   useEffect(() => {
-    if (addUpc) {
+    if (editPrice) {
       document.addEventListener('mousedown', closeModalOnOutsideClick);
     }
     return () => {
       document.removeEventListener('mousedown', closeModalOnOutsideClick);
     };
-  }, [closeModalOnOutsideClick, addUpc]);
+  }, [closeModalOnOutsideClick, editPrice]);
 
   useEffect(() => {
     // Reset form fields when product changes
-    setUpc(product.upc || "");
+    setUnitPrice(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
   }, [product]);
 
   return (
@@ -106,29 +106,56 @@ const AddUPC = ({ onAddUpc, product }: {
         whileTap={{ scale: 0.9 }}
         className="flex flex-row text-md items-center text-blue-500 hover:text-blue-300 p-1"
         onClick={openEventModal}>
-        <IoScan size={35} />
+        <BsCurrencyDollar size={35} />
       </motion.button>
 
-      {/* Modal for adding upc */}
-      <Modal open={addUpc} title="Add UPC" onClose={closeEventModal} ref={modalRef} height="max-h-[50vh]" width="max-w-2xl">
-        {/* Form for adding upc */}
+      {/* Modal for editing prices */}
+      <Modal open={editPrice} title="Edit Price" onClose={closeEventModal} ref={modalRef} height="max-h-[75vh]" width="max-w-2xl">
+        {/* Form for editing prices */}
         <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md p-4">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             {product.name} - {product.size}
 
             <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
-            {/* UPC Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
+            {/* Price Field */}
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
             <input
-              type="text"
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0"
               className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="UPC"
+              placeholder="Price"
               onChange={(e) => {
-                setUpc(e.target.value)
+                const value = e.target.value;
+                setPrice(value === "" ? undefined : parseFloat(value));
               }}
-              value={upc || ""}
+              value={price || ""}
             />
+            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+              i.e. {'\"'}19.99{'\"'} - No $ sign needed
+            </div>
+
+            {/* Unit Price Field */}
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>
+            <input
+              type="number"
+              inputMode="decimal"
+              step=".01"
+              min="0"
+              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              placeholder="Unit Price"
+              onChange={(e) => {
+                const value = e.target.value;
+                setUnitPrice(value === "" ? undefined : parseFloat(value));
+              }}
+              value={unitPrice ?? ""}
+            />
+            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+              i.e. {'\"'}19.99{'\"'} - No $ sign needed
+            </div>
+
 
             {loading ? (
               // Loading spinner
@@ -152,4 +179,4 @@ const AddUPC = ({ onAddUpc, product }: {
   );
 }
 
-export default AddUPC;
+export default EditUnitPrice;

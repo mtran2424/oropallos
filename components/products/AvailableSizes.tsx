@@ -1,5 +1,5 @@
-import { Product } from "@/components/global.utils";
 import Link from "next/link";
+import { Product } from "@/components/global.utils";
 
 const AvailableSizes = ({
   currentProduct,

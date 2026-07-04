@@ -1,6 +1,4 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFreeDiscount } from "../global.utils";
-import Modal from "../ui/Modal";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
@@ -8,6 +6,8 @@ import { FaSearch } from "react-icons/fa";
 import { CiImageOff } from "react-icons/ci";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdKeyboardReturn, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFreeDiscount } from "@/components/global.utils";
+import Modal from "@/components/ui/Modal";
 
 const AddCustom = ({ products, ref, onClick }: {
   products: Product[];

@@ -1,9 +1,9 @@
 "use client"
-import "keen-slider/keen-slider.min.css";
-import { useKeenSlider } from "keen-slider/react";
 import { useState } from "react";
-import Image from 'next/image';
 import { AnimatePresence, motion } from "framer-motion";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
+import Image from 'next/image';
 
 // Gallery Images
 import CansAisle from "@/components/assets/photos/cans-aisle.jpg";

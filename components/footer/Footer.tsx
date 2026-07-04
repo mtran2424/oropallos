@@ -1,10 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import Image from "next/image";
-import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 import { CiPhone } from "react-icons/ci";
 import { FaFacebookF } from "react-icons/fa";
-import Link from "next/link";
+import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

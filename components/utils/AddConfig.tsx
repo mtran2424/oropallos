@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Product } from "@/components/global.utils";
-import { editProduct } from "@/app/api/productapi";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import Modal from "../ui/Modal";

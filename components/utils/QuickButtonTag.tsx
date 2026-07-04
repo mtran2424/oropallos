@@ -1,11 +1,9 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { IoMdClose } from "react-icons/io";
-import { QuickAddButton } from "../global.utils";
-import { MdDelete } from "react-icons/md";
+import { QuickAddButton } from "@/components/global.utils";
 import { useRef, useState } from "react";
-import TextButton from "../ui/TextButton";
-import Modal from "../ui/Modal";
+import TextButton from "@/components/ui/TextButton";
+import Modal from "@/components/ui/Modal";
 import { deleteQuickAddButton, editQuickAddButton } from "@/app/api/adminapi";
 import { FaDeleteLeft } from "react-icons/fa6";
 
@@ -14,9 +12,9 @@ const QuickButtonTag = ({
   onEdit,
   onDelete,
 }: {
-  quickButton: QuickAddButton
-  onEdit: () => void
-  onDelete: () => void
+  quickButton: QuickAddButton;
+  onEdit: () => void;
+  onDelete: () => void;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);

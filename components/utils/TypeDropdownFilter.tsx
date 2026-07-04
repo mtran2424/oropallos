@@ -7,9 +7,9 @@ const TypeDropdownFilter = ({
   handleTypeClick,
   // key
 }: {
-  currentCategory: ProductCategory | undefined,
-  currentSubcategory: ProductSubcategory,
-  handleTypeClick: (type: ProductType) => void,
+  currentCategory: ProductCategory | undefined;
+  currentSubcategory: ProductSubcategory;
+  handleTypeClick: (type: ProductType) => void;
   // key: string
 }) => {
   return (

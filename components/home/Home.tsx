@@ -1,15 +1,15 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { FaConciergeBell } from "react-icons/fa";
 import { BiSolidDiscount } from "react-icons/bi";
 import { RiTempColdFill } from "react-icons/ri";
-import HomeGallery from "./HomeGallery";
-import Link from "next/link";
-import FavoritesGallery from "./FavoritesGallery";
-import ExpandButton from "@/components/ui/ExpandButton";
 import { Product } from "@/components/global.utils";
 import AgeGate from "@/components/ageGate/AgeGate";
+import ExpandButton from "@/components/ui/ExpandButton";
+import HomeGallery from "./HomeGallery";
+import FavoritesGallery from "./FavoritesGallery";
 
 const Home = ({ favorites }: { favorites: Product[] }) => {
   const [expandDiscount, setExpandDiscount] = useState(false);

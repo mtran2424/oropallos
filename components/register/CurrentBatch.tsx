@@ -1,14 +1,29 @@
-import { motion } from "framer-motion";
-import { calculateSubtotal, calculateTax, calculateTotal, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
-import CopyButton from "../ui/CopyButton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getCurrentBatchTransactions, getCurrentUserBatchTransactions, updateTransactionStatus } from "@/app/api/transactionapi";
-import { useUser } from "@clerk/nextjs";
-import TextButton from "../ui/TextButton";
-import toast from "react-hot-toast";
-import Modal from "../ui/Modal";
 import { useReactToPrint } from "react-to-print";
-import Receipt from "../utils/Receipt";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { useUser } from "@clerk/nextjs";
+import {
+  getCurrentBatchTransactions,
+  getCurrentUserBatchTransactions,
+  updateTransactionStatus
+} from "@/app/api/transactionapi";
+import {
+  calculateSubtotal,
+  calculateTax,
+  calculateTotal,
+  formatDate,
+  formatTime,
+  getDiscount,
+  managerTableColumns,
+  Transaction,
+  TransactionItem,
+  transactionItemTableColumns
+} from "@/components/global.utils";
+import Receipt from "@/components/utils/Receipt";
+import CopyButton from "@/components/ui/CopyButton";
+import TextButton from "@/components/ui/TextButton";
+import Modal from "@/components/ui/Modal";
 
 const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transaction[] }) => {
   const { user } = useUser();

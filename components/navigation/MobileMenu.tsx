@@ -1,10 +1,10 @@
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { SignedIn } from "@clerk/nextjs";
+import Link from "next/link";
 import { FiMenu } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
-import { navBarElements } from "../global.utils";
-import { SignedIn } from "@clerk/nextjs";
+import { navBarElements } from "@/components/global.utils";
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
@@ -59,15 +59,15 @@ const MobileMenu = () => {
   };
 
   //Ensure that the menu is closed when the window is resized
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth >= 1024) {
-          setOpen(false)
-        }
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setOpen(false)
       }
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
-    }, [])
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <div>

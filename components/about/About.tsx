@@ -1,12 +1,13 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+
+import { CiPhone } from "react-icons/ci";
+import { FaFacebookF } from "react-icons/fa";
 
 import OropallosStoreFront from "@/components/assets/photos/oropallos-storefront.jpg";
 import { Map } from "@/components/map/Map";
-import { CiPhone } from "react-icons/ci";
-import { FaFacebookF } from "react-icons/fa";
 import ExpandButton from "@/components/ui/ExpandButton";
 
 const About = () => {

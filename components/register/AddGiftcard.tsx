@@ -1,9 +1,8 @@
 import { useState } from "react";
-import Modal from "../ui/Modal";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdKeyboardReturn } from "react-icons/md";
+import Modal from "@/components/ui/Modal";
 
 const AddGiftcard = ({ ref, onClick }: {
   // products: Product[];

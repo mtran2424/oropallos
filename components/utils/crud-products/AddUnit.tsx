@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Product } from "@/components/global.utils";
 import { editProduct } from "@/app/api/productapi";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { FaBoxOpen } from "react-icons/fa6";
-import TextButton from "../ui/TextButton";
-import Modal from "../ui/Modal";
+import TextButton from "@/components/ui/TextButton";
+import Modal from "@/components/ui/Modal";
 
 // This component is a button that opens a modal for adding a product
 const AddUnit = ({ onAddUnit, product }: {

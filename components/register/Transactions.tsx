@@ -1,22 +1,41 @@
-import { motion } from "framer-motion";
-import NumPad from "./NumPad";
-import { MdDelete } from "react-icons/md";
-import { Product, noDiscount, calculateDiscount, calculateSubtotal, calculateTotal, calculateTax, TransactionItem, getDiscount, formatTime, formatDate, Discount, QuickAddButton } from "../global.utils";
 import { useEffect, useRef, useState } from "react";
-import SearchMenu from "./SearchMenu";
-import { createTransaction } from "@/app/api/transactionapi";
-import { useUser } from "@clerk/nextjs";
-import { IoBackspaceOutline } from "react-icons/io5";
-import toast from "react-hot-toast";
-import TextButton from "../ui/TextButton";
 import { useReactToPrint } from "react-to-print";
-import Modal from "../ui/Modal";
-import Receipt from "../utils/Receipt";
+import toast from "react-hot-toast";
+import { useUser } from "@clerk/nextjs";
+import { motion } from "framer-motion";
+import { MdDelete } from "react-icons/md";
+import { IoBackspaceOutline } from "react-icons/io5";
+import { createTransaction } from "@/app/api/transactionapi";
+import {
+  Product,
+  noDiscount,
+  calculateDiscount,
+  calculateSubtotal,
+  calculateTotal,
+  calculateTax,
+  TransactionItem,
+  getDiscount,
+  formatTime,
+  formatDate,
+  Discount,
+  QuickAddButton
+} from "@/components/global.utils";
+import Receipt from "@/components/utils/Receipt";
+import TextButton from "@/components/ui/TextButton";
+import Modal from "@/components/ui/Modal";
 import AddCustom from "./AddCustom";
+import SearchMenu from "./SearchMenu";
 import AddGiftcard from "./AddGiftcard";
 import QuickButton from "./QuickButton";
+import NumPad from "./NumPad";
 
-const Transactions = ({ products, quickAddButtons }: { products: Product[]; quickAddButtons: QuickAddButton[] }) => {
+const Transactions = ({
+  products,
+  quickAddButtons
+}: {
+  products: Product[];
+  quickAddButtons: QuickAddButton[]
+}) => {
   const date = new Date();
   const user = useUser();
   const [cart, setCart] = useState<TransactionItem[]>([]);
@@ -28,12 +47,10 @@ const Transactions = ({ products, quickAddButtons }: { products: Product[]; quic
   const [total, setTotal] = useState<number>(0);
   const [cash, setCash] = useState<number>(0);
   const [credit, setCredit] = useState<number>(0);
-
   const [type, setType] = useState<"Cash" | "Credit">("Credit")
   const [amountTendered, setAmountTendered] = useState<number>(0);
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log("Quick Add Buttons:", quickAddButtons);
 
   const channel = new BroadcastChannel(`${user.user?.username}-pos`);
 
@@ -65,37 +82,6 @@ const Transactions = ({ products, quickAddButtons }: { products: Product[]; quic
       type: "cart-clear",
     });
   };
-
-  //TODO: Create register logins and use username to identify which register is being used for each transaction
-
-  const handleQuickAdd = (name: string, type: string, price: number) => {
-    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount === noDiscount.value && item.itemPrice === price);
-
-    const item = {
-      type: type,
-      name: name,
-      quantity: 1,
-      discount: noDiscount.value,
-      itemPrice: price,
-    }
-
-    if (itemExists != -1) {
-      const temp = cart[itemExists];
-      temp.quantity++;
-      setCart((prev) => [...prev]);
-      channel.postMessage({
-        type: "cart-update",
-        item: item
-      });
-    }
-    else {
-      setCart((prev) => [...prev, item]);
-      channel.postMessage({
-        type: "cart-add",
-        item: item
-      });
-    }
-  }
 
   const handleCustomAdd = (
     product: Product,
@@ -188,7 +174,7 @@ const Transactions = ({ products, quickAddButtons }: { products: Product[]; quic
           credit : total;
 
       const cashTotal =
-        // Fill Credit
+        // Fill Cash
         (type === "Cash") ? (
           (credit < total) ? (
             total - credit

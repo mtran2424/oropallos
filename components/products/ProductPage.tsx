@@ -1,19 +1,19 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
-import { redirect, useParams } from "next/navigation";
-import { Product } from "@/components/global.utils";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Product } from "@/components/global.utils";
+import { redirect, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaWineBottle } from "react-icons/fa";
 import { MdWaterDrop } from "react-icons/md";
 import { CiImageOff } from "react-icons/ci";
-import RelatedProducts from "./RelevantProducts";
-import { useRouter } from "next/navigation";
-import ExpandButton from "../ui/ExpandButton";
-import FilterPath from "../utils/FilterPath";
+import { IoIosArrowBack } from "react-icons/io";
+import ExpandButton from "@/components/ui/ExpandButton";
+import FilterPath from "@/components/utils/FilterPath";
 import { ProductCategory } from "@/components/global.utils";
 import AvailableSizes from "./AvailableSizes";
-import { IoIosArrowBack } from "react-icons/io";
+import RelatedProducts from "./RelevantProducts";
 
 const MAX_DESC_LENGTH = 200;
 

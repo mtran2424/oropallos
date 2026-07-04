@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import TextButton from "../ui/TextButton";
-import Receipt from "../utils/Receipt";
+import Receipt from "@/components/utils/Receipt";
+import TextButton from "@/components/ui/TextButton";
 
 const HelpButton = () => {
   const componentRef = useRef<HTMLDivElement>(null);

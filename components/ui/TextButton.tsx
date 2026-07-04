@@ -1,5 +1,12 @@
 import { motion } from "framer-motion";
 
+/**
+ * Simple animated and formatted text button
+ * @param children Children component to be displayed and formatted 
+ * @param onClick Functionality of button
+ * @param disabled Boolean determining if button is disabled or not
+ * @returns 
+ */
 const TextButton = ({ children, onClick, disabled }: { children: React.ReactNode; onClick: () => void; disabled?: boolean }) => {
   return (
     <motion.button

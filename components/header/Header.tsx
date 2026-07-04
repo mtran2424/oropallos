@@ -1,10 +1,10 @@
 "use client";
-import { getAnnouncements } from "@/app/api/announcementapi";
-import { Announcement } from "@/lib/generated/prisma";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { CiPhone } from "react-icons/ci";
 import { FaFacebookF } from "react-icons/fa";
+import { getAnnouncements } from "@/app/api/announcementapi";
+import { Announcement } from "@/lib/generated/prisma";
 
 const Header = () => {
   const [announcements, setAnnouncements] = useState<string[]>([]);

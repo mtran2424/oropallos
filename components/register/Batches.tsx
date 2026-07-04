@@ -1,13 +1,26 @@
-import { motion } from "framer-motion";
-import { Batch, batchTableColumns, calculateSubtotal, calculateTax, calculateTotal, formatDate, formatTime, getDiscount, managerTableColumns, Transaction, TransactionItem, transactionItemTableColumns } from "../global.utils";
-import CopyButton from "../ui/CopyButton";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
+import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 import { getBatches } from "@/app/api/batchapi";
-import Modal from "../ui/Modal";
-import { useReactToPrint } from "react-to-print";
-import TextButton from "../ui/TextButton";
-import Receipt from "../utils/Receipt";
+import {
+  Batch,
+  batchTableColumns,
+  calculateSubtotal,
+  calculateTax,
+  calculateTotal,
+  formatDate,
+  formatTime,
+  getDiscount,
+  managerTableColumns,
+  Transaction,
+  TransactionItem,
+  transactionItemTableColumns
+} from "@/components/global.utils";
+import Receipt from "@/components/utils/Receipt";
+import CopyButton from "@/components/ui/CopyButton";
+import Modal from "@/components/ui/Modal";
+import TextButton from "@/components/ui/TextButton";
 
 const Batches = () => {
   const { user } = useUser();

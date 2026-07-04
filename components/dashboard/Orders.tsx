@@ -1,14 +1,14 @@
 import React, { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Product, sanitize } from "../global.utils";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import Image from "next/image"
 import { CiImageOff } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
-import ProductTag from "../ui/ProductTag";
 import { FaSearch } from "react-icons/fa";
-import Modal from "../ui/Modal";
-import toast from "react-hot-toast";
 import { getProducts, updateInventory } from "@/app/api/adminapi";
+import { Product, sanitize } from "@/components/global.utils";
+import ProductTag from "@/components/ui/ProductTag";
+import Modal from "@/components/ui/Modal";
 
 interface OrderItem {
   product: Product;

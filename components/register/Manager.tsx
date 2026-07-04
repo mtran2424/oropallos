@@ -1,7 +1,6 @@
-import { motion } from "framer-motion";
-import { Transaction } from "../global.utils";
 import { useState } from "react";
-import TextButton from "../ui/TextButton";
+import { motion } from "framer-motion";
+import { Transaction } from "@/components/global.utils";
 import CurrentBatch from "./CurrentBatch";
 import Batches from "./Batches";
 
@@ -44,7 +43,6 @@ const Manager = ({ transactions }: { transactions: Transaction[] }) => {
         </div>
 
         <div className="flex flex-col w-full items-start justify-start py-5">
-          {/* TODO: Action to print receipt for each transaction in table */}
           {view === "currentBatch" && <CurrentBatch initialTransactions={transactions} />}
           {view === "previousBatches" && <Batches />}
         </div>

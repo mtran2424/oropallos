@@ -1,3 +1,11 @@
+/**
+ * UI Card to display statistic
+ * @param title string - Statcard title
+ * @param value string - Statistic value
+ * @param gradient string - Defines colors
+ * @param columns string - Numerical string to adjust card width
+ * @returns 
+ */
 const StatCard = ({
   title,
   value,

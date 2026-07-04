@@ -1,10 +1,9 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { createAnnouncement } from "@/app/api/announcementapi";
-import TextButton from "../ui/TextButton";
-import Modal from "../ui/Modal";
+import Modal from "@/components/ui/Modal";
 
 // This component is a button that opens a modal for adding a product
 const AddAnnouncement = ({ onAddAnnouncement }: {

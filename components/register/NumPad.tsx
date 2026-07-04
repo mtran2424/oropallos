@@ -1,10 +1,16 @@
-import { motion } from "framer-motion";
 import { useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
+import { motion } from "framer-motion";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdKeyboardReturn } from "react-icons/md";
-import { Discount, fifteenPercentDiscount, noDiscount, taxFreeDiscount, TransactionItem } from "../global.utils";
-import { useReactToPrint } from "react-to-print";
-import Receipt from "../utils/Receipt";
+import {
+  Discount,
+  fifteenPercentDiscount,
+  noDiscount,
+  taxFreeDiscount,
+  TransactionItem
+} from "@/components/global.utils";
+import Receipt from "@/components/utils/Receipt";
 
 const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) => {
   const [input, setInput] = useState<string>("");
@@ -14,7 +20,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
   const [discount, setDiscount] = useState<Discount>(noDiscount);
 
   const componentRef = useRef<HTMLDivElement>(null);
-  // TODO: Gift card
+
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
     documentTitle: "Transaction Receipt",

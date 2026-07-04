@@ -3,9 +3,9 @@ const Receipt = ({
   title,
   children
 }: {
-  ref: React.RefObject<HTMLDivElement | null>,
-  title?: string,
-  children: React.ReactNode
+  ref: React.RefObject<HTMLDivElement | null>;
+  title?: string;
+  children: React.ReactNode;
 }) => {
   return (
     <div ref={ref} className="flex flex-col w-full items-center text-md pb-10 receipt">

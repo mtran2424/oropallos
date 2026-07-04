@@ -1,14 +1,14 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Announcement, announcementTableColumns, getDateObject, sanitize } from "@/components/global.utils";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
+import { deleteAnnouncement, getAnnouncements } from "@/app/api/announcementapi";
+import { Announcement, announcementTableColumns, getDateObject, sanitize } from "@/components/global.utils";
 import CopyButton from "@/components/ui/CopyButton";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
-import { deleteAnnouncement, getAnnouncements } from "@/app/api/announcementapi";
-import AddAnnouncement from "../utils/AddAnnouncement";
-import EditAnnouncement from "../utils/EditAnnouncement";
+import AddAnnouncement from "@/components/utils/AddAnnouncement";
+import EditAnnouncement from "@/components/utils/EditAnnouncement";
 
 const ANNOUNCEMENTS_PER_PAGE = 25;
 

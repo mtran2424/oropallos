@@ -1,6 +1,6 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 

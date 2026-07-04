@@ -1,4 +1,3 @@
-// app/map-provider.tsx
 "use client";
 import { LoadScript } from "@react-google-maps/api";
 

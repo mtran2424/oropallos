@@ -1,8 +1,8 @@
+import { useRef } from "react";
+import { motion } from "framer-motion";
 import { Product, QuickAddButton } from "@/components/global.utils";
 import AddQuickButton from "@/components/utils/AddQuickButton";
 import QuickButtonTag from "@/components/utils/QuickButtonTag";
-import { motion } from "framer-motion";
-import { useRef } from "react";
 
 const QuickAddButtonMenu = ({
   products,
@@ -38,7 +38,7 @@ const QuickAddButtonMenu = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 space-x-2 space-y-2 w-[80vw] px-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 space-x-2 space-y-2 w-[80vw] px-2">
             {quickAddButtons && quickAddButtons.map((button) => (
               <QuickButtonTag key={button.id} quickButton={button} onEdit={onEdit} onDelete={onDelete}/>
             ))}

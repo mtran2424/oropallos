@@ -1,16 +1,15 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
-import { Product, ProductCategories, ProductCategory, ProductSubcategory, ProductType } from "@/components/global.utils";
-import { FaChevronRight, FaFilter } from "react-icons/fa6";
 import { useEffect, useMemo, useState } from "react";
-import Collection from "./Collection";
-// import { getProducts } from "@/app/api/productapi";
-import { IoMdClose } from "react-icons/io";
+import { AnimatePresence, motion } from "framer-motion";
+import { FaChevronRight, FaFilter } from "react-icons/fa6";
 import { useRouter, useSearchParams } from "next/navigation";
-import CategoryDropdownFilter from "../utils/CategoryDropdownFilter";
-import SubcategoryDropdownFilter from "../utils/SubcategoryDropdownFilter";
-import FilterPath from "../utils/FilterPath";
-import TypeDropdownFilter from "../utils/TypeDropdownFilter";
+import { IoMdClose } from "react-icons/io";
+import { Product, ProductCategories, ProductCategory, ProductSubcategory, ProductType } from "@/components/global.utils";
+import CategoryDropdownFilter from "@/components/utils/CategoryDropdownFilter";
+import SubcategoryDropdownFilter from "@/components/utils/SubcategoryDropdownFilter";
+import FilterPath from "@/components/utils/FilterPath";
+import TypeDropdownFilter from "@/components/utils/TypeDropdownFilter";
+import Collection from "./Collection";
 
 // Products component - Displays a list of products with filters for categories, subcategories, and types
 const Products = ({ products }: { products: Product[] }) => {

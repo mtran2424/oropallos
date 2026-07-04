@@ -3,9 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { editAnnouncement } from "@/app/api/announcementapi";
 import { MdModeEditOutline } from "react-icons/md";
-import { Announcement } from "../global.utils";
-import TextButton from "../ui/TextButton";
-import Modal from "../ui/Modal";
+import { Announcement } from "@/components/global.utils";
+import Modal from "@/components/ui/Modal";
 
 // This component is a button that opens a modal for adding a product
 const EditAnnouncement = ({
@@ -13,7 +12,7 @@ const EditAnnouncement = ({
   announcement
 }: {
   onEditAnnouncement: () => void;
-  announcement: Announcement
+  announcement: Announcement;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [edit, setEdit] = useState(false);

@@ -2,8 +2,14 @@ import { motion } from "framer-motion";
 import Image from "next/image"
 import { CiImageOff } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
-import { Product } from "../global.utils";
+import { Product } from "@/components/global.utils";
 
+/**
+ * Tag component displaying product details
+ * @param product Product - item being displayed
+ * @param onDelete () => void - Function defining action on onClick of X icon
+ * @returns 
+ */
 const ProductTag = ({
   product,
   onDelete
@@ -13,6 +19,7 @@ const ProductTag = ({
 }) => {
   return (
     <div className="grid grid-cols-5 text-xl justify-center items-center space-x-3 border border-zinc-300 rounded-lg px-2 py-1">
+      {/* Close Button */}
       <motion.div
         key={"close"}
         initial={{ scale: 0, opacity: 0 }}
@@ -24,6 +31,7 @@ const ProductTag = ({
       >
         <IoMdClose size={25} />
       </motion.div>
+      {/* Product image if applicable */}
       <div className="flex flex-col items-center">
         <div className="relative w-10 h-10 mx-auto mb-2 overflow-hidden rounded-lg">
           {product.imageUrl ? (
@@ -48,8 +56,8 @@ const ProductTag = ({
           )}
         </div>
       </div>
+      {/* Product name and size */}
       <div className="col-span-3">
-
         {product.name + " - " + product.size}
       </div>
 

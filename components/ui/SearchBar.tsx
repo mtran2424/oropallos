@@ -4,6 +4,13 @@ import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 
+/**
+ * 
+ * @param searchTerm string - Controlling input
+ * @param setSearchTerm (string) => void - Modifier function for search term
+ * @param handleSearchChange (e: React.ChangeEvent<HTMLInputElement>) => void - Definition of action on search change
+ * @returns 
+ */
 const SearchBar = ({
   searchTerm,
   setSearchTerm,

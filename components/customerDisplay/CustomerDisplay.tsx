@@ -1,11 +1,11 @@
 "use client"
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { IoMdClose } from "react-icons/io";
-import { FaRegSquare } from "react-icons/fa";
-import { calculateSubtotal, calculateTax, calculateTotal, TransactionItem } from "../global.utils";
+import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { IoMdClose } from "react-icons/io";
+import { FaRegSquare } from "react-icons/fa";
+import { calculateSubtotal, calculateTax, calculateTotal, TransactionItem } from "@/components/global.utils";
 import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 
 const CustomerDisplay = () => {

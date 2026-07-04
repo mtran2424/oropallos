@@ -1,16 +1,23 @@
-import { motion } from "framer-motion";
-import { Batch, colorPool, formatDate, getDateObject, getDateTime, Product, Transaction } from "../global.utils";
 import { useEffect, useState } from "react";
-import StatCard from "../ui/StatCard";
-import DonutChart from "../utils/DonutChart";
-import SidewaysBarChart from "../utils/SidewaysBarChart";
-import LineGraph from "../utils/LineGraph";
+import { motion } from "framer-motion";
 import { getBatches } from "@/app/api/batchapi";
 import { getTransactions } from "@/app/api/transactionapi";
+import {
+  Batch,
+  colorPool,
+  getDateObject,
+  getDateTime,
+  Product,
+  Transaction
+} from "@/components/global.utils";
+import DonutChart from "@/components/utils/charts/DonutChart";
+import SidewaysBarChart from "@/components/utils/charts/SidewaysBarChart";
+import LineGraph from "@/components/utils/charts/LineGraph";
+import StatCard from "@/components/ui/StatCard";
 
 interface breakdownObject {
   type: string,
-  qty: number,
+  value: number,
   fill: string
 }
 
@@ -32,10 +39,10 @@ const Sales = ({
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [batches, setBatches] = useState<Batch[]>(initialBatches);
-  const [items, setItems] = useState<{ product: Product | undefined, quantity: number }[]>(
+  const [items, setItems] = useState<{ product: Product | undefined, value: number, quantity: number }[]>(
     initialTransactions.flatMap((transaction) =>
       transaction.transactionItems.map((item) => {
-        return { product: item.product, quantity: item.quantity }
+        return { product: item.product, value: item.itemPrice * item.quantity, quantity: item.quantity }
       })));
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [inventory, setInventory] = useState<number>(products.reduce((sum, product) => sum + ((product.unitPrice ? product.unitPrice : 0) * product.unitCount), 0));
@@ -77,13 +84,13 @@ const Sales = ({
         .reduce((count, item) => {
           if (item.product?.subcategory) {
             count[item.product?.subcategory] =
-              (count[item.product?.subcategory] || 0) + item.quantity;
+              (count[item.product?.subcategory] || 0) + (item.value);
           }
           return count;
         }, {} as Record<string, number>)
-    ).map(([type, qty], index) => ({
+    ).map(([type, value], index) => ({
       type,
-      qty,
+      value,
       fill: colorPool[index],
     })));
   const [wineBreakdown, setWineBreakdown] = useState<breakdownObject[]>(
@@ -93,24 +100,41 @@ const Sales = ({
         .reduce((count, item) => {
           if (item.product?.type) {
             count[item.product?.type] =
-              (count[item.product?.type] || 0) + item.quantity;
+              (count[item.product?.type] || 0) + item.value;
           }
           else if (item.product?.subcategory) {
             count[item.product?.subcategory] =
-              (count[item.product?.subcategory] || 0) + item.quantity;
+              (count[item.product?.subcategory] || 0) + item.value;
           }
           return count;
         }, {} as Record<string, number>)
-    ).map(([type, qty], index) => ({
+    ).map(([type, value], index) => ({
       type,
-      qty,
+      value,
       fill: colorPool[index],
     })));
   const [liquorWineReport, setLiquorWineReport] = useState<reportObject[]>([
     { name: 'Liquor', value: liquorSales, fill: colorPool[0] },
     { name: 'Wine', value: wineSales, fill: colorPool[1] }
   ]);
-  const [frequencyReport, setFrequencyReport] = useState<breakdownObject[]>(
+  const [frequencyByValueReport, setFrequencyByValueReport] = useState<breakdownObject[]>(
+    Object.entries(
+      items
+        .reduce((count, item) => {
+          if (item.product)
+            count[item.product.name] =
+              (count[item.product.name] || 0) + item.value;
+          return count;
+        }, {} as Record<string, number>)
+    ).map(([type, value], index) => ({
+      type,
+      value,
+      fill: colorPool[2],
+    })).sort((a, b) =>
+      (b.value || 0) - (a.value || 0)
+    ).slice(0, 14));
+
+  const [frequencyByVolumeReport, setFrequencyByVolumeReport] = useState<breakdownObject[]>(
     Object.entries(
       items
         .reduce((count, item) => {
@@ -119,13 +143,15 @@ const Sales = ({
               (count[item.product.name] || 0) + item.quantity;
           return count;
         }, {} as Record<string, number>)
-    ).map(([type, qty], index) => ({
+    ).map(([type, value], index) => ({
       type,
-      qty,
-      fill: colorPool[2],
+      value,
+      fill: colorPool[3],
     })).sort((a, b) =>
-      (b.qty || 0) - (a.qty || 0)
+      (b.value || 0) - (a.value || 0)
     ).slice(0, 14));
+
+    
 
   const [salesReport, setSalesReport] = useState(
     Object.entries(
@@ -144,7 +170,7 @@ const Sales = ({
     setItems(
       transactions.flatMap((transaction) =>
         transaction.transactionItems.map((item) => {
-          return { product: item.product, quantity: item.quantity }
+          return { product: item.product, value: item.quantity * item.itemPrice, quantity: item.quantity }
         }))
     );
 
@@ -155,13 +181,13 @@ const Sales = ({
           .reduce((count, item) => {
             if (item.product?.subcategory) {
               count[item.product?.subcategory] =
-                (count[item.product?.subcategory] || 0) + item.quantity;
+                (count[item.product?.subcategory] || 0) + item.value;
             }
             return count;
           }, {} as Record<string, number>)
-      ).map(([type, qty], index) => ({
+      ).map(([type, value], index) => ({
         type,
-        qty,
+        value,
         fill: colorPool[index],
       }))
     );
@@ -173,17 +199,17 @@ const Sales = ({
           .reduce((count, item) => {
             if (item.product?.type) {
               count[item.product?.type] =
-                (count[item.product?.type] || 0) + item.quantity;
+                (count[item.product?.type] || 0) + item.value;
             }
             else if (item.product?.subcategory) {
               count[item.product?.subcategory] =
-                (count[item.product?.subcategory] || 0) + item.quantity;
+                (count[item.product?.subcategory] || 0) + item.value;
             }
             return count;
           }, {} as Record<string, number>)
-      ).map(([type, qty], index) => ({
+      ).map(([type, value], index) => ({
         type,
-        qty,
+        value,
         fill: colorPool[index],
       }))
     );
@@ -221,25 +247,43 @@ const Sales = ({
 
     setWineProfit(
       transactions.reduce((transactionSum, transaction) => {
-    return (
-      transactionSum +
-      transaction.transactionItems.reduce((itemSum, item) => {
         return (
-          itemSum +
-          (item.type === "Wine"
-            ? item.itemPrice - (item.unitPrice ?? 0)
-            : 0)
+          transactionSum +
+          transaction.transactionItems.reduce((itemSum, item) => {
+            return (
+              itemSum +
+              (item.type === "Wine"
+                ? item.itemPrice - (item.unitPrice ?? 0)
+                : 0)
+            );
+          }, 0)
         );
-      }, 0)
-    );
-  }, 0));
+      }, 0));
 
     setLiquorWineReport([
       { name: 'Liquor', value: liquorSales, fill: colorPool[0] },
       { name: 'Wine', value: wineSales, fill: colorPool[1] }
     ]);
 
-    setFrequencyReport(
+    setFrequencyByValueReport(
+      Object.entries(
+        items
+          .reduce((count, item) => {
+            if (item.product)
+              count[item.product.name] =
+                (count[item.product.name] || 0) + item.value;
+            return count;
+          }, {} as Record<string, number>)
+      ).map(([type, value], index) => ({
+        type,
+        value,
+        fill: colorPool[2],
+      })).sort((a, b) =>
+        (b.value || 0) - (a.value || 0)
+      ).slice(0, 14)
+    );
+
+    setFrequencyByVolumeReport(
       Object.entries(
         items
           .reduce((count, item) => {
@@ -248,12 +292,12 @@ const Sales = ({
                 (count[item.product.name] || 0) + item.quantity;
             return count;
           }, {} as Record<string, number>)
-      ).map(([type, qty], index) => ({
+      ).map(([type, value], index) => ({
         type,
-        qty,
-        fill: colorPool[2],
+        value,
+        fill: colorPool[3],
       })).sort((a, b) =>
-        (b.qty || 0) - (a.qty || 0)
+        (b.value || 0) - (a.value || 0)
       ).slice(0, 14)
     );
 
@@ -432,7 +476,7 @@ const Sales = ({
               columns="2"
             />
           </div>
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
             <DonutChart
               title="Liquor/Wine Sale Report"
               data={liquorWineReport}
@@ -445,23 +489,35 @@ const Sales = ({
             <DonutChart
               title="Liquor Breakdown"
               data={liquorBreakdown}
-              dataKey="qty"
+              dataKey="value"
               nameKey="type"
               height={300}
               width={95}
+              format
             />
             <DonutChart
               title="Wine Breakdown"
               data={wineBreakdown}
-              dataKey="qty"
+              dataKey="value"
               nameKey="type"
+              format
               height={300}
               width={95}
             />
             <SidewaysBarChart
-              title="Top 15 Bestsellers"
-              data={frequencyReport}
-              dataKey="qty"
+              title="Top 15 Bestsellers By Value"
+              data={frequencyByValueReport}
+              dataKey="value"
+              nameKey="type"
+              format
+              width={95}
+              height={300}
+            />
+
+            <SidewaysBarChart
+              title="Top 15 Bestsellers By Volume"
+              data={frequencyByVolumeReport}
+              dataKey="value"
               nameKey="type"
               width={95}
               height={300}

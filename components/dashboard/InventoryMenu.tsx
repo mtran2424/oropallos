@@ -1,17 +1,17 @@
 import { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
-import { inventoryTableColumns, Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
 import { deleteProduct, hideProduct } from "@/app/api/productapi";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import { inventoryTableColumns, Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
+import { getProducts } from "@/app/api/adminapi";
+import EditUnitPrice from "@/components/utils/crud-products/EditUnitPrice";
+import AddUPC from "@/components/utils/crud-products/AddUPC";
+import AddUnit from "@/components/utils/crud-products/AddUnit";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
-import { getProducts } from "@/app/api/adminapi";
-import EditUnitPrice from "../utils/EditUnitPrice";
-import AddUPC from "../utils/AddUPC";
-import AddUnit from "../utils/AddUnit";
-import Modal from "../ui/Modal";
+import Modal from "@/components/ui/Modal";
 
 const PRODUCTS_PER_PAGE = 25;
 

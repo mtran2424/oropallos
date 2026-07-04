@@ -1,13 +1,12 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Product, ProductCategories, sanitize } from "@/components/global.utils";
 import { editProduct } from "@/app/api/productapi";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { MdModeEditOutline } from "react-icons/md";
 import Image from "next/image";
 import { IoIosCloseCircle } from "react-icons/io";
-import TextButton from "../ui/TextButton";
-import Modal from "../ui/Modal";
+import Modal from "@/components/ui/Modal";
 
 // This component is a button that opens a modal for adding a product
 const EditProduct = ({ onEditProduct, product, products }: {

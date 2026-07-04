@@ -3,6 +3,11 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaClipboardCheck, FaRegClipboard } from "react-icons/fa";
 
+/**
+ * Copy to clipboard component
+ * @param text Content to be copied to clipboard
+ * @returns 
+ */
 const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false);
 

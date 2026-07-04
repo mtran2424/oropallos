@@ -1,8 +1,8 @@
 "use client";
-import { Product } from "@/components/global.utils";
-import ProductCard from "@/components/products/ProductCard";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Product } from "@/components/global.utils";
+import ProductCard from "@/components/products/ProductCard";
 import Pagination from "@/components/ui/Pagination";
 
 const PRODUCTS_PER_PAGE = 3;

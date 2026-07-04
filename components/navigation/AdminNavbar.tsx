@@ -2,9 +2,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
-import { adminNavBarElements } from "@/components/global.utils";
 import { SignedIn, UserButton } from "@clerk/nextjs";
+import { adminNavBarElements } from "@/components/global.utils";
+import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 import AdminMobileMenu from "./AdminMobileMenu";
 
 const AdminNavbar = () => {
@@ -73,7 +73,7 @@ const AdminNavbar = () => {
             <UserButton />
           </SignedIn>
         </div>
-        
+
         {/* Mobile Menu Button */}
         <AdminMobileMenu />
       </div>

@@ -1,19 +1,19 @@
 import { useState, useMemo, useRef, useEffect, useDeferredValue } from "react";
-import { Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
-import AddProduct from "@/components/utils/AddProduct";
-import { deleteProduct, favoriteProduct, hideProduct } from "@/app/api/productapi";
-import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
-import { MdDelete, MdFavorite } from "react-icons/md";
-import EditProduct from "@/components/utils/EditProduct";
 import Image from "next/image";
-import CopyButton from "@/components/ui/CopyButton";
+import toast from "react-hot-toast";
+import { MdDelete, MdFavorite } from "react-icons/md";
 import { FaEye, FaEyeSlash, FaImage } from "react-icons/fa6";
+import { getProducts } from "@/app/api/adminapi";
+import { deleteProduct, favoriteProduct, hideProduct } from "@/app/api/productapi";
+import { Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
+import AddProduct from "@/components/utils/crud-products/AddProduct";
+import EditProduct from "@/components/utils/crud-products/EditProduct";
+import AddSize from "@/components/utils//crud-products/AddSize";
+import CopyButton from "@/components/ui/CopyButton";
 import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
-import AddSize from "../utils/AddSize";
-import { getProducts } from "@/app/api/adminapi";
-import TextButton from "../ui/TextButton";
+import TextButton from "@/components/ui/TextButton";
 
 const PRODUCTS_PER_PAGE = 25;
 
