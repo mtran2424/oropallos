@@ -151,7 +151,7 @@ const Sales = ({
       (b.value || 0) - (a.value || 0)
     ).slice(0, 14));
 
-    
+
 
   const [salesReport, setSalesReport] = useState(
     Object.entries(
@@ -426,6 +426,7 @@ const Sales = ({
           </h1>
           <div className="absolute h-screen w-screen rounded-full bg-white/20 blur-3xl" />
 
+          {/* Stat card cluster*/}
           <div className="grid lg:grid-cols-8 grid-cols-4 w-full items-center px-10 pb-5 gap-2">
             <StatCard
               title="Inventory On Hand"
@@ -476,7 +477,8 @@ const Sales = ({
               columns="2"
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+          {/* Graphs and figures */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-1">
             <DonutChart
               title="Liquor/Wine Sale Report"
               data={liquorWineReport}
@@ -533,9 +535,9 @@ const Sales = ({
         </div>
 
         {/* Sidebar Filter Menu */}
-        <div className="hidden md:flex p-5 justify-start self-start sticky top-5 h-fit">
+        <div className="hidden lg:flex p-5 justify-start self-start sticky top-5 h-fit">
           <div className="flex flex-col border-gray-400 border p-5 rounded w-full h-1/4 min-w-70 overflow-hidden">
-            {/* Close Modal Button */}
+            {/* Close filter */}
             <div className="flex w-full justify-end">
               <motion.button
                 whileHover={{ scale: 1.05 }}

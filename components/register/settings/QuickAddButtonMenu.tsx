@@ -38,7 +38,7 @@ const QuickAddButtonMenu = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 space-x-2 space-y-2 w-[80vw] px-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 space-x-2 space-y-2 w-[80vw] px-2">
             {quickAddButtons && quickAddButtons.map((button) => (
               <QuickButtonTag key={button.id} quickButton={button} onEdit={onEdit} onDelete={onDelete}/>
             ))}

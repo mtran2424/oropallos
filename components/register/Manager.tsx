@@ -15,7 +15,7 @@ const Manager = ({ transactions }: { transactions: Transaction[] }) => {
       transition={{ duration: 1, ease: "easeInOut" }}
     >
       <div className="flex flex-row w-full h-full items-start justify-start divide-x divide-zinc-400">
-        <div className="hidden md:flex flex-col bg-white w-full h-screen justify-start items-start z-50 space-y-2 px-1">
+        <div className="hidden lg:flex flex-col bg-white w-full h-screen justify-start items-start z-50 space-y-2 px-1">
           <div className="px-2 py-5 text-2xl text-zinc-600">
             Manage Transactions
           </div>

@@ -20,8 +20,8 @@ const StatCard = ({
   return (
     <div className={`flex flex-col col-span-${columns} border border-blue-400 rounded-xl h-full p-5
           ${gradient} shadow-lg text-white`}>
-      <h2 className="text-left text-xl">{title}</h2>
-      <h2 className="text-left font-semibold text-3xl">{value}</h2>
+      <h2 className="text-left text-lg lg:text-xl">{title}</h2>
+      <h2 className="text-left font-semibold text-xl lg:text-3xl">{value}</h2>
     </div>
   );
 }

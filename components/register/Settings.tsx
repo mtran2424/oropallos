@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Product, QuickAddButton } from "@/components/global.utils";
 import QuickAddButtonMenu from "./settings/QuickAddButtonMenu";
+import AccountingMenu from "./settings/AccountingMenu";
 
 const Settings = ({
   products,
@@ -26,7 +27,7 @@ const Settings = ({
         transition={{ duration: 1, ease: "easeInOut" }}
       >
         <div className="flex flex-row w-full h-full items-start justify-start divide-x divide-zinc-400">
-          <div className="hidden md:flex flex-col bg-white w-[15vw] h-screen justify-start items-start z-50 space-y-2 px-1">
+          <div className="hidden lg:flex flex-col bg-white w-[15vw] h-screen justify-start items-start z-50 space-y-2 px-1">
             <div className="px-2 py-5 text-2xl text-zinc-600">
               Settings
             </div>
@@ -57,13 +58,14 @@ const Settings = ({
                 ${view === "archive" ? "bg-zinc-300" : ""}
                 transition-colors ease-in-out
                 `}
-              onClick={() => setView("archive")}
+              onClick={() => setView("accounting")}
             >
-              Archive
+              Accounting
             </button>
           </div>
           <div className="flex flex-col w-full items-start justify-start py-5">
             {view === "quickButtons" && <QuickAddButtonMenu products={products} quickAddButtons={quickAddButtons} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd}/>}
+            {view === "accounting" && <AccountingMenu/>}
           </div>
         </div>
       </motion.div>

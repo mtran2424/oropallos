@@ -549,6 +549,55 @@ export const colorPool = [
   "#473198",
 ] as const;
 
+export const weekDays = [
+  { day: "Sunday", abbr: "Sun" },
+  { day: "Monday", abbr: "Mon" },
+  { day: "Tuesday", abbr: "Tue" },
+  { day: "Wednesday", abbr: "Wed" },
+  { day: "Thursday", abbr: "Thu" },
+  { day: "Friday", abbr: "Fri" },
+  { day: "Saturday", abbr: "Sat" },
+];
+
+/**
+ * Calculates the difference between two dates in days
+ * @param date1 Date further in the past
+ * @param date2 Date further in the future
+ * @returns 
+ */
+export const getDatesBetween = (date1: Date, date2: Date) => {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const utc1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const utc2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
+  return Math.floor((utc2 - utc1) / msPerDay);
+}
+
+/**
+ * Compares two dates (ignoring time)
+ * @param date1 
+ * @param date2 
+ * @returns 
+ */
+export const compareDates = (date1: Date, date2: Date) => {
+  return date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate() &&
+    date1.getDay() === date2.getDay()
+}
+
+/**
+ * Converts 24 hour time string to 12 hour format
+ * @param time24 - 24 hour time string (e.g. "14:30")
+ * @returns 
+ */
+export const to12HourTime = (time24: string) => {
+  const [hourStr, minute] = time24.split(':');
+  let hour = parseInt(hourStr, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12; // convert 0 to 12
+  return `${hour}:${minute} ${ampm}`;
+}
+
 // Utility function to sanitize strings for search
 export const sanitize = (str: string) =>
   str
