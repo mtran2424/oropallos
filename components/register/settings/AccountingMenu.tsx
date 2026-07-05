@@ -1,7 +1,12 @@
-import Calendar from "@/components/utils/calendar/Calendar";
 import { motion } from "framer-motion";
+import { Batch } from "@/components/global.utils";
+import Calendar from "@/components/utils/calendar/Calendar";
 
-const AccountingMenu = () => {
+const AccountingMenu = ({
+  batches
+}:{
+  batches: Batch[]
+}) => {
   return (
     <motion.div
       initial={{ x: "-100%", opacity: 0 }}
@@ -15,7 +20,7 @@ const AccountingMenu = () => {
           Accounting
         </h1>
         <div className="flex flex-col w-[80vw] h-full">
-          <Calendar onClick={() => {
+          <Calendar batches={batches} onClick={() => {
           }} />
         </div>
       </div>

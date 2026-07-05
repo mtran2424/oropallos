@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Product, QuickAddButton } from "@/components/global.utils";
+import { Batch, Product, QuickAddButton } from "@/components/global.utils";
 import QuickAddButtonMenu from "./settings/QuickAddButtonMenu";
 import AccountingMenu from "./settings/AccountingMenu";
 
 const Settings = ({
   products,
   quickAddButtons,
+  batches,
   onEdit,
   onDelete,
   onAdd
 }:{
   products: Product[],
   quickAddButtons: QuickAddButton[],
+  batches: Batch[];
   onEdit: () => void,
   onDelete: () => void,
   onAdd: () => void
@@ -55,7 +57,7 @@ const Settings = ({
             <button
               type="button"
               className={`w-full text-start text-xl text-nowrap text-zinc-900 hover:bg-zinc-200 rounded-xl p-2 
-                ${view === "archive" ? "bg-zinc-300" : ""}
+                ${view === "accounting" ? "bg-zinc-300" : ""}
                 transition-colors ease-in-out
                 `}
               onClick={() => setView("accounting")}
@@ -65,7 +67,7 @@ const Settings = ({
           </div>
           <div className="flex flex-col w-full items-start justify-start py-5">
             {view === "quickButtons" && <QuickAddButtonMenu products={products} quickAddButtons={quickAddButtons} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd}/>}
-            {view === "accounting" && <AccountingMenu/>}
+            {view === "accounting" && <AccountingMenu batches={batches}/>}
           </div>
         </div>
       </motion.div>

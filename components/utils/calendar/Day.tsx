@@ -1,10 +1,11 @@
 import { motion, useAnimation } from "framer-motion";
-import { compareDates, formatDate } from "@/components/global.utils";
+import { Batch, compareDates, formatDate } from "@/components/global.utils";
 import { useState } from "react";
 
-const Day = ({ date, selectedDate, onClick }: {
+const Day = ({ date, selectedDate, batches, onClick }: {
   date: Date;
   selectedDate: Date;
+  batches: Batch[]
   onClick: () => void;
 }) => {
   const currentDate = new Date();
@@ -93,6 +94,20 @@ const Day = ({ date, selectedDate, onClick }: {
       >
         {date.getDate()}
       </div>}
+
+      <div className="flex flex-col w-full">
+          {batches.map((batch, index) => (
+            <motion.div
+              animate={controls}
+              key={index}
+              className="bg-blue-300 hover:bg-blue-500 text-blue-500 hover:text-white hover:font-semibold rounded-md shadow-md mb-1 w-full text-center text-xs lg:text-lg border border-blue-300 transition duration-200 ease-in-out overflow-hidden"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            >
+              Reg_{batch.register.split('_')[1]} - ${(batch.gross/100).toFixed(2)}
+            </motion.div>
+          ))}
+        </div>
 
       {/* Display the number of events on the day cell. If greater than 3, generalize */}
       {/* {events.length < 3 ?

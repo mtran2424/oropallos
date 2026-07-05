@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DailyView from "./DailyView";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import ReactSwitch from "react-switch";
-import { weekDays } from "@/components/global.utils";
+import { Batch, compareDates, formatDate, getDateObject, Transaction, weekDays } from "@/components/global.utils";
 import Day from "./Day";
+import AccountingTable from "../accounting/AccountingTable";
 
 /**
  * 
@@ -89,8 +90,10 @@ const renderWeek = (date: Date) => {
 };
 
 const Calendar = ({
+  batches,
   onClick
 }: {
+  batches: Batch[]
   onClick: (date: Date) => void
 }) => {
   const currentDate = new Date();
@@ -101,6 +104,132 @@ const Calendar = ({
   const [direction, setDirection] = useState<number>(0);
   const [visibleDays, setVisibleDays] = useState<Date[]>(renderMonth(currentDate));
   const [view, setView] = useState<boolean>(true);
+  const [selectedBatches, setSelectedBatches] = useState(() => Object.values(
+    batches.filter(batch => batch.date).reduce<Record<string, {
+      date: Date | undefined;
+      wineGross: number;
+      liquorGross: number;
+      gross: number;
+      tax: number;
+      void: number;
+      cashTotal: number;
+      creditTotal: number;
+      discount: number;
+      transactions: Transaction[],
+      register: string,
+      cardReceiptTotal: number;
+    }>>((acc, batch) => {
+      const date = (batch.date instanceof Date ? formatDate(batch.date, "mm/dd/yyyy") :
+        batch.date ? formatDate(new Date(batch.date), "mm/dd/yyyy") : "") ?? "";
+      if (!acc[date]) {
+        acc[date] = {
+          date: batch.date,
+          wineGross: 0,
+          liquorGross: 0,
+          gross: 0,
+          tax: 0,
+          void: 0,
+          cashTotal: 0,
+          creditTotal: 0,
+          transactions: [],
+          register: "",
+          discount: 0,
+          cardReceiptTotal: 0,
+        };
+      }
+
+      acc[date].wineGross += batch.wineGross ?? 0;
+      acc[date].liquorGross += batch.liquorGross ?? 0;
+      acc[date].gross += batch.gross ?? 0;
+      acc[date].tax += batch.tax ?? 0;
+      acc[date].void += batch.void ?? 0;
+      acc[date].cashTotal += batch.cashTotal ?? 0;
+      acc[date].creditTotal += batch.creditTotal ?? 0;
+      acc[date].discount += batch.discount ?? 0;
+      acc[date].cardReceiptTotal += batch.cardReceiptTotal ?? 0;
+
+      return acc;
+    }, {})
+  ));
+  const filteredBatches = useMemo(() =>
+    Object.values(
+      batches.filter((batch) => {
+        if (!batch.date) return false;
+
+        const batchDate = new Date(batch.date);
+
+        if (startDate) {
+          const startObject = getDateObject(startDate);
+          const start = new Date(
+            startObject.year,
+            startObject.month,
+            startObject.day
+          );
+
+          if (batchDate < start) return false;
+        }
+
+        if (endDate) {
+          const endObject = getDateObject(endDate);
+          const end = new Date(
+            endObject.year,
+            endObject.month,
+            endObject.day
+          );
+
+          // Include the entire end day
+          end.setHours(23, 59, 59, 999);
+
+          if (batchDate > end) return false;
+        }
+
+        return true;
+      }).reduce<Record<string, {
+        date: Date | undefined;
+        wineGross: number;
+        liquorGross: number;
+        gross: number;
+        tax: number;
+        void: number;
+        cashTotal: number;
+        creditTotal: number;
+        discount: number;
+        transactions: Transaction[],
+        register: string,
+        cardReceiptTotal: number;
+      }>>((acc, batch) => {
+        const date = (batch.date instanceof Date ? formatDate(batch.date, "mm/dd/yyyy") :
+          batch.date ? formatDate(new Date(batch.date), "mm/dd/yyyy") : "") ?? "";
+        if (!acc[date]) {
+          acc[date] = {
+            date: batch.date,
+            wineGross: 0,
+            liquorGross: 0,
+            gross: 0,
+            tax: 0,
+            void: 0,
+            cashTotal: 0,
+            creditTotal: 0,
+            transactions: [],
+            register: "",
+            discount: 0,
+            cardReceiptTotal: 0,
+          };
+        }
+
+        acc[date].wineGross += batch.wineGross ?? 0;
+        acc[date].liquorGross += batch.liquorGross ?? 0;
+        acc[date].gross += batch.gross ?? 0;
+        acc[date].tax += batch.tax ?? 0;
+        acc[date].void += batch.void ?? 0;
+        acc[date].cashTotal += batch.cashTotal ?? 0;
+        acc[date].creditTotal += batch.creditTotal ?? 0;
+        acc[date].discount += batch.discount ?? 0;
+        acc[date].cardReceiptTotal += batch.cardReceiptTotal ?? 0;
+
+        return acc;
+      }, {})
+    ), [batches, startDate, endDate]);
 
   // Sets new selected event when date is dropped into daily view
   const handleDateDrop = (date: Date) => {
@@ -211,7 +340,7 @@ const Calendar = ({
 
   return (
     <motion.div
-      className="flex flex-col w-full h-full lg:flex-row items-center lg:items-start gap-10 lg:gap-2"
+      className="flex flex-col w-full h-full lg:flex-row items-start justify-center px-5 gap-2"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -219,7 +348,7 @@ const Calendar = ({
 
       {/* Calendar View */}
       <motion.div
-        className="flex flex-col w-full h-[80vh] m-2"
+        className="flex flex-col w-full h-full"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -290,7 +419,6 @@ const Calendar = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          {/* Week days header */}
           <div className="grid grid-cols-7 w-full gap-1 mb-2">
             {/* Generate the days of the week header */}
             {weekDays.map((day, index) => (
@@ -329,19 +457,34 @@ const Calendar = ({
                     <Day
                       date={date}
                       selectedDate={selectedDate}
+                      batches={batches.filter(batch => compareDates(date, new Date(batch.date ?? 0)))}
                       onClick={() => handleDateChange(date)}
                     />
                   </motion.div>
                 ))}
               </motion.div>
+
+              <motion.div
+                custom={direction}
+                variants={calendarVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="col-span-7 gap-1 h-full"
+              >
+                <AccountingTable batches={filteredBatches} />
+              </motion.div>
             </AnimatePresence>
+
           </div>
         </motion.div>
+
+
       </motion.div>
 
       {/* Sidebar Filter Menu */}
       <div className="hidden lg:flex lg:flex-col gap-2 p-5 justify-start self-start sticky top-5 h-fit z-100">
-        <div className="flex flex-col border-gray-400 border p-5 rounded w-full h-1/4 min-w-70 overflow-hidden">
+        <div className="flex flex-col border-gray-400 border p-5 rounded w-full h-1/4 min-w-80 overflow-hidden">
           {/* Close filter */}
           <div className="flex w-full justify-end">
             <motion.button
@@ -394,12 +537,10 @@ const Calendar = ({
           <DailyView
             onDateDrop={handleDateDrop}
             date={selectedDate}
+            batches={batches.filter(batch => compareDates(selectedDate, new Date(batch.date ?? 0)))}
           />
-
         </motion.div>
       </div>
-
-
     </motion.div>
   );
 }
