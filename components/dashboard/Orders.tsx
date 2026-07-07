@@ -162,7 +162,7 @@ const Orders = ({ initialProducts }: { initialProducts: Product[] }) => {
           className="w-[95vw] text-xl sm:text-2xl font-serif font-semibold text-center sm:text-start text-zinc-900 mb-4">
           Orders
         </h1>
-        <div className="flex flex-row w-[95vw] items-start justify-center gap-5 pt-5">
+        <div className="flex flex-col lg:flex-row w-full lg:w-[95vw] items-start justify-center space-y-5 lg:space-x-5 pt-5">
           {/* Shopping cart section */}
           <div className="flex flex-col w-full h-[60vh]">
             <div className="flex overflow-auto">
@@ -206,13 +206,13 @@ const Orders = ({ initialProducts }: { initialProducts: Product[] }) => {
           </div>
 
           {/* Search Product Component */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col w-full lg:w-[30vw] px-5 space-y-5">
             <motion.div
               initial={{ y: "-100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "100%", opacity: 0 }}
               transition={{ duration: 1, ease: "easeInOut" }}
-              className="bg-zinc-100 border border-zinc-300 w-[30vw] px-5 py-10"
+              className="bg-zinc-100 border border-zinc-300 w-full px-5 py-5"
             >
               {/* Search Bar Component */}
               <div className="flex flex-center items-center w-full max-w-7xl ">

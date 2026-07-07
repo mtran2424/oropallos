@@ -63,10 +63,10 @@ const Dashboard = () => {
       {/* Header */}
 
       {/* Tab Buttons */}
-      <div className="grid grid-cols-5">
+      <div className="grid grid-cols-4 lg:grid-cols-5 w-screen">
         <motion.button
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className={`px-6 py-3 text-md z-10 ${tab === 'products'
+          className={`px-6 py-3 text-sm lg:text-md w-full z-10 ${tab === 'products'
             ? 'bg-white text-zinc-900'
             : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
             } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
@@ -78,7 +78,7 @@ const Dashboard = () => {
 
         <motion.button
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className={`px-6 py-3 text-md z-10 ${tab === 'announcements'
+          className={`px-6 py-3 text-sm lg:text-md w-full z-10 ${tab === 'announcements'
             ? 'bg-white text-zinc-900'
             : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
             } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
@@ -90,7 +90,7 @@ const Dashboard = () => {
 
         <motion.button
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className={`px-6 py-3 text-md z-10 ${tab === 'inventory'
+          className={`px-6 py-3 text-sm lg:text-md w-full z-10 ${tab === 'inventory'
             ? 'bg-white text-zinc-900'
             : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
             } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
@@ -102,7 +102,7 @@ const Dashboard = () => {
 
         <motion.button
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className={`px-6 py-3 text-md z-10 ${tab === 'orders'
+          className={`px-6 py-3 text-sm lg:text-md w-full z-10 ${tab === 'orders'
             ? 'bg-white text-zinc-900'
             : 'text-blue-500 hover:text-zinc-700 bg-zinc-100'
             } rounded-t-xl shadow-t-xl border-t border-r border-zinc-300`}
