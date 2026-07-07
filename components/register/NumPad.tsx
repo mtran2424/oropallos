@@ -60,7 +60,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: "100%", opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
-      className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-10"
+      className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-5"
     >
       {/* Input bar */}
       <motion.div

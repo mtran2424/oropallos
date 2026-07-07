@@ -104,11 +104,11 @@ const AddCustom = ({ products, ref, onClick }: {
   const handleConfirm = () => {
     if (currentProduct) {
       onClick(
-        currentProduct, 
-        quantity * units, 
-        currentProduct.name, 
-        type, 
-        discount, 
+        currentProduct,
+        quantity * units,
+        currentProduct.name,
+        type,
+        discount,
         (units > 1) ? (price / units) : price);
       closeModal();
     }
@@ -144,7 +144,7 @@ const AddCustom = ({ products, ref, onClick }: {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{ duration: 1, ease: "easeInOut" }}
-            className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-10 space-y-5"
+            className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-5 space-y-5"
           >
             {/* Search Bar Component */}
             <div className="flex flex-center items-center w-full max-w-7xl ">
@@ -359,8 +359,8 @@ const AddCustom = ({ products, ref, onClick }: {
             </div>
 
             <div className="text-md font-medium text-zinc-500 text-left px-2 wrap-break-word">
-                i.e. 10 units per 9.99 Red Stag 10 pack. Quantity of 2 for 2 10 packs
-              </div>
+              i.e. 10 units per 9.99 Red Stag 10 pack. Quantity of 2 for 2 10 packs
+            </div>
 
             <div className="flex flex-row space-x-2 w-full">
               <button
@@ -385,7 +385,7 @@ const AddCustom = ({ products, ref, onClick }: {
               </button>
             </div>
 
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full items-center">
               {/* Discount Field */}
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
               <input
@@ -398,235 +398,237 @@ const AddCustom = ({ products, ref, onClick }: {
             </div>
 
           </motion.div>
-
-          <motion.div
-            initial={{ y: "-100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
-            className="bg-zinc-100 border border-zinc-300 w-[40vw] px-5 py-10"
-          >
-            {/* Input bar */}
+          <div className="flex flex-col w-full space-y-5 pb-5 ">
             <motion.div
-              className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                        overflow-hidden w-full h-30 mb-5"
+              initial={{ y: "-100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ duration: 1, ease: "easeInOut" }}
+              className="bg-zinc-100 border border-zinc-300 w-full px-5 py-10"
             >
-              {/* Current input dash display */}
-              <input
-                type="number"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="px-2 text-4xl overflow-hidden w-full h-full focus:outline-none"
-                style={{ whiteSpace: "nowrap" }}
-              />
-              {/* {discount && <div className="text-start text-lg text-zinc-500">
+              {/* Input bar */}
+              <motion.div
+                className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                        overflow-hidden w-full h-30 mb-5"
+              >
+                {/* Current input dash display */}
+                <input
+                  type="number"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="px-2 text-4xl overflow-hidden w-full h-full focus:outline-none"
+                  style={{ whiteSpace: "nowrap" }}
+                />
+                {/* {discount && <div className="text-start text-lg text-zinc-500">
                 {discount.name}
               </div>} */}
-            </motion.div>
-            <div className="grid grid-cols-4 gap-x-1 gap-y-1">
-              {/* First Row */}
+              </motion.div>
+              <div className="grid grid-cols-4 gap-x-1 gap-y-1">
+                {/* First Row */}
 
-              {/* Multi item button */}
-              <button className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                {/* Multi item button */}
+                <button className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
                               hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  if (input !== "") {
-                    setUnits(parseInt(input));
+                  onClick={() => {
+                    if (input !== "") {
+                      setUnits(parseInt(input));
+                      setInput("");
+                    }
+                  }}
+                >
+                  @/for
+                </button>
+
+                <button></button>
+
+                {/* Clear inputs */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => {
                     setInput("");
-                  }
-                }}
-              >
-                @/for
-              </button>
-
-              <button></button>
-
-              {/* Clear inputs */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  setInput("");
-                  setDiscount(noDiscount);
-                  setType("Liquor");
-                  setQuantity(1);
-                }}
-              >
-
-                Clear
-              </button>
-
-              <button />
-
-              {/* Second Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}7`)}
-              >
-                7
-              </button>
-
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}8`)}
-              >
-                8
-              </button>
-
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}9`)}
-              >
-                9
-              </button>
-
-              {/* Back space button */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  setInput(prev => prev.slice(0, -1));
-                }}
-              >
-                <IoBackspaceOutline size={40} />
-              </button>
-
-
-              {/* Third Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}4`)}
-              >
-                4
-              </button>
-
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}5`)}
-              >
-                5
-              </button>
-
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}6`)}
-              >
-                6
-              </button>
-
-              {/* 15% Discount Shortcut button */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  if (discount !== fifteenPercentDiscount) {
-                    setDiscount(fifteenPercentDiscount);
-                  }
-                  else {
                     setDiscount(noDiscount);
-                  }
-                }}
-              >
-                15%
-              </button>
+                    setType("Liquor");
+                    setQuantity(1);
+                  }}
+                >
 
-              {/* Fourth Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                  Clear
+                </button>
+
+                <button />
+
+                {/* Second Row */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
                         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}1`)}
-              >
-                1
-              </button>
+                  onClick={() => setInput(`${input}7`)}
+                >
+                  7
+                </button>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
                         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}2`)}
-              >
-                2
-              </button>
+                  onClick={() => setInput(`${input}8`)}
+                >
+                  8
+                </button>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
                         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}3`)}
-              >
-                3
-              </button>
+                  onClick={() => setInput(`${input}9`)}
+                >
+                  9
+                </button>
 
-              {/* Tax Free Discount Shortcut button */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                {/* Back space button */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
                         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  if (discount !== taxFreeDiscount) {
-                    setDiscount(taxFreeDiscount);
-                    if (input)
-                      setInput((parseFloat(input) / 1.07).toFixed(0))
-                  }
-                  else {
-                    setDiscount(noDiscount);
-                  }
-                }}
-              >
-                Tax Free
-              </button>
+                  onClick={() => {
+                    setInput(prev => prev.slice(0, -1));
+                  }}
+                >
+                  <IoBackspaceOutline size={40} />
+                </button>
 
-              {/* Fifth Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+
+                {/* Third Row */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => setInput(`${input}4`)}
+                >
+                  4
+                </button>
+
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => setInput(`${input}5`)}
+                >
+                  5
+                </button>
+
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => setInput(`${input}6`)}
+                >
+                  6
+                </button>
+
+                {/* 15% Discount Shortcut button */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => {
+                    if (discount !== fifteenPercentDiscount) {
+                      setDiscount(fifteenPercentDiscount);
+                    }
+                    else {
+                      setDiscount(noDiscount);
+                    }
+                  }}
+                >
+                  15%
+                </button>
+
+                {/* Fourth Row */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => setInput(`${input}1`)}
+                >
+                  1
+                </button>
+
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => setInput(`${input}2`)}
+                >
+                  2
+                </button>
+
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => setInput(`${input}3`)}
+                >
+                  3
+                </button>
+
+                {/* Tax Free Discount Shortcut button */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => {
+                    if (discount !== taxFreeDiscount) {
+                      setDiscount(taxFreeDiscount);
+                      if (input)
+                        setInput((parseFloat(input) / 1.07).toFixed(0))
+                    }
+                    else {
+                      setDiscount(noDiscount);
+                    }
+                  }}
+                >
+                  Tax Free
+                </button>
+
+                {/* Fifth Row */}
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
                         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
-                onClick={() => setInput(`${input}0`)}
-              >
-                0
-              </button>
+                  onClick={() => setInput(`${input}0`)}
+                >
+                  0
+                </button>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
                         hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}00`)}
-              >
-                00
-              </button>
+                  onClick={() => setInput(`${input}00`)}
+                >
+                  00
+                </button>
 
-              <button></button>
+                <button></button>
 
-              {/* Seventh Row */}
-              {/* Confirm item button */}
-              <button
-                className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center px-10 col-span-4
+                {/* Seventh Row */}
+                {/* Confirm item button */}
+                <button
+                  className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center px-10 col-span-4
                         hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  if (input) {
-                    setPrice(parseInt(input));
-                    setInput("");
-                  }
-                }}
-              >
-                <MdKeyboardReturn size={40} />
-              </button>
+                  onClick={() => {
+                    if (input) {
+                      setPrice(parseInt(input));
+                      setInput("");
+                    }
+                  }}
+                >
+                  <MdKeyboardReturn size={40} />
+                </button>
 
-            </div>
-          </motion.div>
-          <div />
-          <button
-            className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center px-10
+              </div>
+            </motion.div>
+
+            <button
+              className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center
                         hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-            onClick={() => {
-              if (currentProduct && quantity && (price > 0) && discount) {
-                handleConfirm();
-              }
-            }}
-          >
-            Confirm
-          </button>
+              onClick={() => {
+                if (currentProduct && quantity && (price > 0) && discount) {
+                  handleConfirm();
+                }
+              }}
+            >
+              Confirm
+            </button>
+          </div>
+          {/* <div /> */}
         </div>
       </Modal>
 
