@@ -496,6 +496,15 @@ export const batchTableColumns = [
   { field: "cardReceiptTotal", label: "Card Receipt Total", width: "200" },
 ] as const;
 
+export const netTableColumns = [
+  { field: "date", label: "Date", width: "200px" },
+  { field: "liquorGross", label: "Liquor", width: "200px" },
+  { field: "wineGross", label: "Wine", width: "200px" },
+  { field: "tax", label: "Sales Tax", width: "200px" },
+  { field: "gross", label: "Total w/out Tax", width: "200px" },
+  { field: "cardReceiptTotal", label: "Card Receipt Total", width: "200" },
+] as const;
+
 // Headers for product tables in admin view
 export const announcementTableColumns = [
   { field: "id", label: "Announcement ID", width: "200px" },
