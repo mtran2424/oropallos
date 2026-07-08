@@ -125,7 +125,7 @@ const AddCustom = ({ products, modalRef, onClick }: {
       if (inputRef.current) {
         inputRef.current.focus();
       }
-    }, 8000);
+    }, 10000);
     if (!add) {
       return () => clearInterval(intervalId);
     }
@@ -164,7 +164,10 @@ const AddCustom = ({ products, modalRef, onClick }: {
                   key={"clear"}
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  onClick={() => setSearchTerm("")}
+                  onClick={() => {
+                    setSearchTerm("")
+                    inputRef.current?.focus();
+                  }}
                   exit={{ scale: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="text-gray-600 p-2 focus:outline-none"

@@ -154,7 +154,7 @@ const SearchMenu = ({
       if (inputRef.current) {
         inputRef.current.focus();
       }
-    }, 8000);
+    }, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -174,7 +174,10 @@ const SearchMenu = ({
               key={"close"}
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              onClick={() => setSearchTerm("")}
+              onClick={() => {
+                setSearchTerm("")
+                inputRef.current?.focus();
+              }}
               exit={{ scale: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="text-gray-600 p-2 focus:outline-none"
@@ -183,10 +186,9 @@ const SearchMenu = ({
             </motion.div>
           ) : (
             <motion.div
-              key={"fullscreen"}
+              key={"search"}
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 1 }}
-              // onClick={() => toggleFullscreen()}
               exit={{ scaleX: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="text-gray-600 p-2 focus:outline-none"
