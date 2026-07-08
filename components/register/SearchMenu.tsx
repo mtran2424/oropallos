@@ -1,22 +1,29 @@
-import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue, Ref, RefObject } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 import { FaSearch } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import { 
-  Discount, 
-  fifteenPercentDiscount, 
-  noDiscount, 
-  Product, 
-  sanitize, 
-  taxFreeDiscount, 
-  TransactionItem 
+import {
+  Discount,
+  fifteenPercentDiscount,
+  noDiscount,
+  Product,
+  sanitize,
+  taxFreeDiscount,
+  TransactionItem
 } from "@/components/global.utils";
 import Modal from "@/components/ui/Modal";
 
-const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (item: TransactionItem) => void }) => {
+const SearchMenu = ({
+  products,
+  onConfirm
+}: {
+  products: Product[];
+  onConfirm: (item: TransactionItem) => void
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
@@ -25,9 +32,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
   const [quantity, setQuantity] = useState<number>(1);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [discount, setDiscount] = useState<Discount>(noDiscount);
-  const [type, setType] = useState<string>("")
-
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [type, setType] = useState<string>("");
 
   // Handlers for search and sort
 
@@ -149,7 +154,7 @@ const SearchMenu = ({ products, onConfirm }: { products: Product[]; onConfirm: (
       if (inputRef.current) {
         inputRef.current.focus();
       }
-    }, 10000);
+    }, 8000);
     return () => clearInterval(intervalId);
   }, []);
 

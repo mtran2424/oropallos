@@ -53,8 +53,6 @@ const Transactions = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const channel = new BroadcastChannel(`${user.user?.username}-pos`);
-
-  // Cashout modal
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close the modal for cashout
@@ -386,7 +384,6 @@ const Transactions = ({
   );
 
   useEffect(() => {
-    console.log("Customer display listening on channel:", `${user.user?.username}-pos`);
     channel.postMessage({
       type: "cart-clear",
     });
@@ -462,7 +459,7 @@ const Transactions = ({
 
             </div>
             <div className="grid grid-cols-4 gap-1">
-              <AddCustom products={products} ref={modalRef} onClick={handleCustomAdd} />
+              <AddCustom products={products} modalRef={modalRef} onClick={handleCustomAdd} />
               <AddGiftcard ref={modalRef} onClick={handleGiftcardAdd} />
               {quickAddButtons && quickAddButtons.map((button) => (
                 <QuickButton key={button.id} quickButton={button} onClick={handleCustomAdd} />
@@ -531,9 +528,6 @@ const Transactions = ({
                 </tr>
               </tbody>
             </table>
-
-            {/* TODO: Create success modal and option to print receipt
-          */}
             <button
               className="flex h-20 my-5 w-full bg-blue-600 text-white font-semibold m-0.5 text-2xl justify-center items-center px-10 col-span-4 
                         hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
@@ -624,7 +618,7 @@ const Transactions = ({
 
               {/* Clear inputs */}
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => {
                   setInput("");
@@ -640,7 +634,7 @@ const Transactions = ({
 
               {/* Back space button */}
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => {
                   setInput(prev => prev.slice(0, -1));
@@ -651,7 +645,7 @@ const Transactions = ({
 
               {/* Second Row */}
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}7`)}
               >
@@ -659,7 +653,7 @@ const Transactions = ({
               </button>
 
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}8`)}
               >
@@ -667,7 +661,7 @@ const Transactions = ({
               </button>
 
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}9`)}
               >
@@ -676,7 +670,7 @@ const Transactions = ({
 
               {/* Third Row */}
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}4`)}
               >
@@ -684,7 +678,7 @@ const Transactions = ({
               </button>
 
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}5`)}
               >
@@ -692,7 +686,7 @@ const Transactions = ({
               </button>
 
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}6`)}
               >
@@ -701,7 +695,7 @@ const Transactions = ({
 
               {/* Fourth Row */}
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}1`)}
               >
@@ -709,7 +703,7 @@ const Transactions = ({
               </button>
 
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}2`)}
               >
@@ -717,7 +711,7 @@ const Transactions = ({
               </button>
 
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}3`)}
               >
@@ -726,7 +720,7 @@ const Transactions = ({
 
               {/* Fifth Row */}
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
                 onClick={() => setInput(`${input}0`)}
               >
@@ -734,7 +728,7 @@ const Transactions = ({
               </button>
 
               <button
-                className="flex p-3 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
+                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
                                 hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
                 onClick={() => setInput(`${input}00`)}
               >

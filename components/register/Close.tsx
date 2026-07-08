@@ -18,6 +18,7 @@ const Close = ({
   const date = new Date();
   const { user } = useUser();
   const modalRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions.filter((transaction) => transaction.batchId === null));
   const [refresh, setRefresh] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -312,6 +313,12 @@ const Close = ({
     recalculateTotals();
   }, [transactions]);
 
+  useEffect(() => {
+    if (confirm && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [confirm]);
+
   // Add event listener for closing the modal when clicking outside of it
   useEffect(() => {
     if (confirm) {
@@ -381,7 +388,7 @@ const Close = ({
       {/* Confirmation modal */}
       <Modal open={confirm} title="Are you sure?" onClose={closeEventModal} ref={modalRef} height="max-h-[50vh]" width="max-w-2xl">
 
-        <div className="flex flex-col gap-4 mb-15">
+        <form className="flex flex-col gap-4 mb-15">
           <label className="text-xl text-zinc-700 w-full text-left px-2">
             Date: {formatDate(date, "mm/dd/yyyy")} {formatTime(date)}
           </label>
@@ -392,6 +399,7 @@ const Close = ({
 
           <label className="text-lg font-semibold text-zinc-700 w-full text-left px-2">Card Receipt Total From Batch</label>
           <input
+            ref={inputRef}
             type="number"
             inputMode="decimal"
             step="0.01"
@@ -404,29 +412,26 @@ const Close = ({
             }}
             value={cardReceiptTotal || "0"}
           />
-        </div>
 
-        {/* Card Receipt Field */}
+          <div className="flex flex-col items-center gap-2">
+            {/* Loading Spinner */}
+            {loading ? (
+              <div className="flex justify-center items-center py-2">
+                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                className="text-2xl font-semibold w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
+                onClick={handleSubmitBatch}
+              >
+                Submit
+              </motion.button>
+            )}
 
-        <div className="flex flex-col items-center gap-2">
-          {/* Loading Spinner */}
-          {loading ? (
-            <div className="flex justify-center items-center py-2">
-              <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              className="text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out"
-              onClick={handleSubmitBatch}
-            >
-              Submit
-            </motion.button>
-          )}
-
-          <TextButton onClick={handlePrint}>Print Report</TextButton>
-        </div>
-
+            <TextButton onClick={handlePrint}>Print Report</TextButton>
+          </div>
+        </form>
       </Modal>
     </>
   );

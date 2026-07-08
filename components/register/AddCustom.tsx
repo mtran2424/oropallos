@@ -9,9 +9,9 @@ import { MdKeyboardReturn, MdNavigateBefore, MdNavigateNext } from "react-icons/
 import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFreeDiscount } from "@/components/global.utils";
 import Modal from "@/components/ui/Modal";
 
-const AddCustom = ({ products, ref, onClick }: {
+const AddCustom = ({ products, modalRef, onClick }: {
   products: Product[];
-  ref: React.Ref<HTMLDivElement>;
+  modalRef: React.Ref<HTMLDivElement>;
   onClick: (
     product: Product,
     quantity: number,
@@ -120,6 +120,17 @@ const AddCustom = ({ products, ref, onClick }: {
     }
   }, [add]);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 8000);
+    if (!add) {
+      return () => clearInterval(intervalId);
+    }
+  }, [add]);
+
   return (
     <>
       <button
@@ -133,7 +144,7 @@ const AddCustom = ({ products, ref, onClick }: {
         open={add}
         title="Custom Product"
         onClose={closeModal}
-        ref={ref}
+        ref={modalRef}
         width="max-w-[85vw]"
       >
         <div className="grid grid-cols-2 w-full space-y-5">

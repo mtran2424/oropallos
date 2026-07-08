@@ -1,13 +1,8 @@
 import { useState } from "react";
 import { compareDates, weekDays, formatDate, Batch } from "@/components/global.utils";
-// import EventCard from "./EventCard";
 import { motion } from "framer-motion";
-// import { deleteEvent, updateEvent } from "../../api/calenderapi";
-// import AddEvent from "../resourceComponents/AddEvent";
 import { MdDelete } from "react-icons/md";
 import BatchCard from "./BatchCard";
-
-// import { getEventById } from "../../api/calenderapi";
 
 const DailyView = ({ 
   date, 
@@ -26,30 +21,7 @@ const DailyView = ({
       const newDate = new Date(data[1]);
       onDateDrop(newDate);
     }
-    // else if (data[0] === "event" && events.filter(event => event._id === data[1]).length === 0) {
-    //   getEventById(data[1]).then((eventData: event) => {
-    //     const event = {
-    //       name: eventData.name,
-    //       location: eventData.location,
-    //       timeStart: eventData.timeStart,
-    //       timeEnd: eventData.timeEnd,
-    //       meetingLink: eventData.meetingLink,
-    //       description: eventData.description,
-    //       date: formatDate(date),
-    //     }
-    //     updateEvent(data[1], event).then(() => {
-    //       onEditEvent();
-    //     });
-    //   });
-    // }
   };
-  // const handleAddEvent = (event: event) => {
-  //   onAddEvent(event);
-  // }
-
-  // const handleEditEvent = (event: event) => {
-  //   onEditEvent(event);
-  // }
 
   const allowDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
