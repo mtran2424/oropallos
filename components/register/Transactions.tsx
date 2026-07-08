@@ -557,7 +557,7 @@ const Transactions = ({
       {/* Cashout Modal */}
       <Modal open={cashout} title="Cashout" onClose={closeCashoutModal} ref={modalRef}>
         <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
-          <div className="flex flex-col items-center justify-center w-full gap-2">
+          <div className="flex flex-col items-center justify-center w-full gap-1">
 
             {/* Current input dash display */}
             <div className="grid grid-cols-2 text-xl w-full">
