@@ -153,6 +153,7 @@ export interface BatchRequest {
 }
 
 export interface Discount {
+  id?: string;
   name: string;
   value: string;
   multiplier: number;

@@ -1,4 +1,4 @@
-import { InventoryRequest, OrderItem, QuickAddButton } from "@/components/global.utils";
+import { Discount, InventoryRequest, OrderItem, QuickAddButton } from "@/components/global.utils";
 
 /**
  * Fetches all products from the server.
@@ -111,6 +111,57 @@ export const editQuickAddButton = async (button: QuickAddButton) => {
 
   if (!res.ok) {
     throw new Error('Failed to update quick add button');
+  }
+  return res;
+}
+
+export const createDiscount = async (discount: Discount) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/discounts/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(discount),
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to create discounts');
+  }
+  return res.json();
+}
+
+export const getDiscount = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/discounts/get`, {
+    method: 'GET',
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch discounts');
+  }
+  return res.json();
+}
+
+export const deleteDiscount = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/discounts/remove/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to delete discounts');
+  }
+  return res;
+}
+
+export const editDiscount = async (discount: Discount) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/discounts/update/${discount.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(discount),
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to update discounts');
   }
   return res;
 }

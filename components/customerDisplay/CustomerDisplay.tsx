@@ -123,8 +123,8 @@ const CustomerDisplay = () => {
                     Qty
                   </th>
                   <th>
-                      Discount
-                    </th>
+                    Discount
+                  </th>
                   <th>
                     Price
                   </th>

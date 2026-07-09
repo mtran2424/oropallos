@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Batch, Product, QuickAddButton } from "@/components/global.utils";
+import { Batch, Discount, Product, QuickAddButton } from "@/components/global.utils";
 import QuickAddButtonMenu from "./settings/QuickAddButtonMenu";
 import AccountingMenu from "./settings/AccountingMenu";
+import DiscountMenu from "./settings/DiscountMenu";
 
 const Settings = ({
   products,
   quickAddButtons,
   batches,
+  discounts,
   onEdit,
   onDelete,
   onAdd
@@ -15,6 +17,7 @@ const Settings = ({
   products: Product[],
   quickAddButtons: QuickAddButton[],
   batches: Batch[];
+  discounts: Discount[];
   onEdit: () => void,
   onDelete: () => void,
   onAdd: () => void
@@ -67,6 +70,7 @@ const Settings = ({
           </div>
           <div className="flex flex-col w-full items-start justify-start py-5">
             {view === "quickButtons" && <QuickAddButtonMenu products={products} quickAddButtons={quickAddButtons} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd}/>}
+            {view === "discounts" && <DiscountMenu discounts={discounts} onEdit={onEdit} onDelete={onDelete} onAdd={onAdd}/>}
             {view === "accounting" && <AccountingMenu batches={batches}/>}
           </div>
         </div>

@@ -10,14 +10,15 @@ import { RxExit } from "react-icons/rx";
 import { FaRegSquare } from "react-icons/fa";
 import { IoIosSettings, IoMdClose } from "react-icons/io";
 import { getBatches } from "@/app/api/batchapi";
-import { getProducts, getQuickAddButtons } from "@/app/api/adminapi";
+import { getDiscount, getProducts, getQuickAddButtons } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
 import { 
   Batch, 
   Config, 
   Product, 
   QuickAddButton, 
-  Transaction 
+  Transaction,
+  Discount
 } from "@/components/global.utils";
 import Sales from "./Sales";
 import HelpButton from "./HelpButton";
@@ -33,6 +34,7 @@ const Register = () => {
   const [batches, setBatches] = useState<Batch[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [quickAddButtons, setQuickAddButtons] = useState<QuickAddButton[]>([]);
+  const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [configs, setConfigs] = useState<Config[]>([]);
 
@@ -96,7 +98,7 @@ const Register = () => {
         const data = await getBatches();
         setBatches(data.batches);
       } catch (error) {
-        console.error("Error fetching transactions:", error);
+        console.error("Error fetching batches:", error);
       }
     };
 
@@ -104,6 +106,15 @@ const Register = () => {
       try {
         const data = await getQuickAddButtons();
         setQuickAddButtons(data.buttons);
+      } catch (error) {
+        console.error("Error fetching quick buttons:", error);
+      }
+    }
+
+    const fetchDiscounts = async () => {
+      try {
+        const data = await getDiscount();
+        setDiscounts(data.discounts);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
@@ -113,6 +124,7 @@ const Register = () => {
     fetchProducts();
     fetchTransactions();
     fetchQuickAddButtons();
+    fetchDiscounts();
   }, [refresh]);
 
   // hook to listen for fullscreen changes and update state accordingly
@@ -239,7 +251,7 @@ const Register = () => {
         {page === "Manager" && <Manager transactions={transactions} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
         {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches} />}
-        {page === "Settings" && <Settings products={products} quickAddButtons={quickAddButtons} batches={batches} onEdit={()=> setRefresh(prev => !prev)}  onDelete={()=> setRefresh(prev => !prev)} onAdd={()=> setRefresh(prev => !prev)}/>}
+        {page === "Settings" && <Settings products={products} quickAddButtons={quickAddButtons} discounts={discounts} batches={batches} onEdit={()=> setRefresh(prev => !prev)}  onDelete={()=> setRefresh(prev => !prev)} onAdd={()=> setRefresh(prev => !prev)}/>}
       </div>
     </motion.div>
   );
