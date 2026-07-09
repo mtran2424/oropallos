@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { FaRegSquare } from "react-icons/fa";
-import { calculateSubtotal, calculateTax, calculateTotal, TransactionItem } from "@/components/global.utils";
+import { calculateSubtotal, calculateTax, calculateTotal, getDiscount, TransactionItem } from "@/components/global.utils";
 import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 
 const CustomerDisplay = () => {
@@ -122,9 +122,9 @@ const CustomerDisplay = () => {
                   <th>
                     Qty
                   </th>
-                  {/* <th>
+                  <th>
                       Discount
-                    </th> */}
+                    </th>
                   <th>
                     Price
                   </th>
@@ -139,7 +139,7 @@ const CustomerDisplay = () => {
                     <td className="text-2xl text-center p-1">{item.type}</td>
                     <td className="text-2xl text-left p-1">{item.name}</td>
                     <td className="text-2xl text-center p-1">{item.quantity}</td>
-                    {/* <td className="text-2xl text-center p-1">{getDiscount(item.discount).name}</td> */}
+                    <td className="text-2xl text-center p-1">{getDiscount(item.discount).name}</td>
                     <td className="text-2xl text-center p-1">{(item.itemPrice / 100).toFixed(2)}</td>
                   </tr>
                 ))}
