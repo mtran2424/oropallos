@@ -48,7 +48,7 @@ const AccountingTable = ({
   const exportCSV = () => {
   const headers = [
     ...netTableColumns.map((c) => c.label),
-    "Total w/ Tax",
+    "Cash",
   ];
 
   const rows = sortedBatches.map((batch) => [
@@ -60,9 +60,9 @@ const AccountingTable = ({
       (batch.liquorGross / 100).toFixed(2),
     (batch.wineGross / 100).toFixed(2),
     (batch.tax / 100).toFixed(2),
-    (batch.gross / 100).toFixed(2),
-    (batch.cardReceiptTotal / 100).toFixed(2),
-    ((batch.gross + batch.tax) / 100).toFixed(2),
+    // (batch.gross / 100).toFixed(2),
+    (-batch.cardReceiptTotal / 100).toFixed(2),
+    (-(batch.gross + batch.tax - batch.cardReceiptTotal) / 100).toFixed(2),
   ]);
 
   const csvContent =
@@ -124,7 +124,7 @@ const AccountingTable = ({
                       className="px-4 py-3 text-left text-md font-medium uppercase tracking-widest whitespace-nowrap"
                       style={{ width: "200px" }}
                     >
-                      <strong>Total w/ Tax</strong>
+                      <strong>Cash</strong>
                     </th>
                   </tr>
                 </thead>
@@ -159,7 +159,7 @@ const AccountingTable = ({
                             whiteSpace: "pre-line",
                           }}
                         >
-                          ${((batch.gross + batch.tax) / 100).toFixed(2)}
+                          ${((batch.gross + batch.tax - batch.cardReceiptTotal) / 100).toFixed(2)}
                         </td>
                       </tr>
                     ))

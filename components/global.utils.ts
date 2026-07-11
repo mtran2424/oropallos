@@ -502,7 +502,7 @@ export const netTableColumns = [
   { field: "liquorGross", label: "Liquor", width: "200px" },
   { field: "wineGross", label: "Wine", width: "200px" },
   { field: "tax", label: "Sales Tax", width: "200px" },
-  { field: "gross", label: "Total w/out Tax", width: "200px" },
+  // { field: "gross", label: "Total w/out Tax", width: "200px" },
   { field: "cardReceiptTotal", label: "Card Receipt Total", width: "200" },
 ] as const;
 
