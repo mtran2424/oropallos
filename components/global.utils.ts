@@ -176,19 +176,19 @@ export const taxRate = 7;
 export const noDiscount = {
   name: "No Discount",
   value: "No_Discount",
-  multiplier: 1,
+  multiplier: 0,
 } as Discount;
 
 export const fifteenPercentDiscount = {
   name: "Fifteen Percent",
   value: "Fifteen_Percent",
-  multiplier: 0.85,
+  multiplier: 15,
 } as Discount;
 
 export const taxFreeDiscount = {
   name: "Tax Free",
   value: "Tax_Free",
-  multiplier: 1,
+  multiplier: 0,
 } as Discount;
 
 // CONSTANTS
@@ -675,13 +675,13 @@ export const getTotal = (item: TransactionItemRequest) => {
   return (
     item.itemPrice *
     item.quantity *
-    item.discount.multiplier *
+    (1 - parseFloat((item.discount.multiplier/100).toFixed(2))) *
     (item.type !== "Giftcard" ? 1 + taxRate / 100 : 1)
   );
 };
 
 export const getSubtotal = (item: TransactionItemRequest) => {
-  return item.itemPrice * item.quantity * item.discount.multiplier;
+  return item.itemPrice * item.quantity *  (1 - parseFloat((item.discount.multiplier/100).toFixed(2)));
 };
 
 export const calculateSubtotal = (cart: TransactionItemRequest[]) => {
@@ -699,7 +699,7 @@ export const calculateDiscount = (cart: TransactionItemRequest[]) => {
     total +=
       item.itemPrice *
       item.quantity *
-      (1 - item.discount.multiplier);
+      (parseFloat((item.discount.multiplier/100).toFixed(2)));
   });
 
   return total;
