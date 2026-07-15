@@ -63,7 +63,7 @@ const Dashboard = () => {
       {/* Header */}
 
       {/* Tab Buttons */}
-      <div className="grid grid-cols-4 lg:grid-cols-5 w-screen">
+      <div className="grid grid-cols-4 lg:grid-cols-5 w-full">
         <motion.button
           transition={{ duration: 0.2, ease: "easeInOut" }}
           className={`px-6 py-3 text-sm lg:text-md w-full z-10 ${tab === 'products'
