@@ -132,14 +132,15 @@ const AccountingTable = ({
                 {/* Table Body */}
                 <tbody className="divide-y divide-zinc-400">
                   {sortedBatches.length > 0 ? (
-                    sortedBatches.map((batch) => (
+                    sortedBatches.map((batch, index) => (
                       <tr
-                        key={batch.id} className="hover:bg-zinc-200 transition duration-200"
+                        key={batch.id} 
+                        className="hover:bg-zinc-200 transition duration-200"
                       >
                         {netTableColumns.map((column) => (
                           // Render each cell based on the column field
                           <td
-                            key={column.field}
+                            key={`${column.field}-${index}`}
                             className="px-4 py-3 text-xl align-center"
                             style={{
                               width: column.width,
@@ -151,11 +152,11 @@ const AccountingTable = ({
                           </td>
                         ))}
                         <td
-                          key={"netTotal"}
+                          key={`netTotal-${index}`}
                           className="px-4 py-3 text-xl align-center"
                           style={{
                             width: "200px",
-                            maxWidth: "200px",
+                            maxWidth: "200px", 
                             whiteSpace: "pre-line",
                           }}
                         >

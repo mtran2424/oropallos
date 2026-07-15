@@ -339,209 +339,207 @@ const Calendar = ({
   });
 
   return (
-    <motion.div
-      className="flex flex-col w-full h-full lg:flex-row items-start justify-center px-5 gap-2"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-
-      {/* Calendar View */}
+    <AnimatePresence mode="wait">
       <motion.div
-        className="flex flex-col w-full h-full"
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex flex-col w-full h-full lg:flex-row items-start justify-center px-5 gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
       >
+
+        {/* Calendar View */}
         <motion.div
-          className="flex flex-row w-full items-center justify-center text-center text-xl lg:text-2xl font-semibold text-zinc-700 gap-10 transition duration-200 ease-in-out"
-          variants={headerVariants}
-          initial="initial"
-          animate="animate"
-        >
-          {/* previous and next month/week button */}
-          <motion.button
-            className="text-zinc-700 font-semibold hover:text-zinc-100 hover:bg-zinc-400 rounded-3xl"
-            value={"<"}
-            onClick={handleNextPrevChange}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <FiChevronLeft />
-          </motion.button>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={monthYearString}
-              initial={{ opacity: 0, y: direction > 0 ? 20 : -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: direction > 0 ? -20 : 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {monthYearString}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* next month/week button */}
-          <motion.button
-            className="text-zinc-700 font-semibold hover:text-zinc-100 hover:bg-zinc-400 rounded-3xl"
-            value={">"}
-            onClick={handleNextPrevChange}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <FiChevronRight />
-          </motion.button>
-        </motion.div>
-
-        <div className="flex flex-row items-end justify-end">
-          {/* Toggle for selecting the view (month/week/day) */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ReactSwitch
-              checked={view}
-              onChange={handleViewChange}
-              offColor="#71717a"
-              onColor="#3b82f6"
-              uncheckedIcon={<div className="flex px-1 text-white/60 text-md font-semibold">W</div>}
-              checkedIcon={<div className="flex px-2 text-white/60 text-md font-semibold">M</div>}
-              className="m-2"
-            />
-          </motion.div>
-        </div>
-
-        {/* Weekly/Monthly view */}
-        <motion.div
-          className="flex flex-col h-full w-full px-2 rounded-md border items-center bg-zinc-200 border-zinc-300"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <div className="grid grid-cols-7 w-full gap-1 mb-2">
-            {/* Generate the days of the week header */}
-            {weekDays.map((day, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center justify-center p-2 w-full text-xs lg:text-lg text-zinc-700 font-semibold"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
-              >
-                {day.abbr}
-              </motion.div>
-            ))}
-
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={monthYearString + (view ? "month" : "week")}
-                custom={direction}
-                variants={calendarVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="col-span-7 grid grid-cols-7 gap-1 h-full"
-              >
-                {/* Generate the days of the month/week */}
-                {visibleDays.map((date, index) => (
-                  <motion.div
-                    key={index}
-                    className="flex items-center justify-center h-full w-full transition duration-200 ease-in-out"
-                    custom={index}
-                    variants={dayVariants}
-                    initial="initial"
-                    animate="animate"
-                    whileHover="hover"
-                  >
-                    <Day
-                      date={date}
-                      selectedDate={selectedDate}
-                      batches={batches.filter(batch => compareDates(date, new Date(batch.date ?? 0)))}
-                      onClick={() => handleDateChange(date)}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              <motion.div
-                custom={direction}
-                variants={calendarVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="col-span-7 gap-1 h-full"
-              >
-                <AccountingTable batches={filteredBatches} />
-              </motion.div>
-            </AnimatePresence>
-
-          </div>
-        </motion.div>
-
-
-      </motion.div>
-
-      {/* Sidebar Filter Menu */}
-      <div className="hidden lg:flex lg:flex-col gap-2 p-5 justify-start self-start sticky top-5 h-fit z-100">
-        <div className="flex flex-col border-gray-400 border p-5 rounded w-full h-1/4 min-w-80 overflow-hidden">
-          {/* Close filter */}
-          <div className="flex w-full justify-end">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="text-md text-blue-500 hover:text-zinc-200"
-            // onClick={handleClearClick}
-            >
-              Clear
-            </motion.button>
-          </div>
-          {/* Title */}
-          <h2 className="flex text-lg font-semibold text-zinc-900 mb-2">Data Filters</h2>
-
-          {/* Filter Categories */}
-          <div className="flex flex-col overflow-auto h-full space-y-2 pb-10">
-            <div className="flex flex-col gap-2">
-              <label htmlFor="start-date">Start Date:</label>
-              <input
-                type="date"
-                className="border p-2 rounded-md z-100"
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value)
-                }}
-              // Native input value is always yyyy-mm-dd
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="start-date">End Date:</label>
-              <input
-                type="date"
-                className="border p-2 rounded-md z-100"
-                value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value)
-                }}
-              // Native input value is always yyyy-mm-dd
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Daily view */}
-        <motion.div
-          className="flex flex-col w-full"
-          initial={{ opacity: 0, x: -50 }}
+          className="flex flex-col w-full h-full"
+          initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <DailyView
-            onDateDrop={handleDateDrop}
-            date={selectedDate}
-            batches={batches.filter(batch => compareDates(selectedDate, new Date(batch.date ?? 0)))}
-          />
+          <motion.div
+            className="flex flex-row w-full items-center justify-center text-center text-xl lg:text-2xl font-semibold text-zinc-700 gap-10 transition duration-200 ease-in-out"
+            variants={headerVariants}
+            initial="initial"
+            animate="animate"
+          >
+            {/* previous and next month/week button */}
+            <motion.button
+              className="text-zinc-700 font-semibold hover:text-zinc-100 hover:bg-zinc-400 rounded-3xl"
+              value={"<"}
+              onClick={handleNextPrevChange}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FiChevronLeft />
+            </motion.button>
+
+              <motion.div
+                key={monthYearString}
+                initial={{ opacity: 0, y: direction > 0 ? 20 : -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: direction > 0 ? -20 : 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {monthYearString}
+              </motion.div>
+
+            {/* next month/week button */}
+            <motion.button
+              className="text-zinc-700 font-semibold hover:text-zinc-100 hover:bg-zinc-400 rounded-3xl"
+              value={">"}
+              onClick={handleNextPrevChange}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FiChevronRight />
+            </motion.button>
+          </motion.div>
+
+          <div className="flex flex-row items-end justify-end">
+            {/* Toggle for selecting the view (month/week/day) */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ReactSwitch
+                checked={view}
+                onChange={handleViewChange}
+                offColor="#71717a"
+                onColor="#3b82f6"
+                uncheckedIcon={<div className="flex px-1 text-white/60 text-md font-semibold">W</div>}
+                checkedIcon={<div className="flex px-2 text-white/60 text-md font-semibold">M</div>}
+                className="m-2"
+              />
+            </motion.div>
+          </div>
+
+          {/* Weekly/Monthly view */}
+          <motion.div
+            className="flex flex-col h-full w-full px-2 rounded-md border items-center bg-zinc-200 border-zinc-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <div className="grid grid-cols-7 w-full gap-1 mb-2">
+              {/* Generate the days of the week header */}
+              {weekDays.map((day, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-center justify-center p-2 w-full text-xs lg:text-lg text-zinc-700 font-semibold"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
+                >
+                  {day.abbr}
+                </motion.div>
+              ))}
+
+                <motion.div
+                  key={monthYearString + (view ? "month" : "week")}
+                  custom={direction}
+                  variants={calendarVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  className="col-span-7 grid grid-cols-7 gap-1 h-full"
+                >
+                  {/* Generate the days of the month/week */}
+                  {visibleDays.map((date, index) => (
+                    <motion.div
+                      key={index}
+                      className="flex items-center justify-center h-full w-full transition duration-200 ease-in-out"
+                      custom={index}
+                      variants={dayVariants}
+                      initial="initial"
+                      animate="animate"
+                      whileHover="hover"
+                    >
+                      <Day
+                        date={date}
+                        selectedDate={selectedDate}
+                        batches={batches.filter(batch => compareDates(date, new Date(batch.date ?? 0)))}
+                        onClick={() => handleDateChange(date)}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                <motion.div
+                  custom={direction}
+                  variants={calendarVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  className="col-span-7 gap-1 h-full"
+                >
+                  <AccountingTable batches={filteredBatches} />
+                </motion.div>
+
+            </div>
+          </motion.div>
+
+
         </motion.div>
-      </div>
-    </motion.div>
+
+        {/* Sidebar Filter Menu */}
+        <div className="hidden lg:flex lg:flex-col gap-2 p-5 justify-start self-start sticky top-5 h-fit z-100">
+          <div className="flex flex-col border-gray-400 border p-5 rounded w-full h-1/4 min-w-80 overflow-hidden">
+            {/* Close filter */}
+            <div className="flex w-full justify-end">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="text-md text-blue-500 hover:text-zinc-200"
+              // onClick={handleClearClick}
+              >
+                Clear
+              </motion.button>
+            </div>
+            {/* Title */}
+            <h2 className="flex text-lg font-semibold text-zinc-900 mb-2">Data Filters</h2>
+
+            {/* Filter Categories */}
+            <div className="flex flex-col overflow-auto h-full space-y-2 pb-10">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="start-date">Start Date:</label>
+                <input
+                  type="date"
+                  className="border p-2 rounded-md z-100"
+                  value={startDate}
+                  onChange={(e) => {
+                    setStartDate(e.target.value)
+                  }}
+                // Native input value is always yyyy-mm-dd
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="start-date">End Date:</label>
+                <input
+                  type="date"
+                  className="border p-2 rounded-md z-100"
+                  value={endDate}
+                  onChange={(e) => {
+                    setEndDate(e.target.value)
+                  }}
+                // Native input value is always yyyy-mm-dd
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Daily view */}
+          <motion.div
+            className="flex flex-col w-full"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <DailyView
+              onDateDrop={handleDateDrop}
+              date={selectedDate}
+              batches={batches.filter(batch => compareDates(selectedDate, new Date(batch.date ?? 0)))}
+            />
+          </motion.div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
