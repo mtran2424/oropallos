@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   const liquorSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Liquor"));
   const wineSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Wine"));
 
-  const discount = calculateDiscount(transaction.transactionItems.filter((item: TransactionItem) => item.type !== "Wine" && getDiscount(item.discount).value !== "No_Discount"));
+  const discount = calculateDiscount(transaction.transactionItems.filter((item: TransactionItem) => getDiscount(item.discount).value !== "No_Discount" && getDiscount(item.discount).value !== "Tax_Free"));
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
 
