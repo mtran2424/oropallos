@@ -12,10 +12,13 @@ import {
   calculateSubtotal,
   calculateTax,
   calculateTotal,
+  Discount,
+  fifteenPercentDiscount,
   formatDate,
   formatTime,
-  getDiscount,
   managerTableColumns,
+  noDiscount,
+  taxFreeDiscount,
   Transaction,
   TransactionItem,
   transactionItemTableColumns
@@ -25,7 +28,13 @@ import CopyButton from "@/components/ui/CopyButton";
 import TextButton from "@/components/ui/TextButton";
 import Modal from "@/components/ui/Modal";
 
-const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transaction[] }) => {
+const CurrentBatch = ({
+  initialTransactions,
+  discounts
+}: {
+  initialTransactions: Transaction[];
+  discounts: Discount[];
+}) => {
   const { user } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions.filter((transaction) => transaction.batchId === null));
   const [refresh, setRefresh] = useState(false);
@@ -77,6 +86,24 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
     setDiscountTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.discount, 0) / 100);
     setTaxTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.tax, 0) / 100);
     setNetTotal(transactions.filter((t) => t.status === "Cashed").reduce((sum, transaction) => sum + transaction.total, 0) / 100);
+  }
+
+  const getDiscount = (discount: string) => {
+    switch (discount) {
+      case "Tax_Free":
+        return taxFreeDiscount;
+      case "Fifteen_Percent":
+        return fifteenPercentDiscount;
+      case "No_Discount":
+        return noDiscount;
+      default:
+        if (discounts) {
+          return discounts.find(disc => disc.value === discount) ?? noDiscount;
+        }
+        else {
+          return noDiscount;
+        }
+    }
   }
 
   const handleReprint = useReactToPrint({
@@ -158,7 +185,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
       case "unitPrice":
         return item.unitPrice ? `$${(item.unitPrice / 100).toFixed(2)}` : "";
       case "discount":
-        return getDiscount(item.discount).name;
+        return item.discount;
       case "type":
         return item.type;
       case "productId":
@@ -508,7 +535,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                             SUBTOTAL
                           </td>
                           <td className="text-end">
-                            ${(calculateSubtotal(transaction.transactionItems) / 100).toFixed(2)}
+                            ${(calculateSubtotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
                           </td>
                         </tr>
                         <tr className="">
@@ -516,7 +543,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                             TAX
                           </td>
                           <td className="text-end">
-                            ${(calculateTax(transaction.transactionItems) / 100).toFixed(2)}
+                            ${(calculateTax(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
                           </td>
                         </tr>
                       </tbody>
@@ -529,7 +556,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                             TOTAL
                           </td>
                           <td className="text-end">
-                            ${(calculateTotal(transaction.transactionItems) / 100).toFixed(2)}
+                            ${(calculateTotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
                           </td>
                         </tr>
                         <tr>
@@ -545,7 +572,7 @@ const CurrentBatch = ({ initialTransactions }: { initialTransactions: Transactio
                             CHANGE
                           </td>
                           <td className="text-end">
-                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems)) / 100).toFixed(2)}
+                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)})))) / 100).toFixed(2)}
                           </td>
                         </tr>
                       </tbody>

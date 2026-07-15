@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Transaction } from "@/components/global.utils";
+import { Discount, Transaction } from "@/components/global.utils";
 import CurrentBatch from "./CurrentBatch";
 import Batches from "./Batches";
 
-const Manager = ({ transactions }: { transactions: Transaction[] }) => {
+const Manager = ({ transactions, discounts }: { 
+  transactions: Transaction[];
+  discounts: Discount[];
+ }) => {
   const [view, setView] = useState<"currentBatch" | "previousBatches">("currentBatch");
 
   return (
@@ -43,8 +46,8 @@ const Manager = ({ transactions }: { transactions: Transaction[] }) => {
         </div>
 
         <div className="flex flex-col w-full items-start justify-start py-5">
-          {view === "currentBatch" && <CurrentBatch initialTransactions={transactions} />}
-          {view === "previousBatches" && <Batches />}
+          {view === "currentBatch" && <CurrentBatch initialTransactions={transactions} discounts={discounts}/>}
+          {view === "previousBatches" && <Batches discounts={discounts}/>}
         </div>
 
       </div>

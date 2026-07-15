@@ -5,6 +5,7 @@ import { getTransactions } from "@/app/api/transactionapi";
 import {
   Batch,
   colorPool,
+  formatDate,
   getDateObject,
   getDateTime,
   Product,
@@ -157,7 +158,13 @@ const Sales = ({
     Object.entries(
       initialBatches
         .reduce((count, batch) => {
-          count[getDateTime(batch.date)] = batch.gross / 100;
+          const date = (batch.date instanceof Date ? formatDate(batch.date, "mm/dd/yyyy") :
+            batch.date ? formatDate(new Date(batch.date), "mm/dd/yyyy") : "") ?? "";
+
+          if (!count[date]) {
+            count[date] = 0;
+          }
+          count[date] += batch.gross / 100;
           return count;
         }, {} as Record<string, number>)
     ).map(([date, sales], index) => ({
@@ -305,7 +312,13 @@ const Sales = ({
       Object.entries(
         batches
           .reduce((count, batch) => {
-            count[getDateTime(batch.date)] = batch.gross / 100;
+            const date = (batch.date instanceof Date ? formatDate(batch.date, "mm/dd/yyyy") :
+              batch.date ? formatDate(new Date(batch.date), "mm/dd/yyyy") : "") ?? "";
+
+            if (!count[date]) {
+              count[date] = 0;
+            }
+            count[date] += batch.gross / 100;
             return count;
           }, {} as Record<string, number>)
       ).map(([date, sales], index) => ({

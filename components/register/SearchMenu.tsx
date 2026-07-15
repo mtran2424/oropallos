@@ -12,7 +12,8 @@ import {
   Product,
   sanitize,
   taxFreeDiscount,
-  TransactionItem
+  TransactionItem,
+  TransactionItemRequest
 } from "@/components/global.utils";
 import Modal from "@/components/ui/Modal";
 
@@ -21,7 +22,7 @@ const SearchMenu = ({
   onConfirm
 }: {
   products: Product[];
-  onConfirm: (item: TransactionItem) => void
+  onConfirm: (item: TransactionItemRequest) => void
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -117,7 +118,7 @@ const SearchMenu = ({
         type: type,
         name: currentProduct.name,
         quantity: quantity,
-        discount: discount.value,
+        discount: discount,
         productId: currentProduct.id,
         itemPrice: parseInt(getPrice(discount.value, currentProduct.price * 100).toFixed(0)),
         unitPrice: currentProduct.unitPrice ? parseInt(currentProduct.unitPrice.toFixed(0)) : undefined

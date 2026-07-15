@@ -247,8 +247,8 @@ const Register = () => {
         </div>
       </motion.div>
       <div className="pl-20">
-        {page === "Transaction" && <Transactions products={products} quickAddButtons={quickAddButtons}/>}
-        {page === "Manager" && <Manager transactions={transactions} />}
+        {page === "Transaction" && <Transactions products={products} discounts={discounts} quickAddButtons={quickAddButtons}/>}
+        {page === "Manager" && <Manager transactions={transactions} discounts={discounts}/>}
         {page === "Close" && <Close initialTransactions={transactions} />}
         {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches} />}
         {page === "Settings" && <Settings products={products} quickAddButtons={quickAddButtons} discounts={discounts} batches={batches} onEdit={()=> setRefresh(prev => !prev)}  onDelete={()=> setRefresh(prev => !prev)} onAdd={()=> setRefresh(prev => !prev)}/>}

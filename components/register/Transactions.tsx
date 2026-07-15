@@ -9,16 +9,15 @@ import { createTransaction } from "@/app/api/transactionapi";
 import {
   Product,
   noDiscount,
-  calculateDiscount,
   calculateSubtotal,
   calculateTotal,
   calculateTax,
-  TransactionItem,
-  getDiscount,
   formatTime,
   formatDate,
   Discount,
-  QuickAddButton
+  QuickAddButton,
+  TransactionItemRequest,
+  calculateDiscount
 } from "@/components/global.utils";
 import Receipt from "@/components/utils/Receipt";
 import TextButton from "@/components/ui/TextButton";
@@ -31,14 +30,16 @@ import NumPad from "./NumPad";
 
 const Transactions = ({
   products,
+  discounts,
   quickAddButtons
 }: {
   products: Product[];
+  discounts: Discount[];
   quickAddButtons: QuickAddButton[]
 }) => {
   const date = new Date();
   const user = useUser();
-  const [cart, setCart] = useState<TransactionItem[]>([]);
+  const [cart, setCart] = useState<TransactionItemRequest[]>([]);
   const [mode, setMode] = useState<string>("Search");
   const [input, setInput] = useState<string>("");
   const [cashout, setCashout] = useState<boolean>(false);
@@ -89,13 +90,13 @@ const Transactions = ({
     discount: Discount,
     price: number
   ) => {
-    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount === noDiscount.value && item.itemPrice === price);
+    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount.value === discount.value && item.itemPrice === price);
 
     const item = {
       type: type,
       name: name,
       quantity: quantity,
-      discount: discount.value,
+      discount: discount,
       itemPrice: price,
       unitPrice: product.unitPrice ? parseInt(product.unitPrice.toFixed(0)) : undefined,
       productId: product.id,
@@ -125,7 +126,7 @@ const Transactions = ({
       type: "Giftcard",
       name: "Gift Card",
       quantity: 1,
-      discount: noDiscount.value,
+      discount: noDiscount,
       itemPrice: price,
     }
     setCart((prev) => [...prev, item]);
@@ -135,7 +136,7 @@ const Transactions = ({
     });
   }
 
-  const handleAddItem = (item: TransactionItem) => {
+  const handleAddItem = (item: TransactionItemRequest) => {
     const itemExists = cart.findIndex(cartItem => cartItem.name === item.name && cartItem.type === item.type && cartItem.discount === item.discount && cartItem.itemPrice === item.itemPrice);
     if (itemExists != -1) {
       const temp = cart[itemExists];
@@ -306,14 +307,14 @@ const Transactions = ({
                   <div>
                     {item.quantity > 1 ? `${item.quantity} @ ` : ''}${(item.itemPrice / 100).toFixed(2)}
                   </div>
-                  {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
+                  {item.discount.value !== "No_Discount" && item.discount.value !== "Tax_Free" && (
                     <div>
-                      -{((1 - getDiscount(item.discount).multiplier) * 100).toFixed(0)}%
+                      -{((1 - item.discount.multiplier) * 100).toFixed(0)}%
                     </div>
                   )}
-                  {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
+                  {item.discount.value !== "No_Discount" && item.discount.value !== "Tax_Free" && (
                     <div>
-                      -{(((item.itemPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
+                      -{(((item.itemPrice * item.quantity) - (item.discount.multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
                     </div>
                   )}
                 </div>
@@ -436,7 +437,7 @@ const Transactions = ({
                         <td className="text-2xl text-center p-1">{item.type}</td>
                         <td className="text-2xl text-left p-1">{item.name} {item.product ? " - " + item.product.size : ""}</td>
                         <td className="text-2xl text-center p-1">{item.quantity}</td>
-                        <td className="text-2xl text-center p-1">{getDiscount(item.discount).name}</td>
+                        <td className="text-2xl text-center p-1">{item.discount.name}</td>
                         <td className="text-2xl text-center p-1">{(item.itemPrice / 100).toFixed(2)}</td>
                         <td className="text-2xl text-center p-1">
                           <button onClick={() => {

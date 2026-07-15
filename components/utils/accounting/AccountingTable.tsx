@@ -134,7 +134,7 @@ const AccountingTable = ({
                   {sortedBatches.length > 0 ? (
                     sortedBatches.map((batch, index) => (
                       <tr
-                        key={batch.id} 
+                        key={`${batch.id}-${index}`} 
                         className="hover:bg-zinc-200 transition duration-200"
                       >
                         {netTableColumns.map((column) => (

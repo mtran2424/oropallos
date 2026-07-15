@@ -8,11 +8,11 @@ import {
   fifteenPercentDiscount,
   noDiscount,
   taxFreeDiscount,
-  TransactionItem
+  TransactionItemRequest
 } from "@/components/global.utils";
 import Receipt from "@/components/utils/Receipt";
 
-const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) => {
+const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItemRequest) => void }) => {
   const [input, setInput] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [item, setItem] = useState<string>("");
@@ -303,7 +303,7 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItem) => void }) =
           onClick={() => {
             if (type && quantity && discount && input) {
               onConfirm(
-                { type: type, name: item, quantity: quantity, discount: discount.value, itemPrice: parseInt(input) }
+                { type: type, name: item, quantity: quantity, discount: discount, itemPrice: parseInt(input) }
               );
               setInput("");
               setDiscount(noDiscount);

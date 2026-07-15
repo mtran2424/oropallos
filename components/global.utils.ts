@@ -133,7 +133,7 @@ export interface TransactionRequest {
   status: string;
   register: string;
   notes?: string;
-  transactionItems: TransactionItem[];
+  transactionItems: TransactionItemRequest[];
 }
 export interface InventoryRequest {
   orderItems: OrderItem[];
@@ -159,6 +159,18 @@ export interface Discount {
   multiplier: number;
 }
 
+export interface TransactionItemRequest {
+  id?: string;
+  name: string;
+  quantity: number;
+  itemPrice: number;
+  unitPrice?: number;
+  discount: Discount;
+  type: string;
+  productId?: string;
+  product?: Product;
+}
+
 export const taxRate = 7;
 
 export const noDiscount = {
@@ -178,17 +190,6 @@ export const taxFreeDiscount = {
   value: "Tax_Free",
   multiplier: 1,
 } as Discount;
-
-export const getDiscount = (discount: string) => {
-  switch (discount) {
-    case "Fifteen_Percent":
-      return fifteenPercentDiscount;
-    case "Tax_Free":
-      return taxFreeDiscount;
-    default:
-      return noDiscount;
-  }
-};
 
 // CONSTANTS
 
@@ -670,20 +671,20 @@ export const formatTime = (date: Date | null | undefined) => {
   return `${hours}:${minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`;
 };
 
-export const getTotal = (item: TransactionItem) => {
+export const getTotal = (item: TransactionItemRequest) => {
   return (
     item.itemPrice *
     item.quantity *
-    getDiscount(item.discount).multiplier *
+    item.discount.multiplier *
     (item.type !== "Giftcard" ? 1 + taxRate / 100 : 1)
   );
 };
 
-export const getSubtotal = (item: TransactionItem) => {
-  return item.itemPrice * item.quantity * getDiscount(item.discount).multiplier;
+export const getSubtotal = (item: TransactionItemRequest) => {
+  return item.itemPrice * item.quantity * item.discount.multiplier;
 };
 
-export const calculateSubtotal = (cart: TransactionItem[]) => {
+export const calculateSubtotal = (cart: TransactionItemRequest[]) => {
   var total = 0;
   cart.map((item) => {
     total += getSubtotal(item);
@@ -692,19 +693,19 @@ export const calculateSubtotal = (cart: TransactionItem[]) => {
   return total;
 };
 
-export const calculateDiscount = (cart: TransactionItem[]) => {
+export const calculateDiscount = (cart: TransactionItemRequest[]) => {
   var total = 0;
   cart.map((item) => {
     total +=
       item.itemPrice *
       item.quantity *
-      (1 - getDiscount(item.discount).multiplier);
+      (1 - item.discount.multiplier);
   });
 
   return total;
 };
 
-export const calculateTotal = (cart: TransactionItem[]) => {
+export const calculateTotal = (cart: TransactionItemRequest[]) => {
   var total = 0;
   cart.map((item) => {
     total += getTotal(item);
@@ -713,7 +714,7 @@ export const calculateTotal = (cart: TransactionItem[]) => {
   return total;
 };
 
-export const calculateTax = (cart: TransactionItem[]) => {
+export const calculateTax = (cart: TransactionItemRequest[]) => {
   var total = 0;
   cart
     .filter((item) => item.type !== "Giftcard")

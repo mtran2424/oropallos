@@ -5,12 +5,12 @@ import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { FaRegSquare } from "react-icons/fa";
-import { calculateSubtotal, calculateTax, calculateTotal, getDiscount, TransactionItem } from "@/components/global.utils";
+import { calculateSubtotal, calculateTax, calculateTotal, TransactionItemRequest } from "@/components/global.utils";
 import logo from "@/components/assets/logos/oropallos-logo-darkfont.png";
 
 const CustomerDisplay = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [cart, setCart] = useState<TransactionItem[]>([]);
+  const [cart, setCart] = useState<TransactionItemRequest[]>([]);
   const user = useUser();
 
   // Function to toggle fullscreen mode
@@ -37,7 +37,7 @@ const CustomerDisplay = () => {
           setCart((prev) => [...prev, event.data.item]);
           break;
         case "cart-update":
-          const itemExists = cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount === event.data.item.discount && item.itemPrice === event.data.item.itemPrice);
+          const itemExists = cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice);
           if (itemExists !== -1) {
             const temp = cart[itemExists];
             temp.quantity += event.data.item.quantity;
@@ -45,7 +45,7 @@ const CustomerDisplay = () => {
           }
           break;
         case "cart-remove":
-          setCart((prev) => prev.filter(item => !(item.name === event.data.item.name && item.type === event.data.item.type && item.discount === event.data.item.discount && item.itemPrice === event.data.item.itemPrice)));
+          setCart((prev) => prev.filter(item => !(item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice)));
           break;
         case "cart-clear":
           setCart([]);
@@ -139,7 +139,7 @@ const CustomerDisplay = () => {
                     <td className="text-2xl text-center p-1">{item.type}</td>
                     <td className="text-2xl text-left p-1">{item.name}</td>
                     <td className="text-2xl text-center p-1">{item.quantity}</td>
-                    <td className="text-2xl text-center p-1">{getDiscount(item.discount).name}</td>
+                    <td className="text-2xl text-center p-1">{item.discount.name}</td>
                     <td className="text-2xl text-center p-1">{(item.itemPrice / 100).toFixed(2)}</td>
                   </tr>
                 ))}

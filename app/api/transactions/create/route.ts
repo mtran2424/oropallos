@@ -6,9 +6,8 @@ import {
   calculateDiscount,
   calculateSubtotal,
   calculateTotal,
-  getDiscount,
   taxRate,
-  TransactionItem,
+  TransactionItemRequest,
 } from "@/components/global.utils";
 
 export async function POST(req: NextRequest) {
@@ -23,16 +22,16 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { transaction } = body;
 
-  const liquorSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Liquor"));
-  const wineSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Wine"));
+  const liquorSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItemRequest) => item.type === "Liquor"));
+  const wineSubtotal = calculateSubtotal(transaction.transactionItems.filter((item: TransactionItemRequest) => item.type === "Wine"));
 
-  const discount = calculateDiscount(transaction.transactionItems.filter((item: TransactionItem) => getDiscount(item.discount).value !== "No_Discount" && getDiscount(item.discount).value !== "Tax_Free"));
+  const discount = calculateDiscount(transaction.transactionItems.filter((item: TransactionItemRequest) => item.discount.value !== "No_Discount" && item.discount.value !== "Tax_Free"));
 
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
 
-  const total = calculateTotal(transaction.transactionItems.filter((item: TransactionItem) => item.type !== "Giftcard"));
+  const total = calculateTotal(transaction.transactionItems.filter((item: TransactionItemRequest) => item.type !== "Giftcard"));
 
-  const giftcardTotal = calculateTotal(transaction.transactionItems.filter((item: TransactionItem) => item.type === "Giftcard"))
+  const giftcardTotal = calculateTotal(transaction.transactionItems.filter((item: TransactionItemRequest) => item.type === "Giftcard"))
 
   try {
     const res = await db.$transaction(async (tx) => {
@@ -52,14 +51,13 @@ export async function POST(req: NextRequest) {
           amountTendered: transaction.amountTendered,
           transactionItems: {
             create: transaction.transactionItems.map(
-              (item: TransactionItem) => ({
+              (item: TransactionItemRequest) => ({
                 name: item.name,
                 quantity: item.quantity,
                 itemPrice: item.itemPrice,
                 unitPrice: item.unitPrice,
-                discount: item.discount,
+                discount: item.discount.value,
                 productId: item.productId ? item.productId : null,
-                // product: item.product,
                 type: item.type,
               }),
             ),
