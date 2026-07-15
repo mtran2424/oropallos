@@ -170,7 +170,7 @@ const Sales = ({
     ).map(([date, sales], index) => ({
       date,
       sales
-    })));
+    })).sort((a,b) => a.date.localeCompare(b.date)));
 
 
   const recalculateTotals = () => {
@@ -324,7 +324,7 @@ const Sales = ({
       ).map(([date, sales], index) => ({
         date,
         sales
-      })));
+      })).sort((a,b) => a.date.localeCompare(b.date)) );
   };
 
   useEffect(() => {
