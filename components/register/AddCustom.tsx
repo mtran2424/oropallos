@@ -9,8 +9,9 @@ import { MdKeyboardReturn, MdNavigateBefore, MdNavigateNext } from "react-icons/
 import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFreeDiscount } from "@/components/global.utils";
 import Modal from "@/components/ui/Modal";
 
-const AddCustom = ({ products, modalRef, onClick }: {
+const AddCustom = ({ products, discounts, modalRef, onClick }: {
   products: Product[];
+  discounts: Discount[];
   modalRef: React.Ref<HTMLDivElement>;
   onClick: (
     product: Product,
@@ -31,6 +32,7 @@ const AddCustom = ({ products, modalRef, onClick }: {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("name-desc");
+  const [otherDiscount, setOtherDiscount] = useState(false);
 
   const [input, setInput] = useState<string>("");
 
@@ -47,6 +49,11 @@ const AddCustom = ({ products, modalRef, onClick }: {
     setInput("");
     setSearchTerm("");
   }
+  
+  const closeDiscountModal = () => {
+    setOtherDiscount(false);
+  }
+  
 
   // Apply filters, seach terms, and sorting
   const sortedAndFilteredProducts = useMemo(() => {
@@ -145,7 +152,7 @@ const AddCustom = ({ products, modalRef, onClick }: {
         title="Custom Product"
         onClose={closeModal}
         ref={modalRef}
-        width="max-w-[85vw]"
+        width="max-w-[90vw]"
       >
         <div className="grid grid-cols-2 w-full space-y-5">
 
@@ -610,7 +617,13 @@ const AddCustom = ({ products, modalRef, onClick }: {
                   00
                 </button>
 
-                <button></button>
+                <button
+                  className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+                  onClick={() => setOtherDiscount(true)}
+                >
+                  Other Disc
+                </button>
 
                 {/* Seventh Row */}
                 {/* Confirm item button */}
@@ -645,7 +658,23 @@ const AddCustom = ({ products, modalRef, onClick }: {
           {/* <div /> */}
         </div>
       </Modal>
-
+      <Modal open={otherDiscount} title="Other Discount" height="max-h-[80vh]" width="max-w-3xl" onClose={closeDiscountModal} ref={modalRef}>
+        <div className="grid grid-cols-4 w-full gap-1">
+          {discounts.map((disc) => (
+            <button
+              key={disc.id}
+              className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+              onClick={() => {
+                setDiscount(disc);
+                closeDiscountModal();
+              }}
+            >
+              {disc.name}
+            </button>))}
+        </div>
+      </Modal>
     </>
   );
 }

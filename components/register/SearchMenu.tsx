@@ -12,16 +12,17 @@ import {
   Product,
   sanitize,
   taxFreeDiscount,
-  TransactionItem,
   TransactionItemRequest
 } from "@/components/global.utils";
 import Modal from "@/components/ui/Modal";
 
 const SearchMenu = ({
   products,
+  discounts,
   onConfirm
 }: {
   products: Product[];
+  discounts: Discount[];
   onConfirm: (item: TransactionItemRequest) => void
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +31,7 @@ const SearchMenu = ({
   const [sortOption, setSortOption] = useState("newest-oldest");
   const modalRef = useRef<HTMLDivElement>(null);
   const [addItem, setAddItem] = useState(false);
+  const [otherDiscount, setOtherDiscount] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [discount, setDiscount] = useState<Discount>(noDiscount);
@@ -83,14 +85,19 @@ const SearchMenu = ({
   }, [products, deferredSearch, sortOption]);
 
   // Close the modal for adding a product
-  const closeEventModal = () => {
+  const closeModal = () => {
     setAddItem(false);
   };
+
+  const closeDiscountModal = () => {
+    setOtherDiscount(false);
+  }
 
   // Close the modal when clicking outside of it
   const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      closeEventModal();
+      closeModal();
+      closeDiscountModal();
     }
   }, []);
 
@@ -311,7 +318,7 @@ const SearchMenu = ({
         </div>
       </motion.div>
 
-      <Modal open={addItem} title="Add Item" height="max-h-[95vh]" width="max-w-2xl" onClose={closeEventModal} ref={modalRef}>
+      <Modal open={addItem} title="Add Item" height="max-h-[80vh]" width="max-w-3xl" onClose={closeModal} ref={modalRef}>
         <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
           <div className="flex flex-col items-center justify-center w-full gap-4">
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
@@ -348,10 +355,39 @@ const SearchMenu = ({
             </div>
 
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
-            <div className="grid grid-cols-3 w-full gap-1">
-              <button className={`p-5 rounded-md text-white text-2xl ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(noDiscount)}>No Discount</button>
-              <button className={`p-5 rounded-md text-white text-2xl ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(fifteenPercentDiscount)}>15% Discount</button>
-              <button className={`p-5 rounded-md text-white text-2xl ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(taxFreeDiscount)}>Tax Free</button>
+            <div className="grid grid-cols-4 w-full gap-1">
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+                onClick={() => setDiscount(noDiscount)}
+              >
+                No Discount
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  hover:bg-zinc-400`}
+                onClick={() => setDiscount(fifteenPercentDiscount)}
+              >
+                15% Discount
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                hover:bg-zinc-400`}
+                onClick={() => setDiscount(taxFreeDiscount)}
+              >
+                Tax Free
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount !== taxFreeDiscount && discount !== fifteenPercentDiscount && discount !== noDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  hover:bg-zinc-400`}
+                onClick={() => setOtherDiscount(true)}
+              >
+                Other
+              </button>
             </div>
 
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
@@ -368,6 +404,24 @@ const SearchMenu = ({
               Submit
             </motion.button>
           </div>
+        </div>
+      </Modal>
+
+      <Modal open={otherDiscount} title="Other Discount" height="max-h-[80vh]" width="max-w-3xl" onClose={closeDiscountModal} ref={modalRef}>
+        <div className="grid grid-cols-4 w-full gap-1">
+          {discounts.map((disc) => (
+            <button
+            key={disc.id}
+            className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+            onClick={() => {
+              setDiscount(disc);
+              closeDiscountModal();
+            }}
+          >
+            {disc.name}
+          </button>))}
         </div>
       </Modal>
     </>

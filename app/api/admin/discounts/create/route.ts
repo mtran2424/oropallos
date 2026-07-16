@@ -12,10 +12,11 @@ export async function POST(req: NextRequest) {
   }
 
   // Retreive request and store in values
-  const { name, value, multiplier } = await req.json();
+  const { label, name, value, multiplier } = await req.json();
   try {
     const discount = await db.discount.create({
       data: {
+        label,
         name,
         value,
         multiplier

@@ -9,6 +9,7 @@ export async function GET() {
     const discounts = await db.discount.findMany({
       select: {
         id: true,
+        label: true,
         name: true,
         value: true,
         multiplier: true,

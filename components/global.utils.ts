@@ -154,6 +154,7 @@ export interface BatchRequest {
 
 export interface Discount {
   id?: string;
+  label: string;
   name: string;
   value: string;
   multiplier: number;
@@ -174,18 +175,21 @@ export interface TransactionItemRequest {
 export const taxRate = 7;
 
 export const noDiscount = {
+  label: "No_Discount",
   name: "No Discount",
   value: "No_Discount",
   multiplier: 0,
 } as Discount;
 
 export const fifteenPercentDiscount = {
+  label: "15% Discount",
   name: "Fifteen Percent",
   value: "Fifteen_Percent",
   multiplier: 15,
 } as Discount;
 
 export const taxFreeDiscount = {
+  label: "Tax Free",
   name: "Tax Free",
   value: "Tax_Free",
   multiplier: 0,

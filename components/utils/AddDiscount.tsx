@@ -20,6 +20,7 @@ const AddDiscount = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [multiplier, setMultiplier] = useState<number>(0);
   const [name, setName] = useState<string>("");
+  const [label, setLabel] = useState<string>("");
 
   const openModal = () => {
     setAdd(true);
@@ -32,13 +33,14 @@ const AddDiscount = ({
   const handleConfirm = () => {
     setLoading(true);
 
-    if (!name || !multiplier) {
+    if (!label || !name || !multiplier) {
       toast.error(`Please fill in all required fields.`);
       setLoading(false);
       return;
     }
 
     const discountData = {
+      label: label,
       name: name,
       value: name.split(' ').join('_'),
       multiplier: parseInt((multiplier).toFixed(0)),
@@ -50,6 +52,7 @@ const AddDiscount = ({
 
         onAdd();
         setName("");
+        setLabel("");
         setMultiplier(0);
         setAdd(false);
       }).finally(() => {
@@ -85,6 +88,22 @@ const AddDiscount = ({
             transition={{ duration: 1, ease: "easeInOut" }}
             className="h-full bg-zinc-100 border border-zinc-300 w-full px-5 py-10 space-y-5"
           >
+            {/* Label Field */}
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Label</label>
+            <input
+              type="text"
+              required
+              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out w-full"
+              placeholder="Label"
+              value={label}
+              onChange={(e) => {
+                setLabel(e.target.value)
+              }}
+            />
+            <div className="text-md font-medium text-zinc-500 text-left px-2 wrap-break-word">
+              Display text for discount
+            </div>
+
             {/* Name Field */}
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Name</label>
             <input
@@ -103,7 +122,7 @@ const AddDiscount = ({
 
               <div className="flex flex-col w-full md:w-1/4">
                 {/* Units Field */}
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2 text-nowrap">Multiplier</label>
+                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2 text-nowrap">Percentage</label>
                 <input
                   type="number"
                   step="1"

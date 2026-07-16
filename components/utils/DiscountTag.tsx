@@ -23,6 +23,7 @@ const DiscountTag = ({
   const [expand, setExpand] = useState<boolean>(false);
   const [multiplier, setMultiplier] = useState<number>((discount.multiplier));
   const [name, setName] = useState<string>(discount.name);
+  const [label, setLabel] = useState<string>(discount.label);
 
   const openConfirmDeleteModal = () => {
     setConfirmDelete(true);
@@ -72,6 +73,7 @@ const DiscountTag = ({
 
     const discountData = {
       id: discount.id,
+      label: label,
       name: name,
       value: name.split(' ').join('_'),
       multiplier: multiplier,
@@ -93,7 +95,9 @@ const DiscountTag = ({
         key={discount.id}
         className="flex flex-col text-xl text-start space-x-3 border border-zinc-300 rounded-lg px-2 py-1"
       >
-
+        <div className="flex flex-col w-full font-semibold">
+          {discount.label}
+        </div>
         <div className="flex flex-row w-full">
           <div className="flex flex-col w-full">
             {discount.name}
@@ -124,7 +128,18 @@ const DiscountTag = ({
             className="col-span-4 w-full h-full rounded-lg p-4 items-center justify-start gap-4"
           >
             <div className="flex flex-col w-full h-full space-y-2">
-              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">name</label>
+              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Label</label>
+              <input
+                type="text"
+                required
+                className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out w-full"
+                placeholder="Label"
+                value={label}
+                onChange={(e) => {
+                  setLabel(e.target.value)
+                }}
+              />
+              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Name</label>
               <input
                 type="text"
                 required

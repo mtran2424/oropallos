@@ -11,15 +11,28 @@ import {
   TransactionItemRequest
 } from "@/components/global.utils";
 import Receipt from "@/components/utils/Receipt";
+import Modal from "../ui/Modal";
 
-const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItemRequest) => void }) => {
+const NumPad = ({ 
+  discounts, 
+  onConfirm 
+}: { 
+  discounts: Discount[];
+  onConfirm: (item: TransactionItemRequest) => void;
+ }) => {
+  const modalRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [item, setItem] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
   const [discount, setDiscount] = useState<Discount>(noDiscount);
+  const [otherDiscount, setOtherDiscount] = useState(false);
 
   const componentRef = useRef<HTMLDivElement>(null);
+
+  const closeDiscountModal = () => {
+    setOtherDiscount(false);
+  }
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
@@ -270,7 +283,13 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItemRequest) => vo
           00
         </button>
 
-        <button></button>
+        <button
+          className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
+        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+          onClick={() => setOtherDiscount(true)}
+        >
+          Other Disc
+        </button>
 
         {/* Sixth Row */}
         {/* Liquor type selector */}
@@ -321,6 +340,24 @@ const NumPad = ({ onConfirm }: { onConfirm: (item: TransactionItemRequest) => vo
           </div>
         </div>
       </div>
+
+      <Modal open={otherDiscount} title="Other Discount" height="max-h-[80vh]" width="max-w-3xl" onClose={closeDiscountModal} ref={modalRef}>
+        <div className="grid grid-cols-4 w-full gap-1">
+          {discounts.map((disc) => (
+            <button
+            key={disc.id}
+            className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+            onClick={() => {
+              setDiscount(disc);
+              closeDiscountModal();
+            }}
+          >
+            {disc.name}
+          </button>))}
+        </div>
+      </Modal>
     </motion.div>);
 }
 

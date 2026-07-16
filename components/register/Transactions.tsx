@@ -460,10 +460,10 @@ const Transactions = ({
 
             </div>
             <div className="grid grid-cols-4 gap-1">
-              <AddCustom products={products} modalRef={modalRef} onClick={handleCustomAdd} />
+              <AddCustom products={products} modalRef={modalRef} discounts={discounts} onClick={handleCustomAdd} />
               <AddGiftcard ref={modalRef} onClick={handleGiftcardAdd} />
               {quickAddButtons && quickAddButtons.map((button) => (
-                <QuickButton key={button.id} quickButton={button} onClick={handleCustomAdd} />
+                <QuickButton key={button.id} quickButton={button} discounts={discounts} onClick={handleCustomAdd} />
               ))}
             </div>
           </div>
@@ -480,10 +480,10 @@ const Transactions = ({
               </TextButton>
             </div>
             {/* Tools */}
-            {mode === "Register" && <NumPad onConfirm={(item) => {
+            {mode === "Register" && <NumPad discounts={discounts} onConfirm={(item) => {
               handleAddItem(item);
             }} />}
-            {mode === "Search" && <SearchMenu products={products} onConfirm={(item) => {
+            {mode === "Search" && <SearchMenu products={products} discounts={discounts} onConfirm={(item) => {
               handleAddItem(item);
             }} />}
 

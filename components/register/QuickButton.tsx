@@ -11,8 +11,9 @@ import {
 } from "@/components/global.utils";
 import Modal from "@/components/ui/Modal";
 
-const QuickButton = ({ quickButton, onClick }: {
+const QuickButton = ({ quickButton, discounts, onClick }: {
   quickButton: QuickAddButton
+  discounts: Discount[];
   onClick: (
     product: Product,
     quantity: number,
@@ -25,13 +26,17 @@ const QuickButton = ({ quickButton, onClick }: {
   const [open, setOpen] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [discount, setDiscount] = useState<Discount>(noDiscount);
-  // const [type, setType] = useState<string>("")
-  //TODO: Create modal to complete functionality of quick add buttons
+  const [otherDiscount, setOtherDiscount] = useState(false);
+
   const openModal = () => {
     setOpen(true);
   }
   const closeModal = () => {
     setOpen(false);
+  }
+
+  const closeDiscountModal = () => {
+    setOtherDiscount(false);
   }
 
   // Calculate price
@@ -73,7 +78,7 @@ const QuickButton = ({ quickButton, onClick }: {
         open={open}
         title="Add Item"
         height="max-h-[95vh]"
-        width="max-w-2xl"
+        width="max-w-3xl"
         onClose={closeModal}
         ref={modalRef}
       >
@@ -113,10 +118,39 @@ const QuickButton = ({ quickButton, onClick }: {
             </div>
 
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
-            <div className="grid grid-cols-3 w-full gap-1">
-              <button className={`p-5 rounded-md text-white text-2xl ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(noDiscount)}>No Discount</button>
-              <button className={`p-5 rounded-md text-white text-2xl ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(fifteenPercentDiscount)}>15% Discount</button>
-              <button className={`p-5 rounded-md text-white text-2xl ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setDiscount(taxFreeDiscount)}>Tax Free</button>
+            <div className="grid grid-cols-4 w-full gap-1">
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+                onClick={() => setDiscount(noDiscount)}
+              >
+                No Discount
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  hover:bg-zinc-400`}
+                onClick={() => setDiscount(fifteenPercentDiscount)}
+              >
+                15% Discount
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                hover:bg-zinc-400`}
+                onClick={() => setDiscount(taxFreeDiscount)}
+              >
+                Tax Free
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount !== taxFreeDiscount && discount !== fifteenPercentDiscount && discount !== noDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  hover:bg-zinc-400`}
+                onClick={() => setOtherDiscount(true)}
+              >
+                Other
+              </button>
             </div>
 
             <motion.button
@@ -130,6 +164,23 @@ const QuickButton = ({ quickButton, onClick }: {
         </div>
       </Modal>
 
+      <Modal open={otherDiscount} title="Other Discount" height="max-h-[80vh]" width="max-w-3xl" onClose={closeDiscountModal} ref={modalRef}>
+        <div className="grid grid-cols-4 w-full gap-1">
+          {discounts.map((disc) => (
+            <button
+              key={disc.id}
+              className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+              onClick={() => {
+                setDiscount(disc);
+                closeDiscountModal();
+              }}
+            >
+              {disc.name}
+            </button>))}
+        </div>
+      </Modal>
     </>
   );
 }

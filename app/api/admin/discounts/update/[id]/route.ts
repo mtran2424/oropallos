@@ -20,13 +20,14 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: 'Discount ID missing' }, { status: 400 });
     }
 
-    const { name, value, multiplier } = await req.json();
+    const { name, label, value, multiplier } = await req.json();
 
     // API call to update the product in the database
     const button = await db.discount.update({
       where: { id: id },
       data: {
         name: name,
+        label: label,
         value: value,
         multiplier: multiplier
       },
