@@ -177,7 +177,7 @@ const QuickButton = ({ quickButton, discounts, onClick }: {
                 closeDiscountModal();
               }}
             >
-              {disc.name}
+              {disc.label}
             </button>))}
         </div>
       </Modal>

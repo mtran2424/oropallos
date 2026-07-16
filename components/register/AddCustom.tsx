@@ -671,7 +671,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
                 closeDiscountModal();
               }}
             >
-              {disc.name}
+              {disc.label}
             </button>))}
         </div>
       </Modal>

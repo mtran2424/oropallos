@@ -354,7 +354,7 @@ const NumPad = ({
               closeDiscountModal();
             }}
           >
-            {disc.name}
+            {disc.label}
           </button>))}
         </div>
       </Modal>

@@ -420,7 +420,7 @@ const SearchMenu = ({
               closeDiscountModal();
             }}
           >
-            {disc.name}
+            {disc.label}
           </button>))}
         </div>
       </Modal>
