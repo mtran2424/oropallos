@@ -25,7 +25,7 @@ const Dashboard = () => {
       redirect('/home');
     }
     else if (user && user.username !== "admin") {
-      redirect('/admin/register');
+      redirect('/admin/pos-system');
     }
   }, [isSignedIn]);
 

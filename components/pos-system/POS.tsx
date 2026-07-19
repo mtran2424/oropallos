@@ -27,7 +27,7 @@ import Transactions from "./Transactions";
 import Manager from "./Manager";
 import Close from "./Close";
 
-const Register = () => {
+const POS = () => {
   const { isSignedIn, user } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,7 +36,6 @@ const Register = () => {
   const [quickAddButtons, setQuickAddButtons] = useState<QuickAddButton[]>([]);
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [configs, setConfigs] = useState<Config[]>([]);
 
   const [page, setPage] = useState<string>("Transaction");
 
@@ -247,7 +246,7 @@ const Register = () => {
         </div>
       </motion.div>
       <div className="pl-20">
-        {page === "Transaction" && <Transactions products={products} discounts={discounts} quickAddButtons={quickAddButtons}/>}
+        {page === "Transaction" && <Transactions products={products} discounts={discounts} quickAddButtons={quickAddButtons} onTransaction={()=> setRefresh(prev => !prev)}/>}
         {page === "Manager" && <Manager transactions={transactions} discounts={discounts}/>}
         {page === "Close" && <Close initialTransactions={transactions} />}
         {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches} />}
@@ -257,4 +256,4 @@ const Register = () => {
   );
 }
 
-export default Register;
+export default POS;

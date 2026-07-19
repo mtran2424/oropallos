@@ -440,7 +440,7 @@ export const navBarElements = [
 
 export const adminNavBarElements = [
   { label: "Dashboard", path: "/admin/dashboard" },
-  { label: "Register", path: "/admin/register" },
+  { label: "POS", path: "/admin/pos-system" },
 ] as const;
 
 // Headers for product tables

@@ -31,11 +31,13 @@ import NumPad from "./NumPad";
 const Transactions = ({
   products,
   discounts,
-  quickAddButtons
+  quickAddButtons,
+  onTransaction
 }: {
   products: Product[];
   discounts: Discount[];
-  quickAddButtons: QuickAddButton[]
+  quickAddButtons: QuickAddButton[];
+  onTransaction: () => void;
 }) => {
   const date = new Date();
   const user = useUser();
@@ -205,6 +207,7 @@ const Transactions = ({
       }
       else {
         setLoading(false);
+        onTransaction();
         toast.success("Transaction successful")
       }
     } catch (err) {
