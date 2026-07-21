@@ -691,7 +691,7 @@ const Batches = ({
                                 )}
                                 {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                                   <div>
-                                    -{(((getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
+                                    -{((((getDiscount(item.discount).multiplier / 100) * item.itemPrice * item.quantity)) / 100).toFixed(2)}
                                   </div>
                                 )}
                               </div>
