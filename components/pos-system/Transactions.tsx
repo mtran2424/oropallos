@@ -312,12 +312,12 @@ const Transactions = ({
                   </div>
                   {item.discount.value !== "No_Discount" && item.discount.value !== "Tax_Free" && (
                     <div>
-                      -{((1 - item.discount.multiplier) * 100).toFixed(0)}%
+                      -{((item.discount.multiplier)).toFixed(0)}%
                     </div>
                   )}
                   {item.discount.value !== "No_Discount" && item.discount.value !== "Tax_Free" && (
                     <div>
-                      -{(((item.itemPrice * item.quantity) - (item.discount.multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
+                      -{((((item.discount.multiplier / 100) * item.itemPrice * item.quantity)) / 100).toFixed(2)}
                     </div>
                   )}
                 </div>

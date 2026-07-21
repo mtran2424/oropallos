@@ -513,12 +513,12 @@ const CurrentBatch = ({
                                 </div>
                                 {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                                   <div>
-                                    -{((1 - getDiscount(item.discount).multiplier) * 100).toFixed(0)}%
+                                    -{((getDiscount(item.discount).multiplier)).toFixed(0)}%
                                   </div>
                                 )}
                                 {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                                   <div>
-                                    -{(((item.itemPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
+                                    -{((((getDiscount(item.discount).multiplier / 100) * item.itemPrice * item.quantity)) / 100).toFixed(2)}
                                   </div>
                                 )}
                               </div>

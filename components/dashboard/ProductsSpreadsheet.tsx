@@ -105,8 +105,6 @@ const ProductsSpreadsheet = ({
     setDeleteConfirm(true);
   }
 
-
-
   const toggleExpanded = (productId: string) => {
     setExpandedImages((prev) => ({
       ...prev,
@@ -134,6 +132,41 @@ const ProductsSpreadsheet = ({
   const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const endIdx = Math.min(startIdx + PRODUCTS_PER_PAGE, sortedAndFilteredProducts.length);
   const currentProducts = sortedAndFilteredProducts.slice(startIdx, endIdx);
+
+  const exportCSV = () => {
+    const headers = [
+      "Name",
+      "Size",
+      "Price",
+      "UPC"
+    ];
+
+    const rows = products.filter((product) => product.upc).map((product) => [
+      product.name,
+      product.size,
+      (product.type === 'Canned_Cocktails' ?
+        parseFloat((product.price * 1.13).toFixed(2)) :
+        product.category !== 'Liquor' ?
+          parseFloat((product.price * 1.13).toFixed(2)) :
+          parseFloat((product.price * 1.15).toFixed(2))),
+      product.upc
+    ]);
+
+    const csvContent =
+      headers.join(",") +
+      "\n" +
+      rows.map((r) => r.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "product_inventory.csv";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
 
   // Refresh product list when a new product is added
   const handleAddProduct = () => {
@@ -434,6 +467,11 @@ const ProductsSpreadsheet = ({
                 <option value="oldest-newest">Date (Oldest → Newest)</option>
               </select>
             </div>
+          </div>
+          <div className="flex flex-row w-full whitespace-nowrap">
+            <TextButton onClick={exportCSV}>
+              Export CSV
+            </TextButton>
           </div>
 
           {/* Data Table */}

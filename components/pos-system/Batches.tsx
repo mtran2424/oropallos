@@ -27,7 +27,7 @@ import TextButton from "@/components/ui/TextButton";
 
 const Batches = ({
   discounts
-}:{
+}: {
   discounts: Discount[];
 }) => {
   const { user } = useUser();
@@ -686,12 +686,12 @@ const Batches = ({
                                 </div>
                                 {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                                   <div>
-                                    -{((1 - getDiscount(item.discount).multiplier) * 100).toFixed(0)}%
+                                    -{((getDiscount(item.discount).multiplier)).toFixed(0)}%
                                   </div>
                                 )}
                                 {item.discount !== "No_Discount" && item.discount !== "Tax_Free" && (
                                   <div>
-                                    -{(((item.itemPrice * item.quantity) - (getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
+                                    -{(((getDiscount(item.discount).multiplier * item.itemPrice * item.quantity)) / 100).toFixed(2)}
                                   </div>
                                 )}
                               </div>
@@ -708,7 +708,7 @@ const Batches = ({
                             SUBTOTAL
                           </td>
                           <td className="text-end">
-                            ${(calculateSubtotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
+                            ${(calculateSubtotal(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) }))) / 100).toFixed(2)}
                           </td>
                         </tr>
                         <tr className="">
@@ -716,7 +716,7 @@ const Batches = ({
                             TAX
                           </td>
                           <td className="text-end">
-                            ${(calculateTax(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
+                            ${(calculateTax(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) }))) / 100).toFixed(2)}
                           </td>
                         </tr>
                       </tbody>
@@ -729,7 +729,7 @@ const Batches = ({
                             TOTAL
                           </td>
                           <td className="text-end">
-                            ${(calculateTotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
+                            ${(calculateTotal(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) }))) / 100).toFixed(2)}
                           </td>
                         </tr>
                         <tr>
@@ -745,7 +745,7 @@ const Batches = ({
                             CHANGE
                           </td>
                           <td className="text-end">
-                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)})))) / 100).toFixed(2)}
+                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) })))) / 100).toFixed(2)}
                           </td>
                         </tr>
                       </tbody>
