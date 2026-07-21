@@ -16,16 +16,20 @@ import Modal from "@/components/ui/Modal";
 const PRODUCTS_PER_PAGE = 25;
 
 // This component is responsible for crud operations on products
-const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
+const InventoryMenu = ({ 
+  products,
+  onChange
+ }: { 
+  products: Product[];
+  onChange: () => void;
+ }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
-  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
-  const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
   const [targetProductId, setTargetProductId] = useState<string | null>(null);
   const productsRef = useRef<HTMLTableElement | null>(null);
@@ -104,11 +108,6 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
     setDeleteConfirm(true);
   }
 
-  // Scroll to products grid on pagination/search/sort change
-  useEffect(() => {
-    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [currentPage, searchTerm, sortOption]);
-
   // Apply filters, seach terms, and sorting
 
   // Handlers for search and sort
@@ -130,7 +129,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
 
   // Refresh product list when a product is edited
   const handleEditProduct = () => {
-    setRefresh(!refresh);
+    onChange();
   }
 
   // Send a delete request to the server to remove the product and refresh the list
@@ -143,7 +142,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
         .then((res) => {
           if (res.status === 200) {
             toast.success('Product deleted successfully');
-            setRefresh(!refresh);
+            onChange();
             setTargetProductId(null);
             setDeleteConfirm(false);
           }
@@ -171,7 +170,7 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
         .then((res) => {
           if (res.status === 200) {
             toast.success('Hidden status changed successfully');
-            setRefresh(!refresh);
+            onChange();
           }
         });
     } catch (error) {
@@ -229,19 +228,10 @@ const InventoryMenu = ({ initialProducts }: { initialProducts: Product[] }) => {
     );
   };
 
-  // Fetch products on component mount and when refresh state changes
+    // Scroll to products grid on pagination/search/sort change
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data.products || []);
-      } catch (error) {
-        console.error('Failed to fetch products', error);
-      }
-    };
-
-    fetchProducts();
-  }, [refresh]);
+    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentPage, searchTerm, sortOption]);
 
   // Scroll to top on component mount
   useEffect(() => {

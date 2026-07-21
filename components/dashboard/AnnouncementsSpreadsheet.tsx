@@ -13,12 +13,16 @@ import EditAnnouncement from "@/components/utils/EditAnnouncement";
 const ANNOUNCEMENTS_PER_PAGE = 25;
 
 // This component is responsible for crud operations on announcements
-const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncements: Announcement[] }) => {
+const AnnouncementsSpreadsheet = ({
+  announcements,
+  onChange
+}: {
+  announcements: Announcement[];
+  onChange: () => void;
+}) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest-oldest");
-  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
-  const [refresh, setRefresh] = useState(false);
   const announcementsRef = useRef<HTMLTableElement | null>(null);
 
   // Apply filters, seach terms, and sorting
@@ -79,12 +83,12 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
 
   // Refresh announcement list when a new announcement is added
   const handleAddAnnouncement = () => {
-    setRefresh(!refresh);
+    onChange();
   }
 
   // Refresh announcement list when an announcement is edited
   const handleEditAnnouncement = () => {
-    setRefresh(!refresh);
+    onChange();
   }
 
   // Send a delete request to the server to remove the announcement and refresh the list
@@ -95,7 +99,7 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
         .then((res) => {
           if (res.status === 200) {
             toast.success('Announcement deleted successfully');
-            setRefresh(!refresh);
+            onChange();
           }
           else {
             console.error('Failed to delete announcement');
@@ -143,20 +147,6 @@ const AnnouncementsSpreadsheet = ({ initialAnnouncements }: { initialAnnouncemen
         return null;
     }
   };
-
-  // Fetch announcements on component mount and when refresh state changes
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        const data = await getAnnouncements();
-        setAnnouncements(data.announcements || []);
-      } catch (error) {
-        console.error('Failed to fetch announcements', error);
-      }
-    };
-
-    fetchAnnouncements();
-  }, [refresh]);
 
   // Scroll to top on component mount
   useEffect(() => {

@@ -16,10 +16,15 @@ interface OrderItem {
   unitType: string
 }
 
-const Orders = ({ initialProducts }: { initialProducts: Product[] }) => {
+const Orders = ({
+  products,
+  onChange
+}: {
+  products: Product[];
+  onChange: () => void;
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [refresh, setRefresh] = useState(false);
   const [addItem, setAddItem] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
@@ -119,7 +124,7 @@ const Orders = ({ initialProducts }: { initialProducts: Product[] }) => {
   const handleSubmit = () => {
     setLoading(true);
 
-    updateInventory({orderItems: cart})
+    updateInventory({ orderItems: cart })
       .then(() => {
         toast.success(`Inventory successfully updated.`);
 
@@ -131,23 +136,9 @@ const Orders = ({ initialProducts }: { initialProducts: Product[] }) => {
       })
       .finally(() => {
         setLoading(false);
-        setRefresh(prev => !prev)
+        onChange();
       })
   }
-
-  // Fetch products on component mount and when refresh state changes
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data.products || []);
-      } catch (error) {
-        console.error('Failed to fetch products', error);
-      }
-    };
-
-    fetchProducts();
-  }, [refresh]);
 
   return (
     <>

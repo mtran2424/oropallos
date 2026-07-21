@@ -4,7 +4,6 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { MdDelete, MdFavorite } from "react-icons/md";
 import { FaEye, FaEyeSlash, FaImage } from "react-icons/fa6";
-import { getProducts } from "@/app/api/adminapi";
 import { deleteProduct, favoriteProduct, hideProduct } from "@/app/api/productapi";
 import { Product, ProductCategories, productTableColumns, sanitize } from "@/components/global.utils";
 import AddProduct from "@/components/utils/crud-products/AddProduct";
@@ -18,7 +17,13 @@ import TextButton from "@/components/ui/TextButton";
 const PRODUCTS_PER_PAGE = 25;
 
 // This component is responsible for crud operations on products
-const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }) => {
+const ProductsSpreadsheet = ({
+  products,
+  onChange
+}: {
+  products: Product[];
+  onChange: () => void
+}) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [subcategoryFilters, setSubcategoryFilters] = useState<string[]>([]);
@@ -26,7 +31,6 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
   const deferredSearch = useDeferredValue(searchTerm);
   const [sortOption, setSortOption] = useState("newest-oldest");
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>({});
-  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -103,11 +107,6 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
 
 
-  // Scroll to products grid on pagination/search/sort change
-  useEffect(() => {
-    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [currentPage, searchTerm, sortOption]);
-
   const toggleExpanded = (productId: string) => {
     setExpandedImages((prev) => ({
       ...prev,
@@ -138,12 +137,12 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
 
   // Refresh product list when a new product is added
   const handleAddProduct = () => {
-    setRefresh(!refresh);
+    onChange();
   }
 
   // Refresh product list when a product is edited
   const handleEditProduct = () => {
-    setRefresh(!refresh);
+    onChange();
   }
 
   // Send a delete request to the server to remove the product and refresh the list
@@ -156,7 +155,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         .then((res) => {
           if (res.status === 200) {
             toast.success('Product deleted successfully');
-            setRefresh(!refresh);
+            onChange();
             setTargetProductId(null);
             setDeleteConfirm(false);
           }
@@ -184,7 +183,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         .then((res) => {
           if (res.status === 200) {
             toast.success('Favorite changed successfully');
-            setRefresh(!refresh);
+            onChange();
           }
         });
     } catch (error) {
@@ -200,7 +199,7 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
         .then((res) => {
           if (res.status === 200) {
             toast.success('Hidden status changed successfully');
-            setRefresh(!refresh);
+            onChange();
           }
         });
     } catch (error) {
@@ -328,19 +327,10 @@ const ProductsSpreadsheet = ({ initialProducts }: { initialProducts: Product[] }
     );
   };
 
-  // Fetch products on component mount and when refresh state changes
+  // Scroll to products grid on pagination/search/sort change
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data.products || []);
-      } catch (error) {
-        console.error('Failed to fetch products', error);
-      }
-    };
-
-    fetchProducts();
-  }, [refresh]);
+    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentPage, searchTerm, sortOption]);
 
   // Reset expanded images on search change
   useEffect(() => {

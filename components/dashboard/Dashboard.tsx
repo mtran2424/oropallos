@@ -14,6 +14,7 @@ import Orders from "./Orders";
 const Dashboard = () => {
   const [tab, setTab] = useState<'products' | 'announcements' | 'inventory' | 'orders'>('products');
   const [products, setProducts] = useState<Product[]>([]);
+  const [refresh, setRefresh] = useState(false);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
   // Admin check
@@ -50,7 +51,7 @@ const Dashboard = () => {
 
     fetchProducts();
     fetchAnnouncements();
-  }, []);
+  }, [refresh]);
 
   return (
     <motion.div
@@ -124,7 +125,7 @@ const Dashboard = () => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="mt-5"
           >
-            <ProductsSpreadsheet initialProducts={products} />
+            <ProductsSpreadsheet products={products} onChange={()=> setRefresh(prev => !prev)}/>
           </motion.div>
         )}
         {tab === 'announcements' && (
@@ -136,7 +137,7 @@ const Dashboard = () => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="mt-5"
           >
-            <AnnouncementsSpreadsheet initialAnnouncements={announcements} />
+            <AnnouncementsSpreadsheet announcements={announcements} onChange={()=> setRefresh(prev => !prev)}/>
           </motion.div>
         )}
 
@@ -149,7 +150,7 @@ const Dashboard = () => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="mt-5"
           >
-            <InventoryMenu initialProducts={products} />
+            <InventoryMenu products={products} onChange={()=> setRefresh(prev => !prev)}/>
           </motion.div>
         )}
 
@@ -162,7 +163,7 @@ const Dashboard = () => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="mt-5"
           >
-            <Orders initialProducts={products} />
+            <Orders products={products} onChange={()=> setRefresh(prev => !prev)}/>
           </motion.div>
         )}
       </AnimatePresence>
