@@ -138,7 +138,8 @@ const ProductsSpreadsheet = ({
       "Name",
       "Size",
       "Price",
-      "UPC"
+      "UPC",
+      "In Stock"
     ];
 
     const rows = products.filter((product) => product.upc).map((product) => [
@@ -149,7 +150,8 @@ const ProductsSpreadsheet = ({
         product.category !== 'Liquor' ?
           parseFloat((product.price * 1.13).toFixed(2)) :
           parseFloat((product.price * 1.15).toFixed(2))),
-      product.upc
+      product.upc,
+      product.unitCount > 0 ? "Yes" : "No"
     ]);
 
     const csvContent =
