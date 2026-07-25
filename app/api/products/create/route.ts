@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     // Parse the request body to get product details
     const body = await req.json();
-    const { name, description, price, category, subcategory, type, imageUrl, favorite, abv, size, upc, hidden, unitPrice, unitCount } = body;
+    const { name, description, price, category, subcategory, type, imageUrl, favorite, abv, size, upc, hidden, unitPrice, unitCount, itemType } = body;
 
     if (!name || !price || !category) {
       return NextResponse.json({ message: 'Name, price, and category are required' }, { status: 400 });
@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
         hidden,
         unitPrice,
         unitCount,
+        itemType
       },
     });
 

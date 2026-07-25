@@ -42,6 +42,7 @@ export interface Product {
   unitPrice?: number;
   unitCount: number;
   unitsPerCase?: number;
+  itemType: string;
   createdAt?: Date;
 }
 
@@ -469,6 +470,7 @@ export const productTableColumns = [
   { field: "upc", label: "UPC", width: "200px" },
   { field: "unitPrice", label: "Unit Price", width: "150px" },
   { field: "unitCount", label: "Unit Count", width: "150px" },
+  { field: "itemType", label: "Item Type", width: "150px"}
 ] as const;
 
 // Headers for manager tables in register view
@@ -528,6 +530,7 @@ export const inventoryTableColumns = [
   { field: "unitPrice", label: "Unit Price", width: "150px" },
   { field: "unitCount", label: "Unit Count", width: "150px" },
   { field: "unitsPerCase", label: "Units Per Case", width: "150px" },
+  { field: "itemType", label: "Item Type", width: "150px"}
 ] as const;
 
 // Headers for product tables in admin view

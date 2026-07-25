@@ -44,6 +44,7 @@ const AddUPC = ({ onAddUpc, product }: {
       hidden: product.hidden,
       unitPrice: product.unitPrice,
       unitCount: product.unitCount,
+      itemType: product.itemType,
     };
 
     if (product.id) {

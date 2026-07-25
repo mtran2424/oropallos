@@ -53,7 +53,8 @@ const AddUnit = ({ onAddUnit, product }: {
       hidden: product.hidden,
       unitPrice: product.unitPrice,
       unitCount: unitCount + (type === "Case" ? quantity * caseCount : quantity),
-      unitsPerCase: unitsPerCase
+      unitsPerCase: unitsPerCase,
+      itemType:product.itemType,
     };
 
     if (product.id) {

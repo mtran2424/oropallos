@@ -25,6 +25,7 @@ export async function GET() {
         hidden: true,
         unitPrice: true,
         unitCount: true,
+        itemType: true,
       },
       where: {
         hidden: true,

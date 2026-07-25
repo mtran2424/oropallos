@@ -32,6 +32,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
   const [upc, setUpc] = useState(product.upc);
   const [unitPrice, setUnitPrice] = useState<number | undefined>(product.unitPrice !== undefined ? product.unitPrice / 100 : undefined);
   const [unitCount, setUnitCount] = useState<number>(product.unitCount);
+  const [itemType, setItemType] = useState(product.itemType);
 
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
@@ -131,7 +132,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
     setLoading(true);
 
     // Validate input fields
-    if (!name || !price || !category || !subcategory || !size) {
+    if (!name || !price || !category || !subcategory || !size || !itemType) {
       toast.error(`Please fill in all required fields.`);
       setLoading(false);
       return;
@@ -153,6 +154,7 @@ const EditProduct = ({ onEditProduct, product, products }: {
       hidden: product.hidden,
       unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
       unitCount: unitCount,
+      itemType: itemType,
     };
 
     if (product.id) {
@@ -481,6 +483,24 @@ const EditProduct = ({ onEditProduct, product, products }: {
             <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
               i.e. {'\"'}40{'\"'} - No % sign needed
             </div>
+
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Item Type</label>
+            <select
+              id="itemType"
+              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              onChange={(e) => {
+                setItemType(e.target.value);
+              }}
+              value={itemType}
+            >
+              <option value="">Select Type</option>
+                <option value={"Liquor"}>
+                  Liquor
+                </option>
+                <option value={"Wine"}>
+                  Wine
+                </option>
+            </select>
 
             {/* Unit Price Field */}
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>

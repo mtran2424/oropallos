@@ -88,6 +88,7 @@ model Product {
   unitPrice        Int?
   unitCount        Int                @default(0)
   unitsPerCase     Int?
+  itemType         ItemType           @default(Wine)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   transactionItems TransactionItem[]

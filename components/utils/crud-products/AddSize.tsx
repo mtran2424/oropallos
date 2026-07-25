@@ -153,7 +153,8 @@ const AddSize = ({
       unitCount: 0,
       unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
       unitsPerCase: product.unitsPerCase,
-      upc: upc
+      upc: upc,
+      itemType: product.itemType,
     };
 
     // Send the product data to the backend API to create a new product

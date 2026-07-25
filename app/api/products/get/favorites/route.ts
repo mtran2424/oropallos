@@ -21,6 +21,7 @@ export async function GET() {
         size: true,
         upc: true,
         createdAt: true,
+        itemType: true,
       },
       where: {
         favorite: true,
