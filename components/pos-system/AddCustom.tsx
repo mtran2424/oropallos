@@ -26,7 +26,6 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [quantity, setQuantity] = useState<number>(1);
   const [units, setUnits] = useState<number>(1);
-  const [type, setType] = useState<"Liquor" | "Wine">("Liquor");
   const [price, setPrice] = useState<number>(0);
   const [discount, setDiscount] = useState<Discount>(noDiscount);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -45,7 +44,6 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
     setQuantity(1);
     setPrice(0);
     setDiscount(noDiscount);
-    setType("Liquor");
     setInput("");
     setSearchTerm("");
   }
@@ -114,7 +112,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
         currentProduct,
         quantity * units,
         currentProduct.name,
-        type,
+        currentProduct.itemType,
         discount,
         (units > 1) ? (price / units) : price);
       closeModal();
@@ -383,28 +381,6 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
               i.e. 10 units per 9.99 Red Stag 10 pack. Quantity of 2 for 2 10 packs
             </div>
 
-            <div className="flex flex-row space-x-2 w-full">
-              <button
-                className={`flex h-full w-full ${(type === "Liquor") ? "bg-blue-600" : "bg-zinc-800"} text-white font-semibold text-2xl p-5 justify-center items-center
-                         rounded-sm transition-colors ease-linear`}
-                onClick={() => {
-                  setType("Liquor");
-                }}
-              >
-                Liquor
-              </button>
-
-              {/* Wine type selector */}
-              <button
-                className={`flex h-full w-full ${(type === "Wine") ? "bg-blue-600" : "bg-zinc-800"} text-white font-semibold text-2xl p-5 justify-center items-center
-                         rounded-sm transition-colors ease-linear`}
-                onClick={() =>
-                  setType("Wine")
-                }
-              >
-                Wine
-              </button>
-            </div>
 
             <div className="flex flex-col w-full items-center">
               {/* Discount Field */}
@@ -469,7 +445,6 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
                   onClick={() => {
                     setInput("");
                     setDiscount(noDiscount);
-                    setType("Liquor");
                     setQuantity(1);
                   }}
                 >

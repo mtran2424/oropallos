@@ -22,7 +22,6 @@ const QuickButtonTag = ({
   const [loadingEdit, setLoadingEdit] = useState<boolean>(false);
   const [expand, setExpand] = useState<boolean>(false);
   const [units, setUnits] = useState<number>(quickButton.units);
-  const [type, setType] = useState<"Liquor" | "Wine">(quickButton.type);
   const [price, setPrice] = useState<number>((quickButton.price / 100));
   const [label, setLabel] = useState<string>(quickButton.label);
 
@@ -66,7 +65,7 @@ const QuickButtonTag = ({
 
   const handleEditQuickButton = async () => {
     setLoadingEdit(true);
-    if (!label || !price || !type || !quickButton.product) {
+    if (!label || !price || !quickButton.product) {
       toast.error(`Please fill in all required fields.`);
       setLoadingEdit(false);
       return;
@@ -79,7 +78,7 @@ const QuickButtonTag = ({
       name: quickButton.product.name,
       price: parseInt((price * 100).toFixed(0)),
       units: units,
-      type: type,
+      type: quickButton.type,
     }
 
     editQuickAddButton(buttonData)
@@ -182,31 +181,6 @@ const QuickButtonTag = ({
                   </div>
                 </div>
 
-              </div>
-              {/* Type Selector Buttons */}
-              <div className="flex flex-row space-x-2 w-full">
-                <button
-                  type="button"
-                  className={`flex h-full w-full ${(type === "Liquor") ? "bg-blue-600" : "bg-zinc-800"} text-white font-semibold text-2xl p-5 justify-center items-center
-                         rounded-sm transition-colors ease-linear`}
-                  onClick={() => {
-                    setType("Liquor");
-                  }}
-                >
-                  Liquor
-                </button>
-
-                {/* Wine type selector */}
-                <button
-                  type="button"
-                  className={`flex h-full w-full ${(type === "Wine") ? "bg-blue-600" : "bg-zinc-800"} text-white font-semibold text-2xl p-5 justify-center items-center
-                         rounded-sm transition-colors ease-linear`}
-                  onClick={() =>
-                    setType("Wine")
-                  }
-                >
-                  Wine
-                </button>
               </div>
 
               {loadingEdit ? (

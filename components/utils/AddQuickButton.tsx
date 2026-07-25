@@ -18,7 +18,6 @@ const AddQuickButton = ({ products, ref, onAdd }: {
   const [loading, setLoading] = useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = useState<Product>();
   const [units, setUnits] = useState<number>(1);
-  const [type, setType] = useState<"Liquor" | "Wine">("Liquor");
   const [price, setPrice] = useState<number>(0);
   const [label, setLabel] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -89,7 +88,7 @@ const AddQuickButton = ({ products, ref, onAdd }: {
   const handleConfirm = () => {
     setLoading(true);
 
-    if (!label || !price || !currentProduct || !type) {
+    if (!label || !price || !currentProduct) {
       toast.error(`Please fill in all required fields.`);
       setLoading(false);
       return;
@@ -101,7 +100,7 @@ const AddQuickButton = ({ products, ref, onAdd }: {
       name: currentProduct.name,
       price: parseInt((price * 100).toFixed(0)),
       units: units,
-      type: type,
+      type: currentProduct.itemType as "Liquor" | "Wine",
     }
 
     createQuickAddButton(buttonData)
@@ -112,7 +111,6 @@ const AddQuickButton = ({ products, ref, onAdd }: {
         setLabel("");
         setPrice(0);
         setUnits(1);
-        setType("Liquor");
         setCurrentProduct(undefined);
         setSearchTerm("");
         setAdd(false);
@@ -354,29 +352,6 @@ const AddQuickButton = ({ products, ref, onAdd }: {
                   Price of a custom product.
                 </div>
               </div>
-            </div>
-            {/* Type Selector Buttons */}
-            <div className="flex flex-row space-x-2 w-full">
-              <button
-                className={`flex h-full w-full ${(type === "Liquor") ? "bg-blue-600" : "bg-zinc-800"} text-white font-semibold text-2xl p-5 justify-center items-center
-                         rounded-sm transition-colors ease-linear`}
-                onClick={() => {
-                  setType("Liquor");
-                }}
-              >
-                Liquor
-              </button>
-
-              {/* Wine type selector */}
-              <button
-                className={`flex h-full w-full ${(type === "Wine") ? "bg-blue-600" : "bg-zinc-800"} text-white font-semibold text-2xl p-5 justify-center items-center
-                         rounded-sm transition-colors ease-linear`}
-                onClick={() =>
-                  setType("Wine")
-                }
-              >
-                Wine
-              </button>
             </div>
 
             {loading ? (
