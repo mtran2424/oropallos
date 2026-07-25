@@ -45,6 +45,7 @@ const EditUnitPrice = ({ onEditPrice, product }: {
       hidden: product.hidden,
       unitPrice: unitPrice !== undefined ? parseInt((unitPrice * 100).toFixed(0)) : undefined,
       unitCount: product.unitCount,
+      itemType: product.itemType,
     };
 
     if (product.id) {
