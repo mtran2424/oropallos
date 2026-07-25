@@ -195,6 +195,8 @@ const InventoryMenu = ({
         return product.size;
       case "upc":
         return product.upc;
+      case "itemType":
+        return product.itemType;
       case "unitPrice":
         return product.unitPrice ? (product.unitPrice / 100).toLocaleString("en-US", {
           style: "currency",
@@ -204,7 +206,6 @@ const InventoryMenu = ({
         return product.unitCount || "N/A";
       case "unitsPerCase":
         return product.unitsPerCase || "N/A";
-
       default:
         return null;
     }
