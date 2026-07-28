@@ -32,12 +32,12 @@ const CustomerDisplay = () => {
     channel.onmessage = (event) => {
       console.log("Received:", event.data);
 
-      const itemExists = cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice);
       switch (event.data.type) {
         case "cart-add":
           setCart((prev) => [...prev, event.data.item]);
           break;
-        case "cart-update":
+          case "cart-update":
+          const itemExists = event.data.type === "cart-clear" ? cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice) : -1;
           if (itemExists !== -1) {
             const temp = cart[itemExists];
             temp.quantity += event.data.item.quantity;
@@ -47,12 +47,12 @@ const CustomerDisplay = () => {
         case "cart-remove":
           setCart((prev) => prev.filter(item => !(item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice)));
           break;
-        case "cart-clear":
-          setCart([]);
-          break;
         case "cart-edit":
           setCart((prev) => prev.filter(item => !(item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice)));
           setCart((prev) => [...prev, event.data.newItem]);
+          break;
+        case "cart-clear":
+          setCart([]);
           break;
       }
     };
