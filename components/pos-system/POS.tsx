@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { PiCashRegister } from "react-icons/pi";
 import { CiViewTable } from "react-icons/ci";
@@ -36,6 +36,7 @@ const POS = () => {
   const [quickAddButtons, setQuickAddButtons] = useState<QuickAddButton[]>([]);
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const router = useRouter();
 
   const [page, setPage] = useState<string>("Transaction");
 
@@ -69,7 +70,7 @@ const POS = () => {
   useEffect(() => {
     // if user is not signed in, redirect to home page
     if (!isSignedIn) {
-      redirect('/');
+      router.push('/');
     }
   }, [user]);
 
@@ -235,9 +236,9 @@ const POS = () => {
             className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out`}
             onClick={() => {
               if (user?.username !== "admin")
-                redirect("/home");
+                router.push("/home");
               else
-                redirect("/admin/dashboard")
+                router.push("/admin/dashboard")
             }}
           >
             <RxExit size={30} />

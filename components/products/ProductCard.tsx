@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 import { Product } from "@/components/global.utils";
 
 const ProductCard = ({ product }: { product: Product }) => {
+  const router = useRouter();
   return (
     <motion.div
       className="flex flex-col bg-white shadow-md rounded-lg border border-zinc-300 p-4 w-full min-w-50"
@@ -12,7 +13,7 @@ const ProductCard = ({ product }: { product: Product }) => {
       whileTap={{ scale: 0.95 }}
       transition={{ duration: 0.2 }}
       onClick={() => {
-        redirect(`/products/${product.id}`);
+        router.push(`/products/${product.id}`);
       }}
     >
       {/* Product Image */}

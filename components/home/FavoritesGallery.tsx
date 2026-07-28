@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
 import { Product } from "@/components/global.utils";
 
 const FavoritesGallery = ({ products }: { products: Product[] }) => {
   const [current, setCurrent] = useState(0);
+  const router = useRouter();
 
   // Function to handle the previous and next button clicks
   const prev = () => setCurrent((prev) => (prev - 1 + products.length) % products.length);
@@ -92,7 +93,7 @@ const FavoritesGallery = ({ products }: { products: Product[] }) => {
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     className="mt-2 px-4 py-2 text-white bg-red-900 border border-red-900 rounded-full hover:bg-white hover:text-red-900 transition duration-300 ease-in-out"
                     onClick={() => {
-                      redirect(`/products/${product.id}`);
+                      router.push(`/products/${product.id}`);
                     }}
                   >
                     View Product

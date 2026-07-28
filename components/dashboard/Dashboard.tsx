@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getProducts } from "@/app/api/adminapi";
 import { getAnnouncements } from "@/app/api/announcementapi";
 import { Announcement, Product } from "@/components/global.utils";
@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const router = useRouter();
 
   // Admin check
   const { isSignedIn, user } = useUser();
@@ -23,10 +24,10 @@ const Dashboard = () => {
   useEffect(() => {
     // if user is not signed in, redirect to home page
     if (!isSignedIn) {
-      redirect('/home');
+      router.push('/home');
     }
     else if (user && user.username !== "admin") {
-      redirect('/admin/pos-system');
+      router.push('/admin/pos-system');
     }
   }, [isSignedIn]);
 

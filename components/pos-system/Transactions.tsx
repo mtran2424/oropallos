@@ -3,7 +3,7 @@ import { useReactToPrint } from "react-to-print";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { createTransaction } from "@/app/api/transactionapi";
 import {
@@ -17,7 +17,9 @@ import {
   Discount,
   QuickAddButton,
   TransactionItemRequest,
-  calculateDiscount
+  calculateDiscount,
+  fifteenPercentDiscount,
+  taxFreeDiscount
 } from "@/components/global.utils";
 import Receipt from "@/components/utils/Receipt";
 import TextButton from "@/components/ui/TextButton";
@@ -54,6 +56,13 @@ const Transactions = ({
   const [amountTendered, setAmountTendered] = useState<number>(0);
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [editItem, setEditItem] = useState(false);
+  const [otherDiscount, setOtherDiscount] = useState(false);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [currentItem, setCurrentItem] = useState<TransactionItemRequest>();
+  const [currentIndex, setCurrentIndex] = useState<number>(-1);
+  const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [discount, setDiscount] = useState<Discount>(noDiscount);
 
   const channel = new BroadcastChannel(`${user.user?.username}-pos`);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -84,6 +93,72 @@ const Transactions = ({
     });
   };
 
+  // Close the modal for adding a product
+  const closeEditModal = () => {
+    setQuantity(-1);
+    setCurrentItem(undefined);
+    setCurrentProduct(undefined);
+    setCurrentIndex(-1);
+    setDiscount(noDiscount);
+    setEditItem(false);
+  };
+
+  const closeDiscountModal = () => {
+    setOtherDiscount(false);
+  }
+
+  // Calculate price
+  const getPrice = (discount: string, price: number) => {
+    switch (discount) {
+      case "Tax_Free": return (price / 1.07);
+      default: return price;
+    }
+  }
+
+  const handleOpenEdit = (item: TransactionItemRequest, index: number) => {
+    setCurrentItem(item);
+    setCurrentIndex(index);
+    setQuantity(item.quantity);
+    setDiscount(item.discount);
+    setCurrentProduct(item.product);
+    setEditItem(true);
+  }
+
+  const handleSubmitEdit = () => {
+    // Type of item and product required to be submitted
+    if (quantity && currentProduct) {
+      const newItem = {
+        type: currentProduct.itemType,
+        name: currentProduct.name,
+        quantity: quantity,
+        discount: discount,
+        productId: currentProduct.id,
+        product: currentProduct,
+        itemPrice: parseInt(getPrice(discount.value, currentProduct.price * 100).toFixed(0)),
+        unitPrice: currentProduct.unitPrice ? parseInt(currentProduct.unitPrice.toFixed(0)) : undefined
+      }
+
+      const newCart = [...cart];
+      newCart.splice(currentIndex, 1);
+      setCart(newCart);
+      channel.postMessage({
+        type: "cart-edit",
+        item: currentItem,
+        newItem: newItem,
+      });
+
+      setCart((prev) => [...prev, newItem]);
+
+      // Reset states upon confirm
+      setQuantity(-1);
+      setCurrentItem(undefined);
+      setCurrentProduct(undefined);
+      setCurrentIndex(-1);
+      setDiscount(noDiscount);
+      setEditItem(false);
+    }
+  }
+
   const handleCustomAdd = (
     product: Product,
     quantity: number,
@@ -102,6 +177,7 @@ const Transactions = ({
       itemPrice: price,
       unitPrice: product.unitPrice ? parseInt(product.unitPrice.toFixed(0)) : undefined,
       productId: product.id,
+      product: product
     }
 
     if (itemExists != -1) {
@@ -438,7 +514,12 @@ const Transactions = ({
                     {cart.map((item, index) => (
                       <tr key={index}>
                         <td className="text-2xl text-center p-1">{item.type}</td>
-                        <td className="text-2xl text-left p-1">{item.name} {item.product ? " - " + item.product.size : ""}</td>
+                        <td
+                          className="text-2xl text-left p-1"
+                          onClick={() => {
+                            handleOpenEdit(item, index);
+                          }}
+                        >{item.name} {item.product ? " - " + item.product.size : ""}</td>
                         <td className="text-2xl text-center p-1">{item.quantity}</td>
                         <td className="text-2xl text-center p-1">{item.discount.name}</td>
                         <td className="text-2xl text-center p-1">{(item.itemPrice / 100).toFixed(2)}</td>
@@ -842,6 +923,107 @@ const Transactions = ({
           >
             Close
           </motion.button>
+        </div>
+      </Modal>
+
+      <Modal open={editItem} title="Add Item" height="max-h-[80vh]" width="max-w-3xl" onClose={closeEditModal} ref={modalRef}>
+        <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
+          <div className="flex flex-col items-center justify-center w-full gap-4">
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
+            <div className="flex flex-row">
+              <button
+                className="text-blue-600 hover:text-zinc-400"
+                onClick={() => {
+                  if (quantity > 1)
+                    setQuantity(quantity - 1)
+                }}
+                disabled={quantity <= 1}
+              >
+                <MdNavigateBefore size={60} />
+              </button>
+              <div className="flex w-full items-center justify-center">
+                <input
+                  type="number"
+                  step="1"
+                  min={0}
+                  className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setQuantity(parseInt(value));
+                  }}
+                  value={quantity || "0"}
+                />
+              </div>
+              <button
+                className="text-blue-600 hover:text-zinc-400"
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                <MdNavigateNext size={60} />
+              </button>
+            </div>
+
+            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
+            <div className="grid grid-cols-4 w-full gap-1">
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+                onClick={() => setDiscount(noDiscount)}
+              >
+                No Discount
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  hover:bg-zinc-400`}
+                onClick={() => setDiscount(fifteenPercentDiscount)}
+              >
+                15% Discount
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                hover:bg-zinc-400`}
+                onClick={() => setDiscount(taxFreeDiscount)}
+              >
+                Tax Free
+              </button>
+              <button
+                className={`p-5 rounded-md text-white text-2xl 
+                  ${discount !== taxFreeDiscount && discount !== fifteenPercentDiscount && discount !== noDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  hover:bg-zinc-400`}
+                onClick={() => setOtherDiscount(true)}
+              >
+                Other
+              </button>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+              onClick={handleSubmitEdit}
+            >
+              Submit
+            </motion.button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal open={otherDiscount} title="Other Discount" height="max-h-[80vh]" width="max-w-3xl" onClose={closeDiscountModal} ref={modalRef}>
+        <div className="grid grid-cols-4 w-full gap-1">
+          {discounts.map((disc) => (
+            <button
+              key={disc.id}
+              className={`p-5 rounded-md text-white text-2xl 
+                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
+                  hover:bg-zinc-400`}
+              onClick={() => {
+                setDiscount(disc);
+                closeDiscountModal();
+              }}
+            >
+              {disc.label}
+            </button>))}
         </div>
       </Modal>
     </>

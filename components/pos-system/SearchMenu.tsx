@@ -126,6 +126,7 @@ const SearchMenu = ({
         quantity: quantity,
         discount: discount,
         productId: currentProduct.id,
+        product: currentProduct,
         itemPrice: parseInt(getPrice(discount.value, currentProduct.price * 100).toFixed(0)),
         unitPrice: currentProduct.unitPrice ? parseInt(currentProduct.unitPrice.toFixed(0)) : undefined
       })
@@ -387,12 +388,6 @@ const SearchMenu = ({
                 Other
               </button>
             </div>
-
-            {/* <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
-            <div className="grid grid-cols-2 w-full gap-1">
-              <button className={`p-5 rounded-md text-white text-2xl ${type === "Wine" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Wine")}>Wine</button>
-              <button className={`p-5 rounded-md text-white text-2xl ${type === "Liquor" ? "bg-zinc-500" : "bg-blue-600"} hover:bg-zinc-400`} onClick={() => setType("Liquor")}>Liquor</button>
-            </div> */}
 
             <motion.button
               whileHover={{ scale: 1.02 }}

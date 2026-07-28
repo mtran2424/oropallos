@@ -32,12 +32,12 @@ const CustomerDisplay = () => {
     channel.onmessage = (event) => {
       console.log("Received:", event.data);
 
+      const itemExists = cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice);
       switch (event.data.type) {
         case "cart-add":
           setCart((prev) => [...prev, event.data.item]);
           break;
         case "cart-update":
-          const itemExists = cart.findIndex(item => item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice);
           if (itemExists !== -1) {
             const temp = cart[itemExists];
             temp.quantity += event.data.item.quantity;
@@ -49,6 +49,10 @@ const CustomerDisplay = () => {
           break;
         case "cart-clear":
           setCart([]);
+          break;
+        case "cart-edit":
+          setCart((prev) => prev.filter(item => !(item.name === event.data.item.name && item.type === event.data.item.type && item.discount.value === event.data.item.discount.value && item.itemPrice === event.data.item.itemPrice)));
+          setCart((prev) => [...prev, event.data.newItem]);
           break;
       }
     };

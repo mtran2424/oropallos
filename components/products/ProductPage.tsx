@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Product } from "@/components/global.utils";
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaWineBottle } from "react-icons/fa";
@@ -42,7 +42,7 @@ const ProductPage = ({ products }: { products: Product[] }) => {
       <div className="flex justify-start items-center w-full max-w-7xl p-5 mt-5">
         <motion.button
           whileHover={{ scale: 1.1 }}
-          onClick={() => redirect("/products")}
+          onClick={() => router.push("/products")}
           className="text-red-900 text-lg"
         >
           <IoIosArrowBack 
@@ -58,7 +58,7 @@ const ProductPage = ({ products }: { products: Product[] }) => {
             category={product && ({ name: product.category.split("_").join(" "), value: product.category, subcategories: [] } as ProductCategory)}
             subcategory={product && { name: product.subcategory.split("_").join(" "), value: product.subcategory, types: [] }}
             type={product?.type}
-            onClearClick={() => redirect("/products")}
+            onClearClick={() => router.push("/products")}
             onCategoryClick={() => router.push(`/products?category=${product?.category}`)}
             onSubcategoryClick={() => router.push(`/products?category=${product?.category}&subcategory=${product?.subcategory}`)}
             onTypeClick={() => router.push(`/products?category=${product?.category}&subcategory=${product?.subcategory}&type=${product?.type}`)}
