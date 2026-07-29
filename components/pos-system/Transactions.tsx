@@ -30,6 +30,7 @@ import SearchMenu from "./transactions/SearchMenu";
 import AddGiftcard from "./transactions/AddGiftcard";
 import QuickButton from "./transactions/QuickButton";
 import ManualRegister from "./ManualRegister";
+import PartialNumPad from "./num-pad/PartialNumPad";
 
 const Transactions = ({
   products,
@@ -724,134 +725,17 @@ const Transactions = ({
               </tbody>
             </table>
 
-
-            {/* Need to add num pad for amount input. Enter amount and punch credit or cash to reduce amount. When amount greater than total due, transaction is completed */}
-            <div className="grid grid-cols-3 gap-x-1 gap-y-1 h-full w-full">
-
-              {/* First Row */}
-
-              {/* Clear inputs */}
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  setInput("");
-                  setCash(0);
-                  setCredit(0);
-                }}
-              >
-
-                Clear
-              </button>
-
-              <button></button>
-
-              {/* Back space button */}
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => {
-                  setInput(prev => prev.slice(0, -1));
-                }}
-              >
-                <IoBackspaceOutline size={40} />
-              </button>
-
-              {/* Second Row */}
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}7`)}
-              >
-                7
-              </button>
-
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}8`)}
-              >
-                8
-              </button>
-
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}9`)}
-              >
-                9
-              </button>
-
-              {/* Third Row */}
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}4`)}
-              >
-                4
-              </button>
-
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}5`)}
-              >
-                5
-              </button>
-
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}6`)}
-              >
-                6
-              </button>
-
-              {/* Fourth Row */}
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}1`)}
-              >
-                1
-              </button>
-
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}2`)}
-              >
-                2
-              </button>
-
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}3`)}
-              >
-                3
-              </button>
-
-              {/* Fifth Row */}
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
-                onClick={() => setInput(`${input}0`)}
-              >
-                0
-              </button>
-
-              <button
-                className="flex p-5 h-full w-full bg-zinc-600 text-white font-semibold m-0.5 text-2xl justify-center items-center
-                                hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
-                onClick={() => setInput(`${input}00`)}
-              >
-                00
-              </button>
-
-              <button></button>
-
-            </div>
+            <PartialNumPad
+              onClearClick={() => {
+                setInput("");
+                setCash(0);
+                setCredit(0);
+              }}
+              onBackspaceClick={() => {
+                setInput(prev => prev.slice(0, -1));
+              }}
+              onNumberClick={(value) => setInput(`${input}${value}`)}
+            />
 
             {/* Cash and credit buttons */}
             <div className="grid grid-cols-2 w-full gap-1">

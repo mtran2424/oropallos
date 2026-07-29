@@ -429,7 +429,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
               <NumPad
                 onQuantityClick={() => {
                   if (input !== "") {
-                    setQuantity(parseInt(input));
+                    setUnits(parseInt(input));
                     setInput("");
                   }
                 }}
