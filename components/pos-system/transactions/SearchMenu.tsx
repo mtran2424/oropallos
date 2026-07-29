@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue, Ref, RefObject } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect, useDeferredValue } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";

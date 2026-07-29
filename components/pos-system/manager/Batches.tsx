@@ -148,8 +148,6 @@ const Batches = ({
   `,
   });
 
-  // TODO: Figure out cluster items for batches (gross, net, tax, discount, etc...)
-
   // Recalculate totals when transactions change
   const recalculateTotals = () => {
     setGrossLiquor(batches.reduce((sum, batch) => sum + batch.liquorGross, 0) / 100);

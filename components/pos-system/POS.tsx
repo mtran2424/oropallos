@@ -13,8 +13,7 @@ import { getBatches } from "@/app/api/batchapi";
 import { getDiscount, getProducts, getQuickAddButtons } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
 import { 
-  Batch, 
-  Config, 
+  Batch,
   Product, 
   QuickAddButton, 
   Transaction,

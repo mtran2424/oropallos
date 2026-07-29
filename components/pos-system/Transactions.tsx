@@ -19,16 +19,17 @@ import {
   TransactionItemRequest,
   calculateDiscount,
   fifteenPercentDiscount,
-  taxFreeDiscount
+  taxFreeDiscount,
+  checkItemExists
 } from "@/components/global.utils";
 import Receipt from "@/components/utils/Receipt";
 import TextButton from "@/components/ui/TextButton";
 import Modal from "@/components/ui/Modal";
-import AddCustom from "./AddCustom";
-import SearchMenu from "./SearchMenu";
-import AddGiftcard from "./AddGiftcard";
-import QuickButton from "./QuickButton";
-import NumPad from "./NumPad";
+import AddCustom from "./transactions/AddCustom";
+import SearchMenu from "./transactions/SearchMenu";
+import AddGiftcard from "./transactions/AddGiftcard";
+import QuickButton from "./transactions/QuickButton";
+import ManualRegister from "./ManualRegister";
 
 const Transactions = ({
   products,
@@ -48,6 +49,8 @@ const Transactions = ({
   const [input, setInput] = useState<string>("");
   const [cashout, setCashout] = useState<boolean>(false);
   const [confirm, setConfirm] = useState<boolean>(false);
+
+  // Transaction states
   const [note, setNote] = useState<string>("");
   const [total, setTotal] = useState<number>(0);
   const [cash, setCash] = useState<number>(0);
@@ -56,6 +59,8 @@ const Transactions = ({
   const [amountTendered, setAmountTendered] = useState<number>(0);
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // Edit cart item states
   const [editItem, setEditItem] = useState(false);
   const [otherDiscount, setOtherDiscount] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
@@ -69,6 +74,7 @@ const Transactions = ({
 
   // Close the modal for cashout
   const closeCashoutModal = () => {
+    // Clear current cashout states before closing modal
     setCashout(false);
     setInput("");
     setCash(0);
@@ -79,6 +85,7 @@ const Transactions = ({
 
   // Close the modal for confirm
   const closeConfirmModal = () => {
+    // Clear cashout states and cart on other screen after confirmation
     setCart([]);
     setCash(0);
     setCredit(0);
@@ -95,6 +102,7 @@ const Transactions = ({
 
   // Close the modal for adding a product
   const closeEditModal = () => {
+    // Reset edit states when no item is selected
     setQuantity(-1);
     setCurrentItem(undefined);
     setCurrentProduct(undefined);
@@ -107,7 +115,7 @@ const Transactions = ({
     setOtherDiscount(false);
   }
 
-  // Calculate price
+  // Return discounted price, considering tax exempt exception
   const getPrice = (discount: string, price: number) => {
     switch (discount) {
       case "Tax_Free": return (price / 1.07);
@@ -115,6 +123,9 @@ const Transactions = ({
     }
   }
 
+  // Event Handlers
+
+  // Populate states when editing item
   const handleOpenEdit = (item: TransactionItemRequest, index: number) => {
     setCurrentItem(item);
     setCurrentIndex(index);
@@ -124,6 +135,7 @@ const Transactions = ({
     setEditItem(true);
   }
 
+  // Submit changes from editing item
   const handleSubmitEdit = () => {
     // Type of item and product required to be submitted
     if (quantity && currentProduct) {
@@ -138,15 +150,17 @@ const Transactions = ({
         unitPrice: currentProduct.unitPrice ? parseInt(currentProduct.unitPrice.toFixed(0)) : undefined
       }
 
+      // Remove old item from cart
       const newCart = [...cart];
       newCart.splice(currentIndex, 1);
       setCart(newCart);
+
+      // Add back as new item to cart
       channel.postMessage({
         type: "cart-edit",
         item: currentItem,
         newItem: newItem,
       });
-
       setCart((prev) => [...prev, newItem]);
 
       // Reset states upon confirm
@@ -159,6 +173,7 @@ const Transactions = ({
     }
   }
 
+  // Adding custom item
   const handleCustomAdd = (
     product: Product,
     quantity: number,
@@ -167,7 +182,7 @@ const Transactions = ({
     discount: Discount,
     price: number
   ) => {
-    const itemExists = cart.findIndex(item => item.name === name && item.type === type && item.discount.value === discount.value && item.itemPrice === price);
+    // Find new item in cart
 
     const item = {
       type: type,
@@ -180,6 +195,9 @@ const Transactions = ({
       product: product
     }
 
+    const itemExists = checkItemExists(cart, item);
+
+    // Create new item entry if DNE, update quantity if exists
     if (itemExists != -1) {
       const temp = cart[itemExists];
       temp.quantity += quantity;
@@ -197,6 +215,8 @@ const Transactions = ({
       });
     }
   }
+
+  // Create gift card item
   const handleGiftcardAdd = (
     price: number
   ) => {
@@ -214,8 +234,12 @@ const Transactions = ({
     });
   }
 
+  // Add basic item
   const handleAddItem = (item: TransactionItemRequest) => {
-    const itemExists = cart.findIndex(cartItem => cartItem.name === item.name && cartItem.type === item.type && cartItem.discount === item.discount && cartItem.itemPrice === item.itemPrice);
+    // Check if item exists
+    const itemExists = checkItemExists(cart, item);
+
+    // Create new item entry if DNE, update quantity if exists
     if (itemExists != -1) {
       const temp = cart[itemExists];
       temp.quantity += item.quantity;
@@ -234,11 +258,15 @@ const Transactions = ({
     }
   }
 
+  // Create transaction on submission
   const handleSubmitTransaction = async () => {
     try {
       setLoading(true);
 
+      // Amount tendered is combination of cash/credit if over total, total if under
       setAmountTendered((cash + credit) > total ? cash + credit : total);
+
+      // No change if cash + credit is less that total
       setChange((cash + credit) > total ? (cash + credit) - total : 0);
 
       const creditTotal =
@@ -354,6 +382,7 @@ const Transactions = ({
     handlePrintNoReceipt();
   }
 
+  // Constants for receipts
   const receipt = (
     <Receipt ref={receiptRef}>
       <table className="w-full max-w-3/4 border-separate border-spacing-y-2">
@@ -564,7 +593,7 @@ const Transactions = ({
               </TextButton>
             </div>
             {/* Tools */}
-            {mode === "Register" && <NumPad discounts={discounts} onConfirm={(item) => {
+            {mode === "Register" && <ManualRegister discounts={discounts} onConfirm={(item) => {
               handleAddItem(item);
             }} />}
             {mode === "Search" && <SearchMenu products={products} discounts={discounts} onConfirm={(item) => {

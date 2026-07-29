@@ -37,9 +37,13 @@ const Sales = ({
   initialTransactions: Transaction[],
   initialBatches: Batch[]
 }) => {
+  // Filter dates
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  // Set batches to run calculations
   const [batches, setBatches] = useState<Batch[]>(initialBatches);
+
+  // Calculate initial values in states on load
   const [items, setItems] = useState<{ product: Product | undefined, value: number, quantity: number }[]>(
     initialTransactions.flatMap((transaction) =>
       transaction.transactionItems.map((item) => {
@@ -152,8 +156,6 @@ const Sales = ({
       (b.value || 0) - (a.value || 0)
     ).slice(0, 14));
 
-
-
   const [salesReport, setSalesReport] = useState(
     Object.entries(
       initialBatches
@@ -170,9 +172,9 @@ const Sales = ({
     ).map(([date, sales], index) => ({
       date,
       sales
-    })).sort((a,b) => a.date.localeCompare(b.date)));
+    })).sort((a, b) => a.date.localeCompare(b.date)));
 
-
+  // Recalculate new totals given filters and data change
   const recalculateTotals = () => {
     setItems(
       transactions.flatMap((transaction) =>
@@ -324,7 +326,7 @@ const Sales = ({
       ).map(([date, sales], index) => ({
         date,
         sales
-      })).sort((a,b) => a.date.localeCompare(b.date)) );
+      })).sort((a, b) => a.date.localeCompare(b.date)));
   };
 
   useEffect(() => {

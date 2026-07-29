@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Discount, Transaction } from "@/components/global.utils";
-import CurrentBatch from "./CurrentBatch";
-import Batches from "./Batches";
+import CurrentBatch from "./manager/CurrentBatch";
+import Batches from "./manager/Batches";
 
 const Manager = ({ transactions, discounts }: { 
   transactions: Transaction[];

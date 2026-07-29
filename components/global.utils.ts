@@ -730,3 +730,15 @@ export const calculateTax = (cart: TransactionItemRequest[]) => {
     });
   return total;
 };
+
+export const compareItems = (a: TransactionItemRequest, b: TransactionItemRequest) => {
+  return a.name === b.name 
+  && a.type === b.type 
+  && a.discount.value === b.discount.value
+  && a.itemPrice === b.itemPrice;
+}
+
+export const checkItemExists = (cart: TransactionItemRequest[], item: TransactionItemRequest) => {
+  return cart.findIndex(currentItem => compareItems(currentItem, item));
+
+}

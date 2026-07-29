@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { IoBackspaceOutline } from "react-icons/io5";
 import { MdKeyboardReturn } from "react-icons/md";
 import Modal from "@/components/ui/Modal";
+import NumPadButton from "../num-pad/NumPadButton";
 
 const AddGiftcard = ({ ref, onClick }: {
   // products: Product[];
@@ -106,127 +107,102 @@ const AddGiftcard = ({ ref, onClick }: {
               {/* First Row */}
 
               {/* Clear inputs */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => {
                   setInput("");
                 }}
               >
                 Clear
-              </button>
+              </NumPadButton>
 
               <button />
 
               {/* Back space button */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => {
                   setInput(prev => prev.slice(0, -1));
                 }}
               >
                 <IoBackspaceOutline size={40} />
-              </button>
+              </NumPadButton>
 
               <button />
 
               {/* Second Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}7`)}
               >
                 7
-              </button>
+              </NumPadButton>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}8`)}
               >
                 8
-              </button>
+              </NumPadButton>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}9`)}
               >
                 9
-              </button>
+              </NumPadButton>
 
               <button />
 
 
               {/* Third Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}4`)}
               >
                 4
-              </button>
+              </NumPadButton>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}5`)}
               >
                 5
-              </button>
+              </NumPadButton>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}6`)}
               >
                 6
-              </button>
+              </NumPadButton>
 
               <button />
 
               {/* Fourth Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}1`)}
               >
                 1
-              </button>
+              </NumPadButton>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}2`)}
               >
                 2
-              </button>
+              </NumPadButton>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}3`)}
               >
                 3
-              </button>
+              </NumPadButton>
 
               {/* Fifth Row */}
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear col-span-2"
+              <NumPadButton
+                columns={2}
                 onClick={() => setInput(`${input}0`)}
               >
                 0
-              </button>
+              </NumPadButton>
 
-              <button
-                className="flex h-full w-full bg-zinc-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-200 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              <NumPadButton
                 onClick={() => setInput(`${input}00`)}
               >
                 00
-              </button>
+              </NumPadButton>
 
 
               {/* Seventh Row */}
