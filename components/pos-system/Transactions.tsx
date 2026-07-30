@@ -738,7 +738,7 @@ const Transactions = ({
             />
 
             {/* Cash and credit buttons */}
-            <div className="grid grid-cols-2 w-full gap-1">
+            <div className="grid grid-cols-2 w-full gap-1 pt-1">
               <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Cash" ? "bg-blue-600" : "bg-zinc-500"}`}
                 onClick={() => {
                   setType("Cash")
@@ -765,7 +765,7 @@ const Transactions = ({
             </div>
 
             {/* Additional Notes Section */}
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full py-4">
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Notes</label>
               <textarea
                 className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"

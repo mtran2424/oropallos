@@ -103,6 +103,7 @@ const ManualRegister = ({
       {/* Numerical to adjust attributes of item */}
       <NumPad
         typeSelector
+        noSale
         onQuantityClick={() => {
           if (input !== "") {
             setQuantity(parseInt(input));
@@ -142,6 +143,9 @@ const ManualRegister = ({
         onTypeClick={(value) => {
           setType(value);
         }}
+        onNoSaleClick={() => {
+          handlePrint();
+        }}
         onConfirmClick={() => {
           if (type && quantity && discount && input) {
             onConfirm(
@@ -154,6 +158,12 @@ const ManualRegister = ({
           }
         }}
       />
+      
+      <div className="hidden" >
+        <div className="print-area" ref={componentRef} >
+          {noSaleReceipt}
+        </div>
+      </div>
 
       {/* Other Discount Modal */}
       <Modal open={otherDiscount} title="Other Discount" height="max-h-[80vh]" width="max-w-3xl" onClose={closeDiscountModal} ref={modalRef}>

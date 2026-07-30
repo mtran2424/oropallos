@@ -5,6 +5,7 @@ import { MdKeyboardReturn } from "react-icons/md";
 
 const NumPad = ({
   typeSelector,
+  noSale,
   onQuantityClick,
   onClearClick,
   onBackspaceClick,
@@ -13,9 +14,11 @@ const NumPad = ({
   onOtherDiscountClick,
   onNumberClick,
   onTypeClick,
+  onNoSaleClick,
   onConfirmClick,
 }: {
   typeSelector?: boolean;
+  noSale?: boolean;
   onQuantityClick: () => void;
   onClearClick: () => void;
   onBackspaceClick: () => void;
@@ -24,6 +27,7 @@ const NumPad = ({
   onOtherDiscountClick: () => void;
   onNumberClick: (value: string) => void;
   onTypeClick?: (value: string) => void;
+  onNoSaleClick?: () => void;
   onConfirmClick: () => void;
 }) => {
   return (
@@ -47,7 +51,14 @@ const NumPad = ({
         Clear
       </NumPadButton>
 
-      <button />
+      {noSale ? <NumPadButton
+        onClick={() => onNoSaleClick?.()}
+      >
+
+        No Sale
+      </NumPadButton> :
+        <button />
+      }
 
       {/* Second Row */}
       <NumPadButton
