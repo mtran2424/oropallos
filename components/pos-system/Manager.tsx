@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import { Discount, Transaction } from "@/components/global.utils";
 import CurrentBatch from "./manager/CurrentBatch";
 import Batches from "./manager/Batches";
+import Printouts from "./manager/Printouts";
 
 const Manager = ({ transactions, discounts }: { 
   transactions: Transaction[];
   discounts: Discount[];
  }) => {
-  const [view, setView] = useState<"currentBatch" | "previousBatches">("currentBatch");
+  const [view, setView] = useState<"currentBatch" | "previousBatches" | "printouts">("currentBatch");
 
   return (
     <motion.div
@@ -43,11 +44,22 @@ const Manager = ({ transactions, discounts }: {
           >
             Previous Batches
           </button>
+          <button
+            type="button"
+            className={`w-full text-start text-xl text-nowrap text-zinc-900 hover:bg-zinc-200 rounded-xl p-2 
+                ${view === "previousBatches" ? "bg-zinc-300" : ""}
+                transition-colors ease-in-out
+                `}
+            onClick={() => setView("printouts")}
+          >
+            Printouts
+          </button>
         </div>
 
         <div className="flex flex-col w-full items-start justify-start py-5">
           {view === "currentBatch" && <CurrentBatch initialTransactions={transactions} discounts={discounts}/>}
           {view === "previousBatches" && <Batches discounts={discounts}/>}
+          {view === "printouts" && <Printouts/>}
         </div>
 
       </div>

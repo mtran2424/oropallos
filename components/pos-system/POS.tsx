@@ -19,8 +19,7 @@ import {
   Transaction,
   Discount
 } from "@/components/global.utils";
-import Sales from "./Sales";
-import HelpButton from "./HelpButton";
+import Sales from "./Sales"
 import Settings from "./Settings";
 import Transactions from "./Transactions";
 import Manager from "./Manager";
@@ -174,10 +173,6 @@ const POS = () => {
             <FaRegSquare size={20} />
           </motion.div>
         )}
-      </div>
-
-      <div className="fixed bottom-4 left-4 z-250">
-        <HelpButton />
       </div>
 
       <motion.div
