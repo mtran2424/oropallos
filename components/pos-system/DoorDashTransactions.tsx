@@ -487,9 +487,9 @@ const DoorDashTransactions = ({
 
             </div>
             <div className="grid grid-cols-4 gap-1">
-              <AddCustom products={products} modalRef={modalRef} discounts={discounts} onClick={handleCustomAdd} />
+              <AddCustom products={products} color="red" modalRef={modalRef} discounts={discounts} onClick={handleCustomAdd} />
               {quickAddButtons && quickAddButtons.map((button) => (
-                <QuickButton key={button.id} discountsDisabled quickButton={button} discounts={discounts} onClick={handleCustomAdd} />
+                <QuickButton key={button.id} color="red" discountsDisabled quickButton={button} discounts={discounts} onClick={handleCustomAdd} />
               ))}
             </div>
           </div>
@@ -498,10 +498,10 @@ const DoorDashTransactions = ({
           <div>
             {/* Tool selector */}
             <div className="grid grid-cols-2 p-2">
-              <TextButton onClick={() => setMode("Search")}>
+              <TextButton color="red" onClick={() => setMode("Search")}>
                 Search
               </TextButton>
-              <TextButton onClick={() => setMode("Register")}>
+              <TextButton color="red" onClick={() => setMode("Register")}>
                 Register
               </TextButton>
             </div>
@@ -513,7 +513,7 @@ const DoorDashTransactions = ({
                   parseInt((item.itemPrice * 1.15).toFixed(0)))
               });
             }} />}
-            {mode === "Search" && <SearchMenu discountsDisabled products={products} discounts={discounts} onConfirm={(item) => {
+            {mode === "Search" && <SearchMenu discountsDisabled color="red"products={products} discounts={discounts} onConfirm={(item) => {
               if (item.product) {
                 handleAddItem({
                   ...item, itemPrice: parseInt(((item.product.type === 'Canned_Cocktails' ?
@@ -568,7 +568,7 @@ const DoorDashTransactions = ({
               </tbody>
             </table>
             <button
-              className="flex h-20 my-5 w-full bg-blue-600 text-white font-semibold m-0.5 text-2xl justify-center items-center px-10 col-span-4 
+              className="flex h-20 my-5 w-full bg-red-600 text-white font-semibold m-0.5 text-2xl justify-center items-center px-10 col-span-4 
                         hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
               onClick={() => {
                 if (cart.length !== 0) {
@@ -622,13 +622,13 @@ const DoorDashTransactions = ({
             {/* Loading Spinner */}
             {loading ? (
               <div className="flex justify-center items-center py-2">
-                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               // Transaction submit button
               <motion.button
                 whileHover={{ scale: 1.02 }}
-                className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+                className="h-20 text-2xl font-semibold w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
                 onClick={handleSubmitTransaction}
               >
                 Submit
@@ -665,13 +665,13 @@ const DoorDashTransactions = ({
 
           <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Receipt Option</label>
           <div className="grid grid-cols-2 w-full gap-2">
-            <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printNoReceipt()}>No Receipt</button>
-            <button type="button" className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => printReceipt()}>Print Receipt</button>
+            <button type="button" className={`p-5 rounded-md text-white text-2xl bg-red-600 hover:bg-zinc-400`} onClick={() => printNoReceipt()}>No Receipt</button>
+            <button type="button" className={`p-5 rounded-md text-white text-2xl bg-red-600 hover:bg-zinc-400`} onClick={() => printReceipt()}>Print Receipt</button>
           </div>
 
           <motion.button
             whileHover={{ scale: 1.02 }}
-            className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+            className="h-20 text-2xl font-semibold w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
             onClick={closeConfirmModal}
           >
             Close
@@ -685,7 +685,7 @@ const DoorDashTransactions = ({
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
             <div className="flex flex-row">
               <button
-                className="text-blue-600 hover:text-zinc-400"
+                className="text-red-600 hover:text-zinc-400"
                 onClick={() => {
                   if (quantity > 1)
                     setQuantity(quantity - 1)
@@ -699,7 +699,7 @@ const DoorDashTransactions = ({
                   type="number"
                   step="1"
                   min={0}
-                  className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                  className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200 ease-in-out"
                   onChange={(e) => {
                     const value = e.target.value;
                     setQuantity(parseInt(value));
@@ -708,7 +708,7 @@ const DoorDashTransactions = ({
                 />
               </div>
               <button
-                className="text-blue-600 hover:text-zinc-400"
+                className="text-red-600 hover:text-zinc-400"
                 onClick={() => setQuantity(quantity + 1)}
               >
                 <MdNavigateNext size={60} />
@@ -717,7 +717,7 @@ const DoorDashTransactions = ({
 
             <motion.button
               whileHover={{ scale: 1.02 }}
-              className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+              className="h-20 text-2xl font-semibold w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
               onClick={handleSubmitEdit}
             >
               Submit

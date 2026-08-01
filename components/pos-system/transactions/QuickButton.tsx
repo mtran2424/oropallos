@@ -15,7 +15,8 @@ const QuickButton = ({
   quickButton,
   discounts,
   discountsDisabled,
-  onClick
+  onClick,
+  color
 }: {
   quickButton: QuickAddButton
   discounts: Discount[];
@@ -26,7 +27,8 @@ const QuickButton = ({
     name: string,
     type: string,
     discount: Discount,
-    price: number) => void
+    price: number) => void;
+  color?: string;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -74,7 +76,7 @@ const QuickButton = ({
     <>
       <button
         key={quickButton.id}
-        className="font-semibold bg-blue-900 text-white text-2xl hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear py-10 px-2 rounded-sm"
+        className={`font-semibold bg-${color ? color : "blue"}-900 text-white text-2xl hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear py-10 px-2 rounded-sm`}
         onClick={openModal}
       >
         {quickButton.label}
@@ -93,7 +95,7 @@ const QuickButton = ({
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
             <div className="flex flex-row">
               <button
-                className="text-blue-600 hover:text-zinc-400"
+                className={`text-${color ? color : "blue"}-600 hover:text-zinc-400`}
                 onClick={() => {
                   if (quantity > 1)
                     setQuantity(quantity - 1)
@@ -107,7 +109,7 @@ const QuickButton = ({
                   type="number"
                   step="1"
                   min={0}
-                  className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                  className={`text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-${color ? color : "blue"}-500 transition duration-200 ease-in-out`}
                   onChange={(e) => {
                     const value = e.target.value;
                     setQuantity(parseInt(value));
@@ -116,7 +118,7 @@ const QuickButton = ({
                 />
               </div>
               <button
-                className="text-blue-600 hover:text-zinc-400"
+                className={`text-${color ? color : "blue"}-600 hover:text-zinc-400`}
                 onClick={() => setQuantity(quantity + 1)}
               >
                 <MdNavigateNext size={60} />
@@ -130,7 +132,7 @@ const QuickButton = ({
               <div className="grid grid-cols-4 w-full gap-1">
                 <button
                   className={`p-5 rounded-md text-white text-2xl 
-                  ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"}
+                  ${discount === noDiscount ? "bg-zinc-500" : `bg-${color ? color : "blue"}-600`}
                   hover:bg-zinc-400`}
                   onClick={() => setDiscount(noDiscount)}
                 >
@@ -138,7 +140,7 @@ const QuickButton = ({
                 </button>
                 <button
                   className={`p-5 rounded-md text-white text-2xl 
-                  ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  ${discount === fifteenPercentDiscount ? "bg-zinc-500" : `bg-${color ? color : "blue"}-600`} 
                   hover:bg-zinc-400`}
                   onClick={() => setDiscount(fifteenPercentDiscount)}
                 >
@@ -146,15 +148,15 @@ const QuickButton = ({
                 </button>
                 <button
                   className={`p-5 rounded-md text-white text-2xl 
-                ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} 
-                hover:bg-zinc-400`}
+                  ${discount === taxFreeDiscount ? "bg-zinc-500" : `bg-${color ? color : "blue"}-600`} 
+                  hover:bg-zinc-400`}
                   onClick={() => setDiscount(taxFreeDiscount)}
                 >
                   Tax Free
                 </button>
                 <button
                   className={`p-5 rounded-md text-white text-2xl 
-                  ${discount !== taxFreeDiscount && discount !== fifteenPercentDiscount && discount !== noDiscount ? "bg-zinc-500" : "bg-blue-600"} 
+                  ${discount !== taxFreeDiscount && discount !== fifteenPercentDiscount && discount !== noDiscount ? "bg-zinc-500" : `bg-${color ? color : "blue"}-600`} 
                   hover:bg-zinc-400`}
                   onClick={() => setOtherDiscount(true)}
                 >
@@ -165,7 +167,7 @@ const QuickButton = ({
 
             <motion.button
               whileHover={{ scale: 1.02 }}
-              className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
+              className={`h-20 text-2xl font-semibold w-full bg-${color ? color : "blue"}-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out`}
               onClick={handleSubmit}
             >
               Submit
@@ -180,7 +182,7 @@ const QuickButton = ({
             <button
               key={disc.id}
               className={`p-5 rounded-md text-white text-2xl 
-                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
+                  ${discount === disc ? "bg-zinc-500" : `bg-${color ? color : "blue"}-600`}
                   hover:bg-zinc-400`}
               onClick={() => {
                 setDiscount(disc);

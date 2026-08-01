@@ -9,8 +9,9 @@ import { Discount, fifteenPercentDiscount, noDiscount, Product, sanitize, taxFre
 import Modal from "@/components/ui/Modal";
 import NumPad from "../num-pad/NumPad";
 
-const AddCustom = ({ products, discounts, modalRef, onClick }: {
+const AddCustom = ({ products, color, discounts, modalRef, onClick }: {
   products: Product[];
+  color?: string;
   discounts: Discount[];
   modalRef: React.Ref<HTMLDivElement>;
   onClick: (
@@ -144,7 +145,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
   return (
     <>
       <button
-        className="font-semibold bg-blue-900 text-white text-2xl hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear py-10 px-2 rounded-sm"
+        className={`font-semibold bg-${color ? color : "blue"}-900 text-white text-2xl hover:bg-zinc-400 hover:text-zinc-600 transition-colors ease-linear py-10 px-2 rounded-sm`}
         onClick={openModal}
       >
         Custom
@@ -213,7 +214,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
                   paddingRight: "0.75rem",
                 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden"
+                className={`py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-${color ? color : "blue"}-500 overflow-hidden`}
                 style={{ whiteSpace: "nowrap" }}
               />
             </div>
@@ -313,7 +314,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
               <div className="flex flex-row">
                 <button
-                  className="text-blue-600 hover:text-zinc-400"
+                  className={`text-${color ? color : "blue"}-600 hover:text-zinc-400`}
                   onClick={() => {
                     if (quantity > 1)
                       setQuantity(quantity - 1)
@@ -327,7 +328,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
                     type="number"
                     step="1"
                     min={0}
-                    className="text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                    className={`text-5xl font-semibold text-center rounded-lg w-40 p-2 focus:outline-none focus:ring-2 focus:ring-${color ? color : "blue"}-500 transition duration-200 ease-in-out`}
                     onChange={(e) => {
                       const value = e.target.value;
                       setQuantity(parseInt(value));
@@ -336,7 +337,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
                   />
                 </div>
                 <button
-                  className="text-blue-600 hover:text-zinc-400"
+                  className={`text-${color ? color : "blue"}-600 hover:text-zinc-400`}
                   onClick={() => setQuantity(quantity + 1)}
                 >
                   <MdNavigateNext size={60} />
@@ -355,7 +356,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
                 <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Units Per</label>
                 <input
                   type="number"
-                  className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                  className={`border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-${color ? color : "blue"}-500 transition duration-200 ease-in-out`}
                   placeholder="Units Per"
                   readOnly
                   value={units.toFixed(0)}
@@ -372,7 +373,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
                   type="number"
                   inputMode="decimal"
                   min="0"
-                  className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+                  className={`border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-${color ? color : "blue"}-500 transition duration-200 ease-in-out`}
                   placeholder="Price"
                   readOnly
                   value={(price / 100).toFixed(2)}
@@ -393,7 +394,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
               <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
               <input
                 type="text"
-                className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out w-full"
+                className={`border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-${color ? color : "blue"}-500 transition duration-200 ease-in-out w-full`}
                 placeholder="Discount"
                 value={discount.name}
                 readOnly
@@ -411,8 +412,8 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
             >
               {/* Input bar */}
               <motion.div
-                className="p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                        overflow-hidden w-full h-30 mb-5"
+                className={`p-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-${color ? color : "blue"}-500 
+                        overflow-hidden w-full h-30 mb-5`}
               >
                 {/* Current input dash display */}
                 <input
@@ -471,8 +472,8 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
             </motion.div>
 
             <button
-              className="flex h-full w-full bg-blue-600 text-white font-semibold text-2xl p-5 justify-center items-center
-                        hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear"
+              className={`flex h-full w-full bg-${color ? color : "blue"}-600 text-white font-semibold text-2xl p-5 justify-center items-center
+                        hover:bg-zinc-400 hover:text-zinc-400 rounded-sm transition-colors ease-linear`}
               onClick={() => {
                 if (currentProduct && quantity && (price > 0) && discount) {
                   handleConfirm();
@@ -493,7 +494,7 @@ const AddCustom = ({ products, discounts, modalRef, onClick }: {
             <button
               key={disc.id}
               className={`p-5 rounded-md text-white text-2xl 
-                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
+                  ${discount === disc ? "bg-zinc-500" : `bg-${color ? color : "blue"}-600`}
                   hover:bg-zinc-400`}
               onClick={() => {
                 setDiscount(disc);
