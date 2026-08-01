@@ -29,6 +29,7 @@ export async function GET() {
         taxRate: true,
         total: true,
         amountTendered: true,
+        doorDash: true,
         transactionItems: {
           select: {
             id: true,

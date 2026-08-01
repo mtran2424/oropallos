@@ -29,6 +29,8 @@ export async function GET() {
         cash: true,
         credit: true,
         amountTendered: true,
+        fee: true,
+        doorDash: true,
         transactionItems: {
           select: {
             id: true,

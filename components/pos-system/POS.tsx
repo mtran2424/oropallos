@@ -12,10 +12,10 @@ import { IoIosSettings, IoMdClose } from "react-icons/io";
 import { getBatches } from "@/app/api/batchapi";
 import { getDiscount, getProducts, getQuickAddButtons } from "@/app/api/adminapi";
 import { getTransactions } from "@/app/api/transactionapi";
-import { 
+import {
   Batch,
-  Product, 
-  QuickAddButton, 
+  Product,
+  QuickAddButton,
   Transaction,
   Discount
 } from "@/components/global.utils";
@@ -24,6 +24,8 @@ import Settings from "./Settings";
 import Transactions from "./Transactions";
 import Manager from "./Manager";
 import Close from "./Close";
+import { SiDoordash } from "react-icons/si";
+import DoorDashTransactions from "./DoorDashTransactions";
 
 const POS = () => {
   const { isSignedIn, user } = useUser();
@@ -193,6 +195,15 @@ const POS = () => {
           </button>
           <button
             className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out
+              ${page === "DoorDash" ? "bg-zinc-500 text-white" : ""}`}
+            onClick={() => {
+              setPage("DoorDash");
+            }}
+          >
+            <SiDoordash size={30} />
+          </button>
+          <button
+            className={`flex h-20 items-center justify-center hover:bg-zinc-400 transition-colors ease-in-out
               ${page === "Manager" ? "bg-zinc-500 text-white" : ""}`}
             onClick={() => {
               setPage("Manager");
@@ -241,11 +252,24 @@ const POS = () => {
         </div>
       </motion.div>
       <div className="pl-20">
-        {page === "Transaction" && <Transactions products={products} discounts={discounts} quickAddButtons={quickAddButtons} onTransaction={()=> setRefresh(prev => !prev)}/>}
-        {page === "Manager" && <Manager transactions={transactions} discounts={discounts}/>}
+        {page === "Transaction" && <Transactions products={products} discounts={discounts} quickAddButtons={quickAddButtons} onTransaction={() => setRefresh(prev => !prev)} />}
+        {page === "DoorDash" && <DoorDashTransactions
+          products={products.map((product) => (
+            {
+              ...product, price: (product.type === 'Canned_Cocktails' ?
+                parseFloat((product.price * 1.13).toFixed(2)) :
+                product.category !== 'Liquor' ?
+                  parseFloat((product.price * 1.13).toFixed(2)) :
+                  parseFloat((product.price * 1.15).toFixed(2)))
+            }))}
+          discounts={discounts}
+          quickAddButtons={quickAddButtons}
+          onTransaction={() => setRefresh(prev => !prev)}
+        />}
+        {page === "Manager" && <Manager transactions={transactions} discounts={discounts} />}
         {page === "Close" && <Close initialTransactions={transactions} />}
         {page === "Sales" && <Sales products={products} initialTransactions={transactions} initialBatches={batches} />}
-        {page === "Settings" && <Settings products={products} quickAddButtons={quickAddButtons} discounts={discounts} batches={batches} onEdit={()=> setRefresh(prev => !prev)}  onDelete={()=> setRefresh(prev => !prev)} onAdd={()=> setRefresh(prev => !prev)}/>}
+        {page === "Settings" && <Settings products={products} quickAddButtons={quickAddButtons} discounts={discounts} batches={batches} onEdit={() => setRefresh(prev => !prev)} onDelete={() => setRefresh(prev => !prev)} onAdd={() => setRefresh(prev => !prev)} />}
       </div>
     </motion.div>
   );

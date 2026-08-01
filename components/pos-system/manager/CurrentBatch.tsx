@@ -152,6 +152,10 @@ const CurrentBatch = ({
         return `$${(transaction.cash / 100).toFixed(2)}`;
       case "credit":
         return `$${(transaction.credit / 100).toFixed(2)}`;
+      case "fee":
+        return `$${(transaction.fee / 100).toFixed(2)}`;
+      case "doorDash":
+        return transaction.doorDash ? "Yes" : "No";
       case "notes":
         return (
           <div
@@ -535,7 +539,7 @@ const CurrentBatch = ({
                             SUBTOTAL
                           </td>
                           <td className="text-end">
-                            ${(calculateSubtotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
+                            ${(calculateSubtotal(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) }))) / 100).toFixed(2)}
                           </td>
                         </tr>
                         <tr className="">
@@ -543,7 +547,7 @@ const CurrentBatch = ({
                             TAX
                           </td>
                           <td className="text-end">
-                            ${(calculateTax(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
+                            ${(calculateTax(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) }))) / 100).toFixed(2)}
                           </td>
                         </tr>
                       </tbody>
@@ -556,7 +560,7 @@ const CurrentBatch = ({
                             TOTAL
                           </td>
                           <td className="text-end">
-                            ${(calculateTotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)}))) / 100).toFixed(2)}
+                            ${(calculateTotal(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) }))) / 100).toFixed(2)}
                           </td>
                         </tr>
                         <tr>
@@ -572,7 +576,7 @@ const CurrentBatch = ({
                             CHANGE
                           </td>
                           <td className="text-end">
-                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems.map(transaction => ({...transaction, discount: getDiscount(transaction.discount)})))) / 100).toFixed(2)}
+                            ${((transaction.amountTendered - calculateTotal(transaction.transactionItems.map(transaction => ({ ...transaction, discount: getDiscount(transaction.discount) })))) / 100).toFixed(2)}
                           </td>
                         </tr>
                       </tbody>

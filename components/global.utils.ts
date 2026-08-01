@@ -79,6 +79,8 @@ export interface Transaction {
   total: number;
   cash: number;
   credit: number;
+  fee: number;
+  doorDash: boolean;
   amountTendered: number;
   createdAt?: Date;
   transactionItems: TransactionItem[];
@@ -135,6 +137,7 @@ export interface TransactionRequest {
   register: string;
   notes?: string;
   transactionItems: TransactionItemRequest[];
+  doorDash: boolean;
 }
 export interface InventoryRequest {
   orderItems: OrderItem[];
@@ -470,7 +473,7 @@ export const productTableColumns = [
   { field: "upc", label: "UPC", width: "200px" },
   { field: "unitPrice", label: "Unit Price", width: "150px" },
   { field: "unitCount", label: "Unit Count", width: "150px" },
-  { field: "itemType", label: "Item Type", width: "150px"}
+  { field: "itemType", label: "Item Type", width: "150px" },
 ] as const;
 
 // Headers for manager tables in register view
@@ -485,6 +488,8 @@ export const managerTableColumns = [
   { field: "cash", label: "Cash", width: "150px" },
   { field: "credit", label: "Credit", width: "150px" },
   { field: "tax", label: "Tax", width: "150px" },
+  { field: "fee", label: "Fee", width: "200px" },
+  { field: "doorDash", label: "DoorDash", width: "200px" },
   { field: "notes", label: "Notes", width: "200px" },
 ] as const;
 
@@ -530,7 +535,7 @@ export const inventoryTableColumns = [
   { field: "unitPrice", label: "Unit Price", width: "150px" },
   { field: "unitCount", label: "Unit Count", width: "150px" },
   { field: "unitsPerCase", label: "Units Per Case", width: "150px" },
-  { field: "itemType", label: "Item Type", width: "150px"}
+  { field: "itemType", label: "Item Type", width: "150px" },
 ] as const;
 
 // Headers for product tables in admin view
@@ -541,6 +546,8 @@ export const transactionItemTableColumns = [
   { field: "itemPrice", label: "Item Price", width: "100px" },
   { field: "unitPrice", label: "Unit Price", width: "100px" },
   { field: "discount", label: "Discount", width: "200px" },
+  { field: "fee", label: "Fee", width: "200px" },
+  { field: "doorDash", label: "DoorDash", width: "200px" },
   { field: "productId", label: "Product ID", width: "200px" },
   { field: "type", label: "Type", width: "100px" },
 ] as const;
@@ -581,40 +588,42 @@ export const weekDays = [
  * Calculates the difference between two dates in days
  * @param date1 Date further in the past
  * @param date2 Date further in the future
- * @returns 
+ * @returns
  */
 export const getDatesBetween = (date1: Date, date2: Date) => {
   const msPerDay = 1000 * 60 * 60 * 24;
   const utc1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
   const utc2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
   return Math.floor((utc2 - utc1) / msPerDay);
-}
+};
 
 /**
  * Compares two dates (ignoring time)
- * @param date1 
- * @param date2 
- * @returns 
+ * @param date1
+ * @param date2
+ * @returns
  */
 export const compareDates = (date1: Date, date2: Date) => {
-  return date1.getFullYear() === date2.getFullYear() &&
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate() &&
     date1.getDay() === date2.getDay()
-}
+  );
+};
 
 /**
  * Converts 24 hour time string to 12 hour format
  * @param time24 - 24 hour time string (e.g. "14:30")
- * @returns 
+ * @returns
  */
 export const to12HourTime = (time24: string) => {
-  const [hourStr, minute] = time24.split(':');
+  const [hourStr, minute] = time24.split(":");
   let hour = parseInt(hourStr, 10);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const ampm = hour >= 12 ? "PM" : "AM";
   hour = hour % 12 || 12; // convert 0 to 12
   return `${hour}:${minute} ${ampm}`;
-}
+};
 
 // Utility function to sanitize strings for search
 export const sanitize = (str: string) =>
@@ -682,13 +691,17 @@ export const getTotal = (item: TransactionItemRequest) => {
   return (
     item.itemPrice *
     item.quantity *
-    (1 - parseFloat((item.discount.multiplier/100).toFixed(2))) *
+    (1 - parseFloat((item.discount.multiplier / 100).toFixed(2))) *
     (item.type !== "Giftcard" ? 1 + taxRate / 100 : 1)
   );
 };
 
 export const getSubtotal = (item: TransactionItemRequest) => {
-  return item.itemPrice * item.quantity *  (1 - parseFloat((item.discount.multiplier/100).toFixed(2)));
+  return (
+    item.itemPrice *
+    item.quantity *
+    (1 - parseFloat((item.discount.multiplier / 100).toFixed(2)))
+  );
 };
 
 export const calculateSubtotal = (cart: TransactionItemRequest[]) => {
@@ -706,7 +719,7 @@ export const calculateDiscount = (cart: TransactionItemRequest[]) => {
     total +=
       item.itemPrice *
       item.quantity *
-      (parseFloat((item.discount.multiplier/100).toFixed(2)));
+      parseFloat((item.discount.multiplier / 100).toFixed(2));
   });
 
   return total;
@@ -731,14 +744,32 @@ export const calculateTax = (cart: TransactionItemRequest[]) => {
   return total;
 };
 
-export const compareItems = (a: TransactionItemRequest, b: TransactionItemRequest) => {
-  return a.name === b.name 
-  && a.type === b.type 
-  && a.discount.value === b.discount.value
-  && a.itemPrice === b.itemPrice;
-}
+export const calculateFee = (total: number) => {
+  if (total >= 0 && total < 1000) return 150;
+  else if (total >= 1000 && total < 2000) return 250;
+  else if (total >= 2000 && total < 3000) return 400;
+  else if (total >= 3000 && total < 5000) return 600;
+  else if (total >= 5000 && total < 7000) return 1000;
+  else if (total >= 7000 && total < 10000) return 1300;
+  else if (total >= 10000) return 1800;
+  else return 0;
+};
 
-export const checkItemExists = (cart: TransactionItemRequest[], item: TransactionItemRequest) => {
-  return cart.findIndex(currentItem => compareItems(currentItem, item));
+export const compareItems = (
+  a: TransactionItemRequest,
+  b: TransactionItemRequest,
+) => {
+  return (
+    a.name === b.name &&
+    a.type === b.type &&
+    a.discount.value === b.discount.value &&
+    a.itemPrice === b.itemPrice
+  );
+};
 
-}
+export const checkItemExists = (
+  cart: TransactionItemRequest[],
+  item: TransactionItemRequest,
+) => {
+  return cart.findIndex((currentItem) => compareItems(currentItem, item));
+};

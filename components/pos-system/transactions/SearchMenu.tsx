@@ -19,10 +19,12 @@ import Modal from "@/components/ui/Modal";
 const SearchMenu = ({
   products,
   discounts,
+  discountsDisabled,
   onConfirm
 }: {
   products: Product[];
   discounts: Discount[];
+  discountsDisabled?: boolean;
   onConfirm: (item: TransactionItemRequest) => void
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -317,7 +319,7 @@ const SearchMenu = ({
         </div>
       </motion.div>
 
-      <Modal open={addItem} title="Add Item" height="max-h-[80vh]" width="max-w-3xl" onClose={closeModal} ref={modalRef}>
+      <Modal open={addItem} title="Add Item" height={discountsDisabled ? "max-h-[40vh]" : "max-h-[60vh]"} width="max-w-3xl" onClose={closeModal} ref={modalRef}>
         <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
           <div className="flex flex-col items-center justify-center w-full gap-4">
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
@@ -353,8 +355,10 @@ const SearchMenu = ({
               </button>
             </div>
 
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
-            <div className="grid grid-cols-4 w-full gap-1">
+            {!discountsDisabled && (
+              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
+            )}  
+            {!discountsDisabled && (<div className="grid grid-cols-4 w-full gap-1">
               <button
                 className={`p-5 rounded-md text-white text-2xl 
                   ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"}
@@ -387,7 +391,7 @@ const SearchMenu = ({
               >
                 Other
               </button>
-            </div>
+            </div>)}
 
             <motion.button
               whileHover={{ scale: 1.02 }}

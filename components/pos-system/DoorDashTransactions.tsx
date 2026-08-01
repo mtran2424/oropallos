@@ -17,22 +17,18 @@ import {
   Discount,
   QuickAddButton,
   TransactionItemRequest,
-  calculateDiscount,
-  fifteenPercentDiscount,
-  taxFreeDiscount,
-  checkItemExists
+  checkItemExists,
+  calculateFee
 } from "@/components/global.utils";
 import Receipt from "@/components/utils/Receipt";
 import TextButton from "@/components/ui/TextButton";
 import Modal from "@/components/ui/Modal";
 import AddCustom from "./transactions/AddCustom";
 import SearchMenu from "./transactions/SearchMenu";
-import AddGiftcard from "./transactions/AddGiftcard";
 import QuickButton from "./transactions/QuickButton";
 import ManualRegister from "./ManualRegister";
-import PartialNumPad from "./num-pad/PartialNumPad";
 
-const Transactions = ({
+const DoorDashTransactions = ({
   products,
   discounts,
   quickAddButtons,
@@ -47,41 +43,32 @@ const Transactions = ({
   const user = useUser();
   const [cart, setCart] = useState<TransactionItemRequest[]>([]);
   const [mode, setMode] = useState<string>("Search");
-  const [input, setInput] = useState<string>("");
   const [cashout, setCashout] = useState<boolean>(false);
   const [confirm, setConfirm] = useState<boolean>(false);
 
   // Transaction states
-  const [note, setNote] = useState<string>("");
   const [total, setTotal] = useState<number>(0);
   const [cash, setCash] = useState<number>(0);
   const [credit, setCredit] = useState<number>(0);
-  const [type, setType] = useState<"Cash" | "Credit">("Credit")
+  const [type, setType] = useState<"Cash">("Cash")
   const [amountTendered, setAmountTendered] = useState<number>(0);
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   // Edit cart item states
   const [editItem, setEditItem] = useState(false);
-  const [otherDiscount, setOtherDiscount] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
-  const [currentItem, setCurrentItem] = useState<TransactionItemRequest>();
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [currentProduct, setCurrentProduct] = useState<Product>();
-  const [discount, setDiscount] = useState<Discount>(noDiscount);
 
-  const channel = new BroadcastChannel(`${user.user?.username}-pos`);
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close the modal for cashout
   const closeCashoutModal = () => {
     // Clear current cashout states before closing modal
     setCashout(false);
-    setInput("");
     setCash(0);
     setCredit(0);
-    setNote("");
-    setType("Credit");
   };
 
   // Close the modal for confirm
@@ -90,48 +77,26 @@ const Transactions = ({
     setCart([]);
     setCash(0);
     setCredit(0);
-    setNote("");
-    setInput("");
     setAmountTendered(0);
     setChange(0);
-    setType("Credit");
     setConfirm(false);
-    channel.postMessage({
-      type: "cart-clear",
-    });
   };
 
   // Close the modal for adding a product
   const closeEditModal = () => {
     // Reset edit states when no item is selected
     setQuantity(-1);
-    setCurrentItem(undefined);
     setCurrentProduct(undefined);
     setCurrentIndex(-1);
-    setDiscount(noDiscount);
     setEditItem(false);
   };
-
-  const closeDiscountModal = () => {
-    setOtherDiscount(false);
-  }
-
-  // Return discounted price, considering tax exempt exception
-  const getPrice = (discount: string, price: number) => {
-    switch (discount) {
-      case "Tax_Free": return (price / 1.07);
-      default: return price;
-    }
-  }
 
   // Event Handlers
 
   // Populate states when editing item
   const handleOpenEdit = (item: TransactionItemRequest, index: number) => {
-    setCurrentItem(item);
     setCurrentIndex(index);
     setQuantity(item.quantity);
-    setDiscount(item.discount);
     setCurrentProduct(item.product);
     setEditItem(true);
   }
@@ -144,10 +109,14 @@ const Transactions = ({
         type: currentProduct.itemType,
         name: currentProduct.name,
         quantity: quantity,
-        discount: discount,
         productId: currentProduct.id,
         product: currentProduct,
-        itemPrice: parseInt(getPrice(discount.value, currentProduct.price * 100).toFixed(0)),
+        discount: noDiscount,
+        itemPrice: parseInt(((currentProduct.type === 'Canned_Cocktails' ?
+          parseFloat((currentProduct.price * 1.13).toFixed(2)) :
+          currentProduct.category !== 'Liquor' ?
+            parseFloat((currentProduct.price * 1.13).toFixed(2)) :
+            parseFloat((currentProduct.price * 1.15).toFixed(2))) * 100).toFixed(0)),
         unitPrice: currentProduct.unitPrice ? parseInt(currentProduct.unitPrice.toFixed(0)) : undefined
       }
 
@@ -156,20 +125,12 @@ const Transactions = ({
       newCart.splice(currentIndex, 1);
       setCart(newCart);
 
-      // Add back as new item to cart
-      channel.postMessage({
-        type: "cart-edit",
-        item: currentItem,
-        newItem: newItem,
-      });
       setCart((prev) => [...prev, newItem]);
 
       // Reset states upon confirm
       setQuantity(-1);
-      setCurrentItem(undefined);
       setCurrentProduct(undefined);
       setCurrentIndex(-1);
-      setDiscount(noDiscount);
       setEditItem(false);
     }
   }
@@ -190,7 +151,11 @@ const Transactions = ({
       name: name,
       quantity: quantity,
       discount: discount,
-      itemPrice: price,
+      itemPrice: parseInt(((product.type === 'Canned_Cocktails' ?
+        parseFloat((product.price * 1.13).toFixed(2)) :
+        product.category !== 'Liquor' ?
+          parseFloat((product.price * 1.13).toFixed(2)) :
+          parseFloat((product.price * 1.15).toFixed(2))) * 100).toFixed(0)),
       unitPrice: product.unitPrice ? parseInt(product.unitPrice.toFixed(0)) : undefined,
       productId: product.id,
       product: product
@@ -203,36 +168,10 @@ const Transactions = ({
       const temp = cart[itemExists];
       temp.quantity += quantity;
       setCart((prev) => [...prev]);
-      channel.postMessage({
-        type: "cart-update",
-        item: item
-      });
     }
     else {
       setCart((prev) => [...prev, item]);
-      channel.postMessage({
-        type: "cart-add",
-        item: item
-      });
     }
-  }
-
-  // Create gift card item
-  const handleGiftcardAdd = (
-    price: number
-  ) => {
-    const item = {
-      type: "Giftcard",
-      name: "Gift Card",
-      quantity: 1,
-      discount: noDiscount,
-      itemPrice: price,
-    }
-    setCart((prev) => [...prev, item]);
-    channel.postMessage({
-      type: "cart-add",
-      item: item
-    });
   }
 
   // Add basic item
@@ -245,17 +184,9 @@ const Transactions = ({
       const temp = cart[itemExists];
       temp.quantity += item.quantity;
       setCart((prev) => [...prev]);
-      channel.postMessage({
-        type: "cart-update",
-        item: item
-      });
     }
     else {
       setCart((prev) => [...prev, item]);
-      channel.postMessage({
-        type: "cart-add",
-        item: item
-      });
     }
   }
 
@@ -269,15 +200,6 @@ const Transactions = ({
 
       // No change if cash + credit is less that total
       setChange((cash + credit) > total ? (cash + credit) - total : 0);
-
-      const creditTotal =
-        // Fill Credit
-        (type === "Credit") ? (
-          (cash < total) ? (
-            total - cash
-          ) : 0
-        ) : (credit < total) ?
-          credit : total;
 
       const cashTotal =
         // Fill Cash
@@ -295,10 +217,10 @@ const Transactions = ({
         register: user.user?.username || "Unknown Register",
         transactionItems: cart,
         cash: cashTotal,
-        credit: creditTotal,
+        credit: 0,
         amountTendered: (cash + credit) > total ? cash + credit : total,
-        notes: note,
-        doorDash: false,
+        notes: "",
+        doorDash: true,
       }
       const res = await createTransaction(transaction).then((res) => {
         setConfirm(true);
@@ -494,12 +416,6 @@ const Transactions = ({
     </Receipt>
   );
 
-  useEffect(() => {
-    channel.postMessage({
-      type: "cart-clear",
-    });
-  }, []);
-
   return (
     <>
       <motion.div
@@ -559,10 +475,6 @@ const Transactions = ({
                             const newCart = [...cart];
                             newCart.splice(index, 1);
                             setCart(newCart);
-                            channel.postMessage({
-                              type: "cart-remove",
-                              item: item
-                            });
                           }}>
                             <MdDelete size={40} className="text-red-500 hover:text-red-700" />
                           </button>
@@ -576,9 +488,8 @@ const Transactions = ({
             </div>
             <div className="grid grid-cols-4 gap-1">
               <AddCustom products={products} modalRef={modalRef} discounts={discounts} onClick={handleCustomAdd} />
-              <AddGiftcard ref={modalRef} onClick={handleGiftcardAdd} />
               {quickAddButtons && quickAddButtons.map((button) => (
-                <QuickButton key={button.id} quickButton={button} discounts={discounts} onClick={handleCustomAdd} />
+                <QuickButton key={button.id} discountsDisabled quickButton={button} discounts={discounts} onClick={handleCustomAdd} />
               ))}
             </div>
           </div>
@@ -596,10 +507,22 @@ const Transactions = ({
             </div>
             {/* Tools */}
             {mode === "Register" && <ManualRegister discounts={discounts} onConfirm={(item) => {
-              handleAddItem(item);
+              handleAddItem({
+                ...item, itemPrice: (item.type !== 'Liquor' ?
+                  parseInt((item.itemPrice * 1.13).toFixed(0)) :
+                  parseInt((item.itemPrice * 1.15).toFixed(0)))
+              });
             }} />}
-            {mode === "Search" && <SearchMenu products={products} discounts={discounts} onConfirm={(item) => {
-              handleAddItem(item);
+            {mode === "Search" && <SearchMenu discountsDisabled products={products} discounts={discounts} onConfirm={(item) => {
+              if (item.product) {
+                handleAddItem({
+                  ...item, itemPrice: parseInt(((item.product.type === 'Canned_Cocktails' ?
+                    parseFloat((item.product.price * 1.13).toFixed(2)) :
+                    item.product.category !== 'Liquor' ?
+                      parseFloat((item.product.price * 1.13).toFixed(2)) :
+                      parseFloat((item.product.price * 1.15).toFixed(2))) * 100).toFixed(0))
+                });
+              }
             }} />}
 
             {/* Cart summary */}
@@ -623,10 +546,10 @@ const Transactions = ({
                 </tr>
                 <tr>
                   <td className="font-semibold text-3xl">
-                    DISCOUNT:
+                    FEE:
                   </td>
                   <td className="text-end text-3xl">
-                    {(calculateDiscount(cart) / 100).toFixed(2)}
+                    {(calculateFee(calculateTotal(cart)) / 100).toFixed(2)}
                   </td>
                 </tr>
               </tbody>
@@ -639,7 +562,7 @@ const Transactions = ({
                     TOTAL
                   </td>
                   <td className="text-end text-3xl">
-                    {(calculateTotal(cart) / 100).toFixed(2)}
+                    {((calculateTotal(cart) + calculateFee(calculateTotal(cart))) / 100).toFixed(2)}
                   </td>
                 </tr>
               </tbody>
@@ -671,109 +594,30 @@ const Transactions = ({
       </motion.div>
 
       {/* Cashout Modal */}
-      <Modal open={cashout} title="Cashout" onClose={closeCashoutModal} ref={modalRef}>
+      <Modal open={cashout} title="Cashout" onClose={closeCashoutModal} height="max-h-[40vh]" ref={modalRef}>
         <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
           <div className="flex flex-col items-center justify-center w-full gap-1">
 
-            {/* Current input dash display */}
-            <div className="grid grid-cols-2 text-xl w-full">
-              <div className="text-start">
-                TOTAL: ${(total / 100).toFixed(2)}
-              </div>
-              <div className="text-end">
-                AMOUNT DUE: ${((total - (cash + credit)) / 100).toFixed(2)}
-              </div>
-            </div>
-
-            {/* Input bar */}
-            <motion.div
-              className="px-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                                overflow-hidden w-full h-30 mb-2"
-            >
-              {/* Current input dash display */}
-
-              {/* Input box for amount entry. When cash or credit buttons are pressed, amount is added to respective payment type and input 
-                    is cleared. If amount entered is greater than amount due, change is calculated and displayed in success modal after transaction submission. */}
-              <input
-                type="number"
-                value={input}
-                min={0}
-                onChange={(e) => setInput(e.target.value)}
-                className="text-4xl overflow-hidden w-full h-full focus:outline-none"
-                style={{ whiteSpace: "nowrap" }}
-              />
-
-            </motion.div>
-
             <table className="w-full">
-              <tbody>
-                <tr>
-                  <td className="font-semibold text-xl">
-                    CASH
-                  </td>
-                  <td className="text-end text-xl">
-                    ${(cash / 100).toFixed(2)}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="font-semibold text-xl">
-                    CREDIT
-                  </td>
-                  <td className="text-end text-xl">
-                    ${(credit / 100).toFixed(2)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <PartialNumPad
-              onClearClick={() => {
-                setInput("");
-                setCash(0);
-                setCredit(0);
-              }}
-              onBackspaceClick={() => {
-                setInput(prev => prev.slice(0, -1));
-              }}
-              onNumberClick={(value) => setInput(`${input}${value}`)}
-            />
-
-            {/* Cash and credit buttons */}
-            <div className="grid grid-cols-2 w-full gap-1 pt-1">
-              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Cash" ? "bg-blue-600" : "bg-zinc-500"}`}
-                onClick={() => {
-                  setType("Cash")
-                  if (input !== "") {
-                    setCash(cash + parseInt(Number(input).toFixed(0)));
-                    setInput("");
-                  }
-                }}
-              >
-                Cash
-              </button>
-              <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 ${type === "Credit" ? "bg-blue-600" : "bg-zinc-500"}`}
-                onClick={() => {
-                  setType("Credit")
-                  if (input !== "") {
-                    setCredit(credit + parseInt(Number(input).toFixed(0)));
-                    setInput("");
-                  }
-                }}
-              >
-                Credit
-              </button>
-              {/* <button className={`p-5 rounded-md text-white text-2xl bg-blue-600 hover:bg-zinc-400`} onClick={() => { }}>Credit</button> */}
-            </div>
-
-            {/* Additional Notes Section */}
-            <div className="flex flex-col w-full py-4">
-              <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Notes</label>
-              <textarea
-                className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                placeholder="Additional Notes"
-                onChange={(e) => setNote(e.target.value)}
-              ></textarea>
-            </div>
+            <tbody>
+              <tr>
+                <td className="font-semibold text-2xl">
+                  TOTAL
+                </td>
+                <td className="text-end text-2xl">
+                  {(calculateTotal(cart) / 100).toFixed(2)}
+                </td>
+              </tr>
+              <tr>
+                <td className="font-semibold text-2xl">
+                  FEE
+                </td>
+                <td className="text-end text-2xl">
+                  {(calculateFee(calculateTotal(cart)) / 100).toFixed(2)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
             {/* Loading Spinner */}
             {loading ? (
@@ -818,11 +662,6 @@ const Transactions = ({
               </tr>
             </tbody>
           </table>
-
-          <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Change</label>
-          <div className="text-2xl font-bold text-zinc-900">
-            ${(change / 100).toFixed(2)}
-          </div>
 
           <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Receipt Option</label>
           <div className="grid grid-cols-2 w-full gap-2">
@@ -876,42 +715,6 @@ const Transactions = ({
               </button>
             </div>
 
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Discount</label>
-            <div className="grid grid-cols-4 w-full gap-1">
-              <button
-                className={`p-5 rounded-md text-white text-2xl 
-                  ${discount === noDiscount ? "bg-zinc-500" : "bg-blue-600"}
-                  hover:bg-zinc-400`}
-                onClick={() => setDiscount(noDiscount)}
-              >
-                No Discount
-              </button>
-              <button
-                className={`p-5 rounded-md text-white text-2xl 
-                  ${discount === fifteenPercentDiscount ? "bg-zinc-500" : "bg-blue-600"} 
-                  hover:bg-zinc-400`}
-                onClick={() => setDiscount(fifteenPercentDiscount)}
-              >
-                15% Discount
-              </button>
-              <button
-                className={`p-5 rounded-md text-white text-2xl 
-                ${discount === taxFreeDiscount ? "bg-zinc-500" : "bg-blue-600"} 
-                hover:bg-zinc-400`}
-                onClick={() => setDiscount(taxFreeDiscount)}
-              >
-                Tax Free
-              </button>
-              <button
-                className={`p-5 rounded-md text-white text-2xl 
-                  ${discount !== taxFreeDiscount && discount !== fifteenPercentDiscount && discount !== noDiscount ? "bg-zinc-500" : "bg-blue-600"} 
-                  hover:bg-zinc-400`}
-                onClick={() => setOtherDiscount(true)}
-              >
-                Other
-              </button>
-            </div>
-
             <motion.button
               whileHover={{ scale: 1.02 }}
               className="h-20 text-2xl font-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-zinc-400 transition duration-200 ease-in-out"
@@ -922,26 +725,8 @@ const Transactions = ({
           </div>
         </div>
       </Modal>
-
-      <Modal open={otherDiscount} title="Other Discount" height="max-h-[80vh]" width="max-w-3xl" onClose={closeDiscountModal} ref={modalRef}>
-        <div className="grid grid-cols-4 w-full gap-1">
-          {discounts.map((disc) => (
-            <button
-              key={disc.id}
-              className={`p-5 rounded-md text-white text-2xl 
-                  ${discount === disc ? "bg-zinc-500" : "bg-blue-600"}
-                  hover:bg-zinc-400`}
-              onClick={() => {
-                setDiscount(disc);
-                closeDiscountModal();
-              }}
-            >
-              {disc.label}
-            </button>))}
-        </div>
-      </Modal>
     </>
   );
 }
 
-export default Transactions;
+export default DoorDashTransactions;

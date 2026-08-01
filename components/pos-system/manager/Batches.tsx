@@ -213,6 +213,10 @@ const Batches = ({
         return `$${(transaction.cash / 100).toFixed(2)}`;
       case "credit":
         return `$${(transaction.credit / 100).toFixed(2)}`;
+      case "fee":
+        return `$${(transaction.fee / 100).toFixed(2)}`;
+      case "doorDash":
+        return transaction.doorDash ? "Yes" : "No";
       case "notes":
         return (
           <div

@@ -136,6 +136,8 @@ model Transaction {
   cash             Int
   credit           Int
   amountTendered   Int
+  fee              Int               @default(0)
+  doorDash         Boolean?          @default(false)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 

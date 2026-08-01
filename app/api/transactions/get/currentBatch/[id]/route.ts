@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
         cash: true,
         credit: true,
         amountTendered: true,
+        fee: true,
+        doorDash: true,
         transactionItems: {
           select: {
             id: true,

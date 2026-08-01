@@ -4,6 +4,7 @@ import { db } from "@/lib/db"; // Adjust to your prisma client path
 import { currentUser } from "@clerk/nextjs/server";
 import {
   calculateDiscount,
+  calculateFee,
   calculateSubtotal,
   calculateTotal,
   taxRate,
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
   const tax = (liquorSubtotal + wineSubtotal) * (taxRate / 100);
 
   const total = calculateTotal(transaction.transactionItems.filter((item: TransactionItemRequest) => item.type !== "Giftcard"));
-
+  const fee = transaction.doorDash ? calculateFee(total) : 0;
   const giftcardTotal = calculateTotal(transaction.transactionItems.filter((item: TransactionItemRequest) => item.type === "Giftcard"))
 
   try {
@@ -44,11 +45,13 @@ export async function POST(req: NextRequest) {
           discount:  parseInt(discount.toFixed(0)),
           tax: tax,
           total: parseInt(total.toFixed(0)),
+          fee: fee,
           taxRate: taxRate,
           cash: transaction.cash - giftcardTotal,
           credit: transaction.credit,
           notes: transaction.notes,
           amountTendered: transaction.amountTendered,
+          doorDash: transaction.doorDash,
           transactionItems: {
             create: transaction.transactionItems.map(
               (item: TransactionItemRequest) => ({
