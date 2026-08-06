@@ -31,6 +31,7 @@ import AddGiftcard from "./transactions/AddGiftcard";
 import QuickButton from "./transactions/QuickButton";
 import ManualRegister from "./ManualRegister";
 import PartialNumPad from "./num-pad/PartialNumPad";
+import { createPayment } from "@/app/api/paymentapi";
 
 const Transactions = ({
   products,
@@ -56,7 +57,7 @@ const Transactions = ({
   const [total, setTotal] = useState<number>(0);
   const [cash, setCash] = useState<number>(0);
   const [credit, setCredit] = useState<number>(0);
-  const [type, setType] = useState<"Cash" | "Credit">("Credit")
+  const [type, setType] = useState<"Cash" | "Credit">("Cash")
   const [amountTendered, setAmountTendered] = useState<number>(0);
   const [change, setChange] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -81,7 +82,7 @@ const Transactions = ({
     setCash(0);
     setCredit(0);
     setNote("");
-    setType("Credit");
+    setType("Cash");
   };
 
   // Close the modal for confirm
@@ -94,7 +95,7 @@ const Transactions = ({
     setInput("");
     setAmountTendered(0);
     setChange(0);
-    setType("Credit");
+    setType("Cash");
     setConfirm(false);
     channel.postMessage({
       type: "cart-clear",
@@ -258,6 +259,22 @@ const Transactions = ({
       });
     }
   }
+
+  const handleCardTransaction = async (amount: number, type: string) => {
+    try {
+      const sale = {
+        amount: amount,
+        paymentType: type,
+        referenceId: `${user.user?.username}-${date.getTime()}`,
+        register: user.user?.username || "Unknown Register"
+      };
+
+      const res = await createPayment(sale);
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Create transaction on submission
   const handleSubmitTransaction = async () => {
@@ -758,6 +775,8 @@ const Transactions = ({
                     setCredit(credit + parseInt(Number(input).toFixed(0)));
                     setInput("");
                   }
+
+                  handleCardTransaction(parseFloat(((total - (cash + credit)) / 100).toFixed(2)), "Credit");
                 }}
               >
                 Credit

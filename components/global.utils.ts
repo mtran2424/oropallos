@@ -139,6 +139,14 @@ export interface TransactionRequest {
   transactionItems: TransactionItemRequest[];
   doorDash: boolean;
 }
+
+export interface SaleRequest {
+  amount: number;
+  paymentType: string;
+  referenceId: string;
+  register: string;
+}
+
 export interface InventoryRequest {
   orderItems: OrderItem[];
 }
