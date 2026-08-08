@@ -167,6 +167,12 @@ const Printouts = () => {
             </td>
             <td />
           </tr>
+          <tr>
+            <td>
+              Fireball<br />10 X 50mL
+            </td>
+            <td />
+          </tr>
         </tbody>
       </table>
     </Receipt>
