@@ -39,7 +39,7 @@ const Printouts = () => {
         Mini Pack List
       </h1>
       <table className="w-full border-separate border-spacing-y-2">
-        <thead className="top-0 text-left text-md">
+        <thead className="top-0 text-left text-lg">
           <tr>
             <th>
               Product
@@ -50,7 +50,7 @@ const Printouts = () => {
           </tr>
         </thead>
 
-        <tbody className="text-md">
+        <tbody className="text-lg">
           <tr>
             <td>
               Captain Morgan<br />10 X 50mL
