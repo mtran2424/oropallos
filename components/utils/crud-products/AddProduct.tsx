@@ -6,6 +6,10 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import Modal from "@/components/ui/Modal";
+import TextInput from "@/components/ui/form/TextInput";
+import TextArea from "@/components/ui/form/TextArea";
+import DropdownSelect from "@/components/ui/form/DropdownSelect";
+import NumInput from "@/components/ui/form/NumInput";
 
 // This component is a button that opens a modal for adding a product
 const AddProduct = ({ onAddProduct, products }: {
@@ -15,7 +19,6 @@ const AddProduct = ({ onAddProduct, products }: {
   const modalRef = useRef<HTMLDivElement>(null);
   const [add, setAdd] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   // States for form fields
   const [name, setName] = useState("");
@@ -34,46 +37,7 @@ const AddProduct = ({ onAddProduct, products }: {
 
   // States for suggestions
   const [nameSuggestions, setNameSuggestions] = useState<string[]>([]);
-  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
   const [sizeSuggestions, setSizeSuggestions] = useState<string[]>([]);
-  const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
-
-  // Function to handle key down events for suggestions
-  const handleKeyDown = (field: string, e: React.KeyboardEvent) => {
-    const showSuggestions = field === "name" ? showNameSuggestions : showSizeSuggestions;
-    const suggestions = field === "name" ? nameSuggestions : sizeSuggestions;
-
-    if (!showSuggestions || suggestions.length === 0) return;
-
-    // Handle arrow keys for navigating suggestions
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setHighlightedIndex((prev) => (prev + 1) % suggestions.length);
-    }
-    // Handle arrow keys for navigating suggestions
-    else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setHighlightedIndex((prev) =>
-        prev === 0 ? suggestions.length - 1 : prev - 1
-      );
-    }
-    // Handle Enter key for selecting a suggestion
-    else if (e.key === "Enter" && highlightedIndex >= 0) {
-      e.preventDefault();
-      handleSelectSuggestion(field, suggestions[highlightedIndex]);
-    }
-  }
-
-  // Function to handle suggestion selection
-  const handleSelectSuggestion = (field: string, suggested: string) => {
-    if (field === "name") {
-      setName(suggested);
-      setShowNameSuggestions(false);
-    } else if (field === "size") {
-      setSize(suggested);
-      setShowSizeSuggestions(false);
-    }
-  };
 
   // Function to handle image upload to Cloudinary
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -185,19 +149,19 @@ const AddProduct = ({ onAddProduct, products }: {
   };
 
   // Open the modal for adding a product
-  const openEventModal = () => {
+  const openAddModal = () => {
     setAdd(true);
   };
 
   // Close the modal for adding a product
-  const closeEventModal = () => {
+  const closeAddModal = () => {
     setAdd(false);
   };
 
   // Close the modal when clicking outside of it
   const closeModalOnOutsideClick = useCallback((e: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      closeEventModal();
+      closeAddModal();
     }
   }, []);
 
@@ -206,7 +170,6 @@ const AddProduct = ({ onAddProduct, products }: {
     // If the name is less than 2 characters, clear suggestions
     if (name.length < 2) {
       setNameSuggestions([]);
-      setShowNameSuggestions(false);
       return;
     }
 
@@ -218,7 +181,6 @@ const AddProduct = ({ onAddProduct, products }: {
       sanitize(product).toLowerCase().includes(sanitize(name.toLowerCase()))
     );
     setNameSuggestions(matches);
-    setShowNameSuggestions(true);
   }, [name, products]);
 
   // Effect to fetch product names for suggestions
@@ -226,7 +188,6 @@ const AddProduct = ({ onAddProduct, products }: {
     // If the name is less than 2 characters, clear suggestions
     if (size.length < 2) {
       setSizeSuggestions([]);
-      setShowSizeSuggestions(false);
       return;
     }
 
@@ -241,7 +202,6 @@ const AddProduct = ({ onAddProduct, products }: {
     );
 
     setSizeSuggestions(matches);
-    setShowSizeSuggestions(true);
   }, [size, products]);
 
   // Add event listener for closing the modal when clicking outside of it
@@ -261,69 +221,39 @@ const AddProduct = ({ onAddProduct, products }: {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.9 }}
         className="flex flex-row text-md items-center text-blue-500 hover:text-blue-300 p-1"
-        onClick={openEventModal}>
+        onClick={openAddModal}>
         <IoIosAdd size={25} />
         Add Product
       </motion.button>
 
       {/* Modal for adding products */}
-      <Modal open={add} title="Add Product" onClose={closeEventModal} ref={modalRef} >
+      <Modal open={add} title="Add Product" onClose={closeAddModal} ref={modalRef} >
         {/* Form for adding products */}
         <div className="mt-6 w-full border-t border-zinc-500 text-sm sm:text-md p-4">
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
             {/* Name Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Product Name</label>
-            <div>
-              <input
-                type="text"
-                required
-                className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out w-full"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value)
-                  setHighlightedIndex(-1);
-                }}
-                onFocus={() => name.length >= 2 && setShowNameSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowNameSuggestions(false), 150)} // delay to allow click
-                onKeyDown={(e) => handleKeyDown("name", e)}
-              />
-              {showNameSuggestions && nameSuggestions.length > 0 && (
-                // Suggestions dropdown
-                <motion.ul
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto max-h-50"
-                >
-                  {nameSuggestions.map((suggestion, index) => (
-                    <motion.li
-                      key={index}
-                      className={
-                        `px-4 py-2 rounded-lg transition duration-200 ease-in-out cursor-pointer 
-                              ${highlightedIndex === index ? "bg-blue-100" : "hover:bg-blue-50"}`
-                      }
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                      onClick={() => handleSelectSuggestion("name", suggestion)}
-                    >
-                      {suggestion}
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              )}
-            </div>
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}Tito{'\''}s Handmade Vodka{'\"'} or {'\"'}Rebellious Pinot Noir{'\"'}
-            </div>
+            <TextInput
+              required
+              name="Product Name"
+              value={name}
+              setValue={setName}
+              onChange={(e) => {
+                setName(e.target.value)
+              }}
+              suggestions={nameSuggestions}
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}Tito{'\''}s Handmade Vodka{'\"'} or {'\"'}Rebellious Pinot Noir{'\"'}
+              </div>
+            </TextInput>
 
             <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Classification</div>
 
             {/* Category Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Category</label>
-            <select
+            <DropdownSelect
               id="category"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              name="Category"
+              value={category}
               onChange={(e) => {
                 if (e.target.value !== category) {
                   // Reset subcategory and type when category changes
@@ -332,21 +262,20 @@ const AddProduct = ({ onAddProduct, products }: {
                 }
                 setCategory(e.target.value);
               }}
-              value={category}
             >
-              <option value="">Select Category</option>
+              <option value=""></option>
               {ProductCategories.map((category, index) => (
                 <option key={index} value={category.value}>
                   {category.name}
                 </option>
               ))}
-            </select>
+            </DropdownSelect>
 
             {/* Subategory Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Subcategory</label>
-            <select
+            <DropdownSelect
               id="subcategory"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              name="Subcategory"
+              value={subcategory}
               onChange={(e) => {
                 if (e.target.value !== subcategory) {
                   // Reset type when subcategory changes
@@ -354,9 +283,8 @@ const AddProduct = ({ onAddProduct, products }: {
                 }
                 setSubcategory(e.target.value)
               }}
-              value={subcategory}
             >
-              <option value="">Select Subcategory</option>
+              <option value=""></option>
               {/* Render subcategory options based on selected category */}
               {category && (
                 ProductCategories.filter((cat) => cat.value === category)[0].subcategories
@@ -366,19 +294,18 @@ const AddProduct = ({ onAddProduct, products }: {
                     </option>
                   )))
               }
-            </select>
+            </DropdownSelect>
 
             {/* Type Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Type</label>
-            <select
+            <DropdownSelect
               id="type"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              name="Type"
+              value={type}
               onChange={(e) => {
                 setType(e.target.value)
               }}
-              value={type}
             >
-              <option value="">Select Type</option>
+              <option value=""></option>
               {(category && subcategory) &&
                 (ProductCategories.filter((cat) => cat.value === category)[0].subcategories
                   .filter((subcat) => subcat.value === subcategory)[0].types
@@ -387,165 +314,120 @@ const AddProduct = ({ onAddProduct, products }: {
                       {type.name}
                     </option>
                   )))}
-            </select>
+            </DropdownSelect>
 
             <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
             {/* Price Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
-            <input
-              type="number"
+
+            <NumInput
+              name="Price"
               inputMode="decimal"
               step="0.01"
               min="0"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Price"
+              value={price || ""}
               onChange={(e) => {
                 const value = e.target.value;
                 setPrice(value === "" ? undefined : parseFloat(value));
               }}
-              value={price || ""}
-            />
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
               i.e. {'\"'}19.99{'\"'} - No $ sign needed
             </div>
+            </NumInput>
 
-            {/* Size Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
-            <div>
-              <input
-                type="text"
-                required
-                className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                placeholder="Size"
-                value={size}
-                onChange={(e) => {
-                  setSize(e.target.value)
-                  setHighlightedIndex(-1);
-                }}
-                onFocus={() => size.length >= 2 && setShowSizeSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSizeSuggestions(false), 150)} // delay to allow click
-                onKeyDown={(e) => handleKeyDown("size", e)}
-              />
-              {showSizeSuggestions && sizeSuggestions.length > 0 && (
-                // Suggestions dropdown
-                <motion.ul
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
-                >
-                  {sizeSuggestions.map((suggestion, index) => (
-                    <motion.li
-                      key={index}
-                      className={
-                        `px-4 py-2 rounded-lg transition duration-200 ease-in-out cursor-pointer 
-                              ${highlightedIndex === index ? "bg-blue-100" : "hover:bg-blue-50"}`
-                      }
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                      onClick={() => handleSelectSuggestion("size", suggestion)}
-                    >
-                      {suggestion}
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              )}
-            </div>
-
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
-            </div>
+            <TextInput
+              required
+              name="Size"
+              value={size}
+              setValue={setSize}
+              onChange={(e) => {
+                setSize(e.target.value)
+              }}
+              suggestions={sizeSuggestions}
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
+              </div>
+            </TextInput>
 
             {/* ABV Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">ABV</label>
-            <input
-              type="number"
+            <NumInput
+              name="ABV"
               inputMode="decimal"
               step="0.1"
               min="0"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="ABV"
+              value={abv || ""}
               onChange={(e) => {
                 const value = e.target.value;
                 setAbv(value === "" ? undefined : parseFloat(value));
-              }}
-              value={abv || ""}
-            />
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}40{'\"'} - No % sign needed
-            </div>
+              }}>
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}40{'\"'} - No % sign needed
+              </div>
+            </NumInput>
 
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Item Type</label>
-            <select
+            {/* Item Type Selection */}
+            <DropdownSelect
               id="itemType"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              onChange={(e) => {
-                setItemType(e.target.value);
-              }}
+              name="Item Type"
               value={itemType}
+              onChange={(e) => {
+                setItemType(e.target.value)
+              }}
             >
-              <option value="">Select Type</option>
-                <option value={"Liquor"}>
-                  Liquor
-                </option>
-                <option value={"Wine"}>
-                  Wine
-                </option>
-            </select>
+              <option value=""></option>
+              <option value={"Liquor"}>
+                Liquor
+              </option>
+              <option value={"Wine"}>
+                Wine
+              </option>
+            </DropdownSelect>
 
-            {/* Unit Price Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>
-            <input
-              type="number"
+            <NumInput
+              name="Unit Price"
               inputMode="decimal"
               step="0.01"
               min="0"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Unit Price"
+              value={unitPrice || ""}
               onChange={(e) => {
                 const value = e.target.value;
                 setUnitPrice(value === "" ? undefined : parseFloat(value));
               }}
-              value={unitPrice || ""}
-            />
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
               i.e. {'\"'}19.99{'\"'} - No $ sign needed
             </div>
+            </NumInput>
 
-            {/* Unit Count Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Count</label>
-            <input
-              type="number"
+            <NumInput
+              name="Unit Count"
               step="1"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Unit Count"
+              value={unitCount || "0"}
               onChange={(e) => {
                 const value = e.target.value;
                 setUnitCount(parseInt(value));
               }}
-              value={unitCount || "0"}
+            >
+            </NumInput>
+
+            <TextArea
+              name="Product Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
 
-            {/* Description Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
-            <textarea
-              className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Product Description"
-              onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
-
-            {/* UPC Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
-            <input
-              type="text"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="UPC"
+            <TextInput
+              required
+              name="UPC"
+              value={upc || ""}
+              setValue={setUpc}
               onChange={(e) => {
                 setUpc(e.target.value)
               }}
-              value={upc || ""}
-            />
+            >
+            </TextInput>
 
             {/* Image Upload Field */}
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
@@ -557,21 +439,24 @@ const AddProduct = ({ onAddProduct, products }: {
             />
             <label className="text-md font-semibold text-gray-600 w-full text-left px-2">Image Preview:</label>
             <div className="text-md font-semibold text-zinc-500 w-full text-left px-4">or</div>
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">URL</label>
-            <input
-              type="text"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="URL"
-              onChange={(e) => setImageUrl(e.target.value)}
+            <TextInput
+              name="URL"
               value={imageUrl}
-            />
-            <div className="text-sm font-medium text-zinc-500 text-left px-4 wrap-break-word">
-              Please only use the URL field for reused images from Cloudinary. Preexisting
-              <br />
-              URLs can be found under the image column in the spreadsheet. Duplicate
-              <br />
-              image uploads get expensive eventually.
-            </div>
+              setValue={setImageUrl}
+              onChange={(e) => {
+                setImageUrl(e.target.value)
+              }}
+            >
+              <div className="text-sm font-medium text-zinc-500 text-left px-4 wrap-break-word">
+                Please only use the URL field for reused images from Cloudinary. Preexisting
+                <br />
+                URLs can be found under the image column in the spreadsheet. Duplicate
+                <br />
+                image uploads get expensive eventually.
+                <br />
+                Also, please paste URLs in. System does not work with manual entry
+              </div>
+            </TextInput>
             {imageUrl && (
               <div className="relative inline-block px-2">
                 <motion.button

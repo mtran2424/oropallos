@@ -3,12 +3,9 @@ import { Montserrat, Merriweather } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import Navbar from "@/components/navigation/Navbar";
-import Footer from "@/components/footer/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import { MapProvider } from "@/components/providers/map-provider";
 import { Toaster } from "react-hot-toast";
-import Header from "@/components/header/Header";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",

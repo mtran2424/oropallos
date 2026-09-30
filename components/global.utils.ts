@@ -452,7 +452,6 @@ export const navBarElements = [
 
 export const adminNavBarElements = [
   { label: "Dashboard", path: "/admin/dashboard" },
-  { label: "POS", path: "/admin/pos-system" },
 ] as const;
 
 // Headers for product tables
@@ -558,28 +557,6 @@ export const transactionItemTableColumns = [
   { field: "doorDash", label: "DoorDash", width: "200px" },
   { field: "productId", label: "Product ID", width: "200px" },
   { field: "type", label: "Type", width: "100px" },
-] as const;
-
-export const colorPool = [
-  "#83C9F4",
-  "#F71735",
-  "#F9C22E",
-  "#99D19C",
-  "#3626A7",
-  "#8093F1",
-  "#6457A6",
-  "#CC59D2",
-  "#004385",
-  "#FB6376",
-  "#93E5AB",
-  "#F487B6",
-  "#ADE25D",
-  "#FCEC52",
-  "#F49CBB",
-  "#23022E",
-  "#9CFFD9",
-  "#501537",
-  "#473198",
 ] as const;
 
 export const weekDays = [
@@ -693,74 +670,6 @@ export const formatTime = (date: Date | null | undefined) => {
   const hours = String(date.getHours() % 12 || 12).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes} ${date.getHours() >= 12 ? "PM" : "AM"}`;
-};
-
-export const getTotal = (item: TransactionItemRequest) => {
-  return (
-    item.itemPrice *
-    item.quantity *
-    (1 - parseFloat((item.discount.multiplier / 100).toFixed(2))) *
-    (item.type !== "Giftcard" ? 1 + taxRate / 100 : 1)
-  );
-};
-
-export const getSubtotal = (item: TransactionItemRequest) => {
-  return (
-    item.itemPrice *
-    item.quantity *
-    (1 - parseFloat((item.discount.multiplier / 100).toFixed(2)))
-  );
-};
-
-export const calculateSubtotal = (cart: TransactionItemRequest[]) => {
-  var total = 0;
-  cart.map((item) => {
-    total += getSubtotal(item);
-  });
-
-  return total;
-};
-
-export const calculateDiscount = (cart: TransactionItemRequest[]) => {
-  var total = 0;
-  cart.map((item) => {
-    total +=
-      item.itemPrice *
-      item.quantity *
-      parseFloat((item.discount.multiplier / 100).toFixed(2));
-  });
-
-  return total;
-};
-
-export const calculateTotal = (cart: TransactionItemRequest[]) => {
-  var total = 0;
-  cart.map((item) => {
-    total += getTotal(item);
-  });
-
-  return total;
-};
-
-export const calculateTax = (cart: TransactionItemRequest[]) => {
-  var total = 0;
-  cart
-    .filter((item) => item.type !== "Giftcard")
-    .map((item) => {
-      total += getSubtotal(item) * (taxRate / 100);
-    });
-  return total;
-};
-
-export const calculateFee = (total: number) => {
-  if (total >= 0 && total < 1000) return 150;
-  else if (total >= 1000 && total < 2000) return 250;
-  else if (total >= 2000 && total < 3000) return 400;
-  else if (total >= 3000 && total < 5000) return 600;
-  else if (total >= 5000 && total < 7000) return 1000;
-  else if (total >= 7000 && total < 10000) return 1300;
-  else if (total >= 10000) return 1800;
-  else return 0;
 };
 
 export const compareItems = (
