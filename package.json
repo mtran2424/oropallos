@@ -41,5 +41,9 @@
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "mysql2": "^3.24.5",
+    "deepmerge-ts": "^8.0.1"
   }
 }
