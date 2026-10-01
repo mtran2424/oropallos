@@ -9,6 +9,8 @@ import { getProducts, updateInventory } from "@/app/api/adminapi";
 import { Product, sanitize } from "@/components/global.utils";
 import ProductTag from "@/components/ui/ProductTag";
 import Modal from "@/components/ui/Modal";
+import NumInput from "../ui/form/NumInput";
+import DropdownSelect from "../ui/form/DropdownSelect";
 
 interface OrderItem {
   product: Product;
@@ -363,38 +365,40 @@ const Orders = ({
 
       {/* Add Item Modal */}
       <Modal open={addItem} title="Add Item" height="max-h-[60vh]" width="max-w-2xl" onClose={closeEventModal} ref={modalRef}>
-        <div className="mt-6 w-full border-t border-zinc-500 text-lg rounded-lg p-4">
-          <div className="flex flex-col items-center justify-center w-full gap-4">
-            <div className="flex flex-col w-full space-y-2">
+        <div className="mt-6 w-full border-t border-zinc-500 text-lg p-4">
+          <div className="flex flex-col items-center justify-center w-full gap-5">
+            <div className="flex flex-col w-full space-y-2 gap-5">
               <div className="flex flex-col w-1/4">
                 {/* Qty Field */}
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Quantity</label>
-                <input
-                  type="number"
+                <NumInput
+                  name="Quantity"
                   step="1"
                   min={1}
-                  className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  placeholder="Quantity"
+                  value={currentQuantity || ""}
                   onChange={(e) => {
                     const value = e.target.value;
                     setCurrentQuantity(value === "" ? 0 : parseInt(value) ?? 0);
                   }}
-                  value={currentQuantity || ""}
-                />
+                >
+                </NumInput>
               </div>
               <div className="flex flex-col w-full">
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Type</label>
-                <select
+                {/* Unit Type Field */}
+                <DropdownSelect
                   id="unitType"
-                  className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  onChange={(e) => {
-                    setCurrentUnitType(e.target.value);
-                  }}
+                  name="Unit Type"
                   value={currentUnitType}
+                  onChange={(e) => {
+                    setCurrentUnitType(e.target.value)
+                  }}
                 >
-                  <option value="Unit">Unit</option>
-                  {currentProduct?.unitsPerCase && <option value="Case">Case</option>}
-                </select>
+                  <option value={"Unit"}>
+                    Unit
+                  </option>
+                  <option value={"Case"}>
+                    Case
+                  </option>
+                </DropdownSelect>
               </div>
 
             </div>

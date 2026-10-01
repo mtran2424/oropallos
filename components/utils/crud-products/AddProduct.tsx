@@ -33,6 +33,7 @@ const AddProduct = ({ onAddProduct, products }: {
   const [upc, setUpc] = useState("");
   const [unitPrice, setUnitPrice] = useState<number | undefined>(undefined);
   const [unitCount, setUnitCount] = useState<number>(0);
+  const [unitsPerCase, setUnitsPerCase] = useState<number>(0);
   const [itemType, setItemType] = useState("");
 
   // States for suggestions
@@ -117,6 +118,7 @@ const AddProduct = ({ onAddProduct, products }: {
       hidden: false,
       unitPrice: unitPrice !== undefined ? parseInt((unitPrice * 100).toFixed(0)) : undefined,
       unitCount: unitCount,
+      unitsPerCase: unitsPerCase,
       itemType: itemType
     };
 
@@ -140,7 +142,7 @@ const AddProduct = ({ onAddProduct, products }: {
         setUpc("");
         setUnitPrice(undefined);
         setUnitCount(0);
-
+        setUnitsPerCase(0);
         // Close the modal after submission
         setAdd(false);
       }).finally(() => {
@@ -319,7 +321,6 @@ const AddProduct = ({ onAddProduct, products }: {
             <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
             {/* Price Field */}
-
             <NumInput
               name="Price"
               inputMode="decimal"
@@ -332,8 +333,8 @@ const AddProduct = ({ onAddProduct, products }: {
               }}
             >
               <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}19.99{'\"'} - No $ sign needed
-            </div>
+                i.e. {'\"'}19.99{'\"'} - No $ sign needed
+              </div>
             </NumInput>
 
             <TextInput
@@ -385,6 +386,7 @@ const AddProduct = ({ onAddProduct, products }: {
               </option>
             </DropdownSelect>
 
+            {/* Unit Price Field */}
             <NumInput
               name="Unit Price"
               inputMode="decimal"
@@ -397,8 +399,8 @@ const AddProduct = ({ onAddProduct, products }: {
               }}
             >
               <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}19.99{'\"'} - No $ sign needed
-            </div>
+                i.e. {'\"'}19.99{'\"'} - No $ sign needed
+              </div>
             </NumInput>
 
             <NumInput
@@ -408,6 +410,17 @@ const AddProduct = ({ onAddProduct, products }: {
               onChange={(e) => {
                 const value = e.target.value;
                 setUnitCount(parseInt(value));
+              }}
+            >
+            </NumInput>
+
+            <NumInput
+              name="Units Per Case"
+              step="1"
+              value={unitsPerCase || "0"}
+              onChange={(e) => {
+                const value = e.target.value;
+                setUnitsPerCase(parseInt(value));
               }}
             >
             </NumInput>
@@ -457,6 +470,7 @@ const AddProduct = ({ onAddProduct, products }: {
                 Also, please paste URLs in. System does not work with manual entry
               </div>
             </TextInput>
+            
             {imageUrl && (
               <div className="relative inline-block px-2">
                 <motion.button

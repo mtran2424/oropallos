@@ -14,7 +14,7 @@ const TextArea = ({
   onChange,
 }: {
   name: string;
-  value: string;
+  value: string | undefined;
   onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }) => {
   return (
@@ -22,7 +22,7 @@ const TextArea = ({
       <div
         className="relative flex flex-col
             border border-zinc-300 rounded-md
-            px-4 py-3
+            px-4 py-3 text-md
             transition-all duration-200
           focus-within:border-blue-500
             focus-within:ring-2

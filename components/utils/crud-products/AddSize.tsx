@@ -6,6 +6,9 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import { IoIosAdd, IoIosCloseCircle } from "react-icons/io";
 import Modal from "@/components/ui/Modal";
+import NumInput from "@/components/ui/form/NumInput";
+import TextInput from "@/components/ui/form/TextInput";
+import TextArea from "@/components/ui/form/TextArea";
 
 // This component is a button that opens a modal for adding a product
 const AddSize = ({
@@ -29,10 +32,12 @@ const AddSize = ({
   const [category, setCategory] = useState(product.category);
   const [subcategory, setSubcategory] = useState(product.subcategory);
   const [type, setType] = useState(product.type);
-  const [imageUrl, setImageUrl] = useState(product.imageUrl);
+  const [imageUrl, setImageUrl] = useState(product.imageUrl || "");
   const [abv, setAbv] = useState<number | undefined>(product.abv || undefined);
   const [upc, setUpc] = useState("");
   const [unitPrice, setUnitPrice] = useState<number | undefined>(undefined);
+  const [unitCount, setUnitCount] = useState<number | undefined>(0);
+  const [unitsPerCase, setUnitsPerCase] = useState<number | undefined>(0);
   const [size, setSize] = useState('750mL');
 
   // States for suggestions
@@ -150,9 +155,9 @@ const AddSize = ({
       favorite: product.favorite,
       abv: abv,
       size: size,
-      unitCount: 0,
+      unitCount: unitCount !== undefined ? unitCount : 0,
       unitPrice: unitPrice !== undefined ? unitPrice * 100 : undefined,
-      unitsPerCase: product.unitsPerCase,
+      unitsPerCase: unitsPerCase !== undefined ? unitsPerCase : 0,
       upc: upc,
       itemType: product.itemType,
     };
@@ -172,6 +177,10 @@ const AddSize = ({
         setType("");
         setDescription("");
         setImageUrl("");
+        setUpc("");
+        setUnitPrice(undefined);
+        setUnitCount(0);
+        setUnitsPerCase(0);
         setAbv(undefined);
         setSize("750mL");
 
@@ -259,7 +268,7 @@ const AddSize = ({
     setCategory(product.category);
     setSubcategory(product.subcategory);
     setType(product.type);
-    setImageUrl(product.imageUrl);
+    setImageUrl(product.imageUrl || "");
     setAbv(product.abv || undefined);
     setSize(product.size);
     setUnitPrice(undefined);
@@ -299,109 +308,92 @@ const AddSize = ({
             <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
             {/* Price Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
-            <input
-              type="number"
+            <NumInput
+              name="Price"
               inputMode="decimal"
               step="0.01"
               min="0"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Price"
+              value={price || ""}
               onChange={(e) => {
                 const value = e.target.value;
                 setPrice(value === "" ? undefined : parseFloat(value));
               }}
-              value={price || ""}
-            />
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}19.99{'\"'} - No $ sign needed
-            </div>
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}19.99{'\"'} - No $ sign needed
+              </div>
+            </NumInput>
 
-            {/* Size Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Size</label>
-            <div>
-              <input
-                type="text"
-                required
-                className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                placeholder="Size"
-                value={size}
-                onChange={(e) => {
-                  setSize(e.target.value)
-                  setHighlightedIndex(-1);
-                }}
-                onFocus={() => size.length >= 2 && setShowSizeSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSizeSuggestions(false), 150)} // delay to allow click
-                onKeyDown={(e) => handleKeyDown("size", e)}
-              />
-              {showSizeSuggestions && sizeSuggestions.length > 0 && (
-                // Suggestions dropdown
-                <motion.ul
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="border border-zinc-500 rounded-lg p-2 transition duration-200 ease-in-out w-full overflow-y-auto"
-                >
-                  {sizeSuggestions.map((suggestion, index) => (
-                    <motion.li
-                      key={index}
-                      className={
-                        `px-4 py-2 rounded-lg transition duration-200 ease-in-out cursor-pointer 
-                              ${highlightedIndex === index ? "bg-blue-100" : "hover:bg-blue-50"}`
-                      }
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                      onClick={() => handleSelectSuggestion("size", suggestion)}
-                    >
-                      {suggestion}
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              )}
-            </div>
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
-            </div>
+            <TextInput
+              required
+              name="Size"
+              value={size}
+              setValue={setSize}
+              onChange={(e) => {
+                setSize(e.target.value)
+              }}
+              suggestions={sizeSuggestions}
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}750mL{'\"'} or {'\"'}1.5L{'\"'}
+              </div>
+            </TextInput>
 
-            {/* Description Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Description</label>
-            <textarea
-              className="border border-zinc-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Product Description"
-              onChange={(e) => setDescription(e.target.value)}
+            <TextArea
+              name="Product Description"
               value={description}
-            ></textarea>
+              onChange={(e) => setDescription(e.target.value)}
+            />
 
             {/* Unit Price Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>
-            <input
-              type="number"
+            <NumInput
+              name="Unit Price"
               inputMode="decimal"
               step="0.01"
               min="0"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Unit Price"
+              value={unitPrice || ""}
               onChange={(e) => {
                 const value = e.target.value;
                 setUnitPrice(value === "" ? undefined : parseFloat(value));
               }}
-              value={unitPrice || ""}
-            />
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}19.99{'\"'} - No $ sign needed
-            </div>
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}19.99{'\"'} - No $ sign needed
+              </div>
+            </NumInput>
 
-            {/* UPC Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
-            <input
-              type="text"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="UPC"
+            <NumInput
+              name="Unit Count"
+              step="1"
+              value={unitCount || "0"}
+              onChange={(e) => {
+                const value = e.target.value;
+                setUnitCount(parseInt(value));
+              }}
+            >
+            </NumInput>
+
+            <NumInput
+              name="Units Per Case"
+              step="1"
+              value={unitsPerCase || "0"}
+              onChange={(e) => {
+                const value = e.target.value;
+                setUnitsPerCase(parseInt(value));
+              }}
+            >
+            </NumInput>
+
+            <TextInput
+              required
+              name="UPC"
+              value={upc || ""}
+              setValue={setUpc}
               onChange={(e) => {
                 setUpc(e.target.value)
               }}
-              value={upc || ""}
-            />
+            >
+            </TextInput>
 
             {/* Image Upload Field */}
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Image</label>
@@ -413,20 +405,24 @@ const AddSize = ({
             />
             <div className="text-md font-semibold text-zinc-500 w-full text-left px-4">or</div>
             <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">URL</label>
-            <input
-              type="text"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="URL"
-              onChange={(e) => setImageUrl(e.target.value)}
+            <TextInput
+              name="URL"
               value={imageUrl}
-            />
-            <div className="text-sm font-medium text-zinc-500 text-left px-4 wrap-break-word">
-              Please only use the URL field for reused images from Cloudinary.
-              <br />
-              Preexisting URLs can be found under the image column in the spreadsheet.
-              <br />
-              Duplicate image uploads get expensive quickly.
-            </div>
+              setValue={setImageUrl}
+              onChange={(e) => {
+                setImageUrl(e.target.value)
+              }}
+            >
+              <div className="text-sm font-medium text-zinc-500 text-left px-4 wrap-break-word">
+                Please only use the URL field for reused images from Cloudinary. Preexisting
+                <br />
+                URLs can be found under the image column in the spreadsheet. Duplicate
+                <br />
+                image uploads get expensive eventually.
+                <br />
+                Also, please paste URLs in. System does not work with manual entry
+              </div>
+            </TextInput>
             {imageUrl && (
               <div className="relative inline-block px-2">
                 <motion.button

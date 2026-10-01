@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { BsCurrencyDollar } from "react-icons/bs";
 import Modal from "@/components/ui/Modal";
+import NumInput from "@/components/ui/form/NumInput";
 
 // This component is a button that opens a modal for adding a product
 const EditUnitPrice = ({ onEditPrice, product }: {
@@ -120,42 +121,38 @@ const EditUnitPrice = ({ onEditPrice, product }: {
             <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
             {/* Price Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Price</label>
-            <input
-              type="number"
+            <NumInput
+              name="Price"
               inputMode="decimal"
               step="0.01"
               min="0"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Price"
+              value={price || ""}
               onChange={(e) => {
                 const value = e.target.value;
                 setPrice(value === "" ? undefined : parseFloat(value));
               }}
-              value={price || ""}
-            />
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}19.99{'\"'} - No $ sign needed
-            </div>
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}19.99{'\"'} - No $ sign needed
+              </div>
+            </NumInput>
 
             {/* Unit Price Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Price</label>
-            <input
-              type="number"
+            <NumInput
+              name="Unit Price"
               inputMode="decimal"
-              step=".01"
+              step="0.01"
               min="0"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="Unit Price"
+              value={unitPrice || ""}
               onChange={(e) => {
                 const value = e.target.value;
                 setUnitPrice(value === "" ? undefined : parseFloat(value));
               }}
-              value={unitPrice ?? ""}
-            />
-            <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
-              i.e. {'\"'}19.99{'\"'} - No $ sign needed
-            </div>
+            >
+              <div className="text-sm font-semibold text-zinc-500 w-full text-left px-4">
+                i.e. {'\"'}19.99{'\"'} - No $ sign needed
+              </div>
+            </NumInput>
 
 
             {loading ? (

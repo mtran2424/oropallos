@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { IoScan } from "react-icons/io5";
 import Modal from "@/components/ui/Modal";
+import TextInput from "@/components/ui/form/TextInput";
 
 // This component is a button that opens a modal for adding a product
 const AddUPC = ({ onAddUpc, product }: {
@@ -119,16 +120,16 @@ const AddUPC = ({ onAddUpc, product }: {
             <div className="text-lg font-semibold text-zinc-500 w-full text-left px-4">Details</div>
 
             {/* UPC Field */}
-            <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">UPC</label>
-            <input
-              type="text"
-              className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-              placeholder="UPC"
+            <TextInput
+              required
+              name="UPC"
+              value={upc || ""}
+              setValue={setUpc}
               onChange={(e) => {
                 setUpc(e.target.value)
               }}
-              value={upc || ""}
-            />
+            >
+            </TextInput>
 
             {loading ? (
               // Loading spinner

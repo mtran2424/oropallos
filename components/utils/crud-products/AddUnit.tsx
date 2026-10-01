@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { FaBoxOpen } from "react-icons/fa6";
 import TextButton from "@/components/ui/TextButton";
 import Modal from "@/components/ui/Modal";
+import NumInput from "@/components/ui/form/NumInput";
 
 // This component is a button that opens a modal for adding a product
 const AddUnit = ({ onAddUnit, product }: {
@@ -54,7 +55,7 @@ const AddUnit = ({ onAddUnit, product }: {
       unitPrice: product.unitPrice,
       unitCount: unitCount + (type === "Case" ? quantity * caseCount : quantity),
       unitsPerCase: unitsPerCase,
-      itemType:product.itemType,
+      itemType: product.itemType,
     };
 
     if (product.id) {
@@ -147,32 +148,28 @@ const AddUnit = ({ onAddUnit, product }: {
             {mode === "Edit" && (
               <>
                 {/* Unit Count Field */}
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Unit Count</label>
-                <input
-                  type="number"
+                <NumInput
+                  name="Unit Count"
                   step="1"
-                  className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  placeholder="Unit Count"
+                  value={unitCount || "0"}
                   onChange={(e) => {
                     const value = e.target.value;
-                    setUnitCount(value === "" ? 0 : parseInt(value));
+                    setUnitCount(parseInt(value));
                   }}
-                  value={unitCount || ""}
-                />
+                >
+                </NumInput>
 
                 {/* Unit Count Field */}
-                <label className="text-md font-semibold text-zinc-700 w-full text-left px-2">Units Per Case</label>
-                <input
-                  type="number"
+                <NumInput
+                  name="Units Per Case"
                   step="1"
-                  className="border border-zinc-500 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-                  placeholder="Units Per Case"
+                  value={unitsPerCase || "0"}
                   onChange={(e) => {
                     const value = e.target.value;
-                    setUnitsPerCase(value === "" ? 0 : parseInt(value));
+                    setUnitsPerCase(parseInt(value));
                   }}
-                  value={unitsPerCase || ""}
-                />
+                >
+                </NumInput>
               </>
             )}
             {mode === "Add" && (<>
